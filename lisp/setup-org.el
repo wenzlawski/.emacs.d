@@ -785,8 +785,8 @@ end #OB-JULIA-VTERM_END\n"))
       (eww url)))
 
   (defun my/org-protcol-capture-body (info)
+    (x-focus-frame nil)
     (let ((body (plist-get info :body)))
-      (message "have body")
       (eww-open-file (make-temp-file "org-protocol" nil ".html" body)))))
 
 ;; ** org-contrib
