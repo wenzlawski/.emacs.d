@@ -214,7 +214,8 @@
   "Load theme, taking current system APPEARANCE into consideration."
   (pcase appearance
     ('light (modus-themes-select 'modus-operandi))
-    ('dark  (modus-themes-select 'modus-vivendi))))
+    ('dark  (modus-themes-select 'modus-vivendi)))
+  (if (eq major-mode 'pdf-view-mode) (pdf-view-themed-minor-mode 1)))
 
 (defun my/modus-theme-on-toggle ()
   "Set some faces each toggle."
@@ -2169,8 +2170,6 @@ See URL `http://pypi.python.org/pypi/ruff'."
 (use-package nix-buffer
   :straight t
   :after nix-mode)
-
-;; Ensure `nil` is in your PATH.
 
 ;; ** bibtex
 
