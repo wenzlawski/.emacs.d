@@ -2170,633 +2170,631 @@ See URL `http://pypi.python.org/pypi/ruff'."
   :straight t
   :after nix-mode)
 
-(use-package eglot
+;; Ensure `nil` is in your PATH.
+
+;; ** bibtex
+
+;; {{ firstCreator suffix=" - " }}{{ year suffix=" - " }}{{ title truncate="100" }}
+
+(use-package bibtex-completion
+  :when (package-installed-p 'org-ref)
+  :straight (bibtex-completion :type git :flavor melpa :files ("bibtex-completion.el" "bibtex-completion-pkg.el") :host github :repo "tmalsburg/helm-bibtex")
+  :custom
+  (bibtex-completion-bibliography '("~/zotero/bibtex-export.bib" "~/cat.bib"))
+  (bibtex-completion-library-path '("~/zotero/storage"))
+  (bibtex-completion-notes-path "~/Dropbox/Org/articles.org")
+  (bibtex-completion-notes-template-multiple-files "* ${author-or-editor}, ${title}, ${journal}, (${year}) :${=type=}: \n\nSee [[cite:&${=key=}]]\n")
+  (bibtex-completion-pdf-field "file")
+  (bibtex-completion-additional-search-fields '("keywords"))
+  (bibtex-completion-display-formats
+   '((article       . "${=has-pdf=:1} ${=has-note=:1} ${year:4} ${author:36} ${title:*} ${journal:40}")
+     (inbook        . "${=has-pdf=:1} ${=has-note=:1} ${year:4} ${author:36} ${title:*} Chapter ${chapter:32}")
+     (incollection  . "${=has-pdf=:1} ${=has-note=:1} ${year:4} ${author:36} ${title:*} ${booktitle:40}")
+     (inproceedings . "${=has-pdf=:1} ${=has-note=:1} ${year:4} ${author:36} ${title:*} ${booktitle:40}")
+     (t             . "${=has-pdf=:1} ${=has-note=:1} ${year:4} ${author:36} ${title:*}")))
+
+  (bibtex-completion-pdf-symbol "")
+  (bibtex-completion-notes-symbol "")
+  (bibtex-completion-notes-template-one-file "\n* ${author-or-editor} (${year}): ${title}\n:PROPERTIES:\n:Custom_ID: ${=key=}\n:END:\n\n"))
+
+(with-eval-after-load 'bibtex-completion
+  (defun my/org-ref-format-citation (keys)
+    "Format ebib references for keys in KEYS."
+    (s-join ", "
+	    (--map (format "cite:&%s" it) keys)))
+
+  (add-to-list 'bibtex-completion-format-citation-functions '(org-mode . my/org-ref-format-citation)))
+
+(use-package bibtex
+  :when (package-installed-p 'org-ref)
+  :custom
+  (bibtex-autokey-year-length 4)
+  (bibtex-autokey-name-year-separator "-")
+  (bibtex-autokey-year-title-separator "-")
+  (bibtex-autokey-titleword-separator "-")
+  (bibtex-autokey-titlewords 2)
+  (bibtex-autokey-titlewords-stretch 1)
+  (bibtex-autokey-titleword-length 5))
+
+;; ** zig
+
+(use-package zig-ts-mode
+  :mode ("\\.zig\\'" . zig-ts-mode))
+
+;; ** go
+
+(use-package go-ts-mode
+  :custom
+  (go-ts-mode-indent-offset 4)
+  :hook
+  (go-ts-mode . (lambda () (setq tab-width 4)))
+  )
+
+(use-package gotest
+  :straight t
+  :bind
+  (:map go-ts-mode-map
+	("C-c C-t f" . go-test-current-file)
+	("C-c C-t t" . go-test-current-test)
+	("C-c C-t p" . go-test-current-project)
+	("C-c C-t c" . go-test-current-coverage)
+	("C-c C-t r" . go-test-current-test-cache)
+	("C-c C-t b" . go-test-current-file-benchmarks)
+	("C-c C-t B" . go-test-current-project-benchmarks)))
+
+;; * ORG
+
+(require 'setup-org)
+
+
+;; * APPLICATIONS
+;; ** smudge spotify
+
+(require 'setup-smudge)
+
+;; ** citar
+
+(require 'setup-citar)
+
+;; ** calibre
+
+(require 'setup-calibre)
+
+;; ** elfeed
+
+(use-package elfeed
+  :straight t
+  :disabled)
+
+(use-package elfeed-org
+  :disabled
+  :straight t
+  :after elfeed
+  :commands elfeed-org
   :config
-  ;; Ensure `nil` is in your PATH.
+  (setq rmh-elfeed-org-files '("~/.emacs.d/feeds.org"))
+  (setopt elfeed-search-title-max-width 100)
+  (elfeed-org))
 
-  ;; ** bibtex
+;; ** notmuch
 
-  ;; {{ firstCreator suffix=" - " }}{{ year suffix=" - " }}{{ title truncate="100" }}
+(use-package notmuch
+  :straight t)
 
-  (use-package bibtex-completion
-    :when (package-installed-p 'org-ref)
-    :straight (bibtex-completion :type git :flavor melpa :files ("bibtex-completion.el" "bibtex-completion-pkg.el") :host github :repo "tmalsburg/helm-bibtex")
-    :custom
-    (bibtex-completion-bibliography '("~/zotero/bibtex-export.bib" "~/cat.bib"))
-    (bibtex-completion-library-path '("~/zotero/storage"))
-    (bibtex-completion-notes-path "~/Dropbox/Org/articles.org")
-    (bibtex-completion-notes-template-multiple-files "* ${author-or-editor}, ${title}, ${journal}, (${year}) :${=type=}: \n\nSee [[cite:&${=key=}]]\n")
-    (bibtex-completion-pdf-field "file")
-    (bibtex-completion-additional-search-fields '("keywords"))
-    (bibtex-completion-display-formats
-     '((article       . "${=has-pdf=:1} ${=has-note=:1} ${year:4} ${author:36} ${title:*} ${journal:40}")
-       (inbook        . "${=has-pdf=:1} ${=has-note=:1} ${year:4} ${author:36} ${title:*} Chapter ${chapter:32}")
-       (incollection  . "${=has-pdf=:1} ${=has-note=:1} ${year:4} ${author:36} ${title:*} ${booktitle:40}")
-       (inproceedings . "${=has-pdf=:1} ${=has-note=:1} ${year:4} ${author:36} ${title:*} ${booktitle:40}")
-       (t             . "${=has-pdf=:1} ${=has-note=:1} ${year:4} ${author:36} ${title:*}")))
+;; ** eww
 
-    (bibtex-completion-pdf-symbol "")
-    (bibtex-completion-notes-symbol "")
-    (bibtex-completion-notes-template-one-file "\n* ${author-or-editor} (${year}): ${title}\n:PROPERTIES:\n:Custom_ID: ${=key=}\n:END:\n\n"))
+(defun my/scroll-up-half ()
+  "Scroll up half the window height."
+  (interactive)
+  (scroll-up-command
+   (floor
+    (- (window-height)
+       next-screen-context-lines)
+    2)))
 
-  (with-eval-after-load 'bibtex-completion
-    (defun my/org-ref-format-citation (keys)
-      "Format ebib references for keys in KEYS."
-      (s-join ", "
-	      (--map (format "cite:&%s" it) keys)))
+(defun my/scroll-down-half ()
+  "Scroll down half the window height."
+  (interactive)
+  (scroll-down-command
+   (floor
+    (- (window-height)
+       next-screen-context-lines)
+    2)))
 
-    (add-to-list 'bibtex-completion-format-citation-functions '(org-mode . my/org-ref-format-citation)))
+(use-package eww
+  :bind
+  ("C-c w" . eww)
+  (:map eww-mode-map
+	("D" . eww-download)
+	("d" . my/scroll-up-half)
+	("u" . my/scroll-down-half)
+	("U" . eww-up-url))
+  :config
+  (setq eww-browse-url-new-window-is-tab nil)
+  (setq eww-restore-desktop t)
+  (setq eww-desktop-remove-duplicates t)
+  (setq eww-header-line-format nil)
 
-  (use-package bibtex
-    :when (package-installed-p 'org-ref)
-    :custom
-    (bibtex-autokey-year-length 4)
-    (bibtex-autokey-name-year-separator "-")
-    (bibtex-autokey-year-title-separator "-")
-    (bibtex-autokey-titleword-separator "-")
-    (bibtex-autokey-titlewords 2)
-    (bibtex-autokey-titlewords-stretch 1)
-    (bibtex-autokey-titleword-length 5))
-
-  ;; ** zig
-
-  (use-package zig-ts-mode
-    :mode ("\\.zig\\'" . zig-ts-mode))
-
-  ;; ** go
-
-  (use-package go-ts-mode
-    :custom
-    (go-ts-mode-indent-offset 4)
-    :hook
-    (go-ts-mode . (lambda () (setq tab-width 4)))
-    )
-
-  (use-package gotest
-    :straight t
-    :bind
-    (:map go-ts-mode-map
-	  ("C-c C-t f" . go-test-current-file)
-	  ("C-c C-t t" . go-test-current-test)
-	  ("C-c C-t p" . go-test-current-project)
-	  ("C-c C-t c" . go-test-current-coverage)
-	  ("C-c C-t r" . go-test-current-test-cache)
-	  ("C-c C-t b" . go-test-current-file-benchmarks)
-	  ("C-c C-t B" . go-test-current-project-benchmarks)))
-
-  ;; * ORG
-
-  (require 'setup-org)
-
-
-  ;; * APPLICATIONS
-  ;; ** smudge spotify
-
-  (require 'setup-smudge)
-
-  ;; ** citar
-
-  (require 'setup-citar)
-
-  ;; ** calibre
-
-  (require 'setup-calibre)
-
-  ;; ** elfeed
-
-  (use-package elfeed
-    :straight t
-    :disabled)
-
-  (use-package elfeed-org
-    :disabled
-    :straight t
-    :after elfeed
-    :commands elfeed-org
-    :config
-    (setq rmh-elfeed-org-files '("~/.emacs.d/feeds.org"))
-    (setopt elfeed-search-title-max-width 100)
-    (elfeed-org))
-
-  ;; ** notmuch
-
-  (use-package notmuch
-    :straight t)
-
-  ;; ** eww
-
-  (defun my/scroll-up-half ()
-    "Scroll up half the window height."
-    (interactive)
-    (scroll-up-command
-     (floor
-      (- (window-height)
-	 next-screen-context-lines)
-      2)))
-
-  (defun my/scroll-down-half ()
-    "Scroll down half the window height."
-    (interactive)
-    (scroll-down-command
-     (floor
-      (- (window-height)
-	 next-screen-context-lines)
-      2)))
-
-  (use-package eww
-    :bind
-    ("C-c w" . eww)
-    (:map eww-mode-map
-	  ("D" . eww-download)
-	  ("d" . my/scroll-up-half)
-	  ("u" . my/scroll-down-half)
-	  ("U" . eww-up-url))
-    :config
-    (setq eww-browse-url-new-window-is-tab nil)
-    (setq eww-restore-desktop t)
-    (setq eww-desktop-remove-duplicates t)
-    (setq eww-header-line-format nil)
-
-    (defun eww-browse-with-external-browser (&optional url)
-      "Browse the current URL with an external browser.
+  (defun eww-browse-with-external-browser (&optional url)
+    "Browse the current URL with an external browser.
 The browser to used is specified by the
 `browse-url-secondary-browser-function' variable."
-      (interactive nil eww-mode)
-      (let ((url (or url (plist-get eww-data :url))))
-	(if (s-starts-with? "https://html.duckduckgo.com/html/" url)
-	    (setq url (concat "https://duckduckgo.com/?q=" (cadar (url-parse-query-string url)))))
-	(funcall browse-url-secondary-browser-function
-		 (or url (plist-get eww-data :url)))))
-    )
+    (interactive nil eww-mode)
+    (let ((url (or url (plist-get eww-data :url))))
+      (if (s-starts-with? "https://html.duckduckgo.com/html/" url)
+	  (setq url (concat "https://duckduckgo.com/?q=" (cadar (url-parse-query-string url)))))
+      (funcall browse-url-secondary-browser-function
+	       (or url (plist-get eww-data :url)))))
+  )
 
-  ;; ** shr
+;; ** shr
 
-  (use-package shr
-    :bind
-    (:map shr-map
-	  ("u" . nil))
-    :config
-    (setq shr-max-image-proportion 0.4))
+(use-package shr
+  :bind
+  (:map shr-map
+	("u" . nil))
+  :config
+  (setq shr-max-image-proportion 0.4))
 
-  ;; ** denote
+;; ** denote
 
-  (defun my/denote-rename-buffer ()
-    "Rename the buffer to the title of the current note."
-    (interactive)
-    (denote-rename-buffer))
+(defun my/denote-rename-buffer ()
+  "Rename the buffer to the title of the current note."
+  (interactive)
+  (denote-rename-buffer))
 
-  (use-package denote
-    :straight t
-    :hook (dired-mode-hook . denote-dired-mode-in-directories)
-    :bind
-    ("C-c n C-r" . my/denote-rename-buffer)
-    ("C-c n I" . denote-add-links)
-    ("C-c n L" . denote-link-or-create)
-    ("C-c n N" . denote-type)
-    ("C-c n R" . denote-rename-file-using-front-matter)
-    ("C-c n b" . denote-backlinks)
-    ("C-c n d" . denote-date)
-    ("C-c n h" . denote-org-extras-link-to-heading)
-    ("C-c n f b" . denote-find-backlink)
-    ("C-c n f f" . denote-find-link)
-    ("C-c n f r" . my/denote-rg-search)
-    ("C-c n i" . denote-link) ; "insert" mnemonic
-    ("C-c n l" . denote-link-after-creating)
-    ("C-c n n" . denote)
-    ("C-c n p" . denote-region) ; "contents" mnemonic
-    ("C-c n P" . denote-org-extras-extract-org-subtree)
-    ("C-c n r" . denote-rename-file)
-    ("C-c n s" . denote-subdirectory)
-    ("C-c n t" . denote-template)
-    ("C-c n z" . denote-signature)
-    :config
-    (setq denote-directory (expand-file-name "~/Dropbox/denote"))
-    (setq denote-dired-directories '("~/Dropbox/denote"))
-    (setq denote-infer-keywords t)
-    (setq denote-sort-keywords t)
-    (setq denote-rename-no-confirm t)
-    (setq denote-file-type nil) ; Org is the default, set others here
-    (setq denote-prompts '(title keywords))
-    (setq denote-excluded-directories-regexp nil)
-    (setq denote-excluded-keywords-regexp nil)
-    (setq denote-date-prompt-use-org-read-date t)
-    (setq denote-date-format nil)
-    (setq denote-backlinks-show-context t)
-    (denote-rename-buffer-mode))
+(use-package denote
+  :straight t
+  :hook (dired-mode-hook . denote-dired-mode-in-directories)
+  :bind
+  ("C-c n C-r" . my/denote-rename-buffer)
+  ("C-c n I" . denote-add-links)
+  ("C-c n L" . denote-link-or-create)
+  ("C-c n N" . denote-type)
+  ("C-c n R" . denote-rename-file-using-front-matter)
+  ("C-c n b" . denote-backlinks)
+  ("C-c n d" . denote-date)
+  ("C-c n h" . denote-org-extras-link-to-heading)
+  ("C-c n f b" . denote-find-backlink)
+  ("C-c n f f" . denote-find-link)
+  ("C-c n f r" . my/denote-rg-search)
+  ("C-c n i" . denote-link) ; "insert" mnemonic
+  ("C-c n l" . denote-link-after-creating)
+  ("C-c n n" . denote)
+  ("C-c n p" . denote-region) ; "contents" mnemonic
+  ("C-c n P" . denote-org-extras-extract-org-subtree)
+  ("C-c n r" . denote-rename-file)
+  ("C-c n s" . denote-subdirectory)
+  ("C-c n t" . denote-template)
+  ("C-c n z" . denote-signature)
+  :config
+  (setq denote-directory (expand-file-name "~/Dropbox/denote"))
+  (setq denote-dired-directories '("~/Dropbox/denote"))
+  (setq denote-infer-keywords t)
+  (setq denote-sort-keywords t)
+  (setq denote-rename-no-confirm t)
+  (setq denote-file-type nil) ; Org is the default, set others here
+  (setq denote-prompts '(title keywords))
+  (setq denote-excluded-directories-regexp nil)
+  (setq denote-excluded-keywords-regexp nil)
+  (setq denote-date-prompt-use-org-read-date t)
+  (setq denote-date-format nil)
+  (setq denote-backlinks-show-context t)
+  (denote-rename-buffer-mode))
 
-  (use-package denote-org-extras
-    :after denote)
+(use-package denote-org-extras
+  :after denote)
 
-  (use-package denote-explore
-    :straight t
-    :custom
-    ;; Where to store network data and in which format
-    ;; (denote-explore-network-directory "<folder>")
-    ;; (denote-explore-network-filename "<filename?")
-    (denote-explore-network-format 'graphviz)
-    :bind
-    (;; Statistics
-     ("C-c n e c" . denote-explore-count-notes)
-     ("C-c n e C" . denote-explore-count-keywords)
-     ("C-c n e b" . denote-explore-keywords-barchart)
-     ("C-c n e x" . denote-explore-extensions-barchart)
-     ;; Random walks
-     ("C-c n e r" . denote-explore-random-note)
-     ("C-c n e l" . denote-explore-random-link)
-     ("C-c n e k" . denote-explore-random-keyword)
-     ;; Denote Janitor
-     ("C-c n e d" . denote-explore-identify-duplicate-notes)
-     ("C-c n e z" . denote-explore-zero-keywords)
-     ("C-c n e s" . denote-explore-single-keywords)
-     ("C-c n e o" . denote-explore-sort-keywords)
-     ("C-c n e r" . denote-explore-rename-keywords)
-     ;; Visualise denote
-     ("C-c n e n" . denote-explore-network)
-     ("C-c n e v" . denote-explore-network-regenerate)
-     ("C-c n e D" . denote-explore-degree-barchart)))
+(use-package denote-explore
+  :straight t
+  :custom
+  ;; Where to store network data and in which format
+  ;; (denote-explore-network-directory "<folder>")
+  ;; (denote-explore-network-filename "<filename?")
+  (denote-explore-network-format 'graphviz)
+  :bind
+  (;; Statistics
+   ("C-c n e c" . denote-explore-count-notes)
+   ("C-c n e C" . denote-explore-count-keywords)
+   ("C-c n e b" . denote-explore-keywords-barchart)
+   ("C-c n e x" . denote-explore-extensions-barchart)
+   ;; Random walks
+   ("C-c n e r" . denote-explore-random-note)
+   ("C-c n e l" . denote-explore-random-link)
+   ("C-c n e k" . denote-explore-random-keyword)
+   ;; Denote Janitor
+   ("C-c n e d" . denote-explore-identify-duplicate-notes)
+   ("C-c n e z" . denote-explore-zero-keywords)
+   ("C-c n e s" . denote-explore-single-keywords)
+   ("C-c n e o" . denote-explore-sort-keywords)
+   ("C-c n e r" . denote-explore-rename-keywords)
+   ;; Visualise denote
+   ("C-c n e n" . denote-explore-network)
+   ("C-c n e v" . denote-explore-network-regenerate)
+   ("C-c n e D" . denote-explore-degree-barchart)))
 
-  ;; ** nov-mode
+;; ** nov-mode
 
-  (defun my/center-reading-mode ()
-    "Center the text in visual column mode."
-    (interactive)
-    (visual-fill-column-mode))
+(defun my/center-reading-mode ()
+  "Center the text in visual column mode."
+  (interactive)
+  (visual-fill-column-mode))
 
-  ;; TODO make this respeatable, and work with n argument
-  (defun my/mark-whole-sentence ()
-    "Mark the whole sentence the cursor is in."
-    (interactive)
-    (backward-sentence)
-    (mark-end-of-sentence nil))
+;; TODO make this respeatable, and work with n argument
+(defun my/mark-whole-sentence ()
+  "Mark the whole sentence the cursor is in."
+  (interactive)
+  (backward-sentence)
+  (mark-end-of-sentence nil))
 
-  ;; (defun my/nov-font-setup ()
-  ;;   (face-remap-add-relative 'variable-pitch :family "ETBembo"))
+;; (defun my/nov-font-setup ()
+;;   (face-remap-add-relative 'variable-pitch :family "ETBembo"))
 
-  (defun my/nov-mode-setup ()
-    "Set up the nov mode."
-    ;; (my/nov-font-setup)
-    (hl-line-mode -1)
-    (visual-fill-column-mode 1)
-    (visual-line-mode 1)
-    (variable-pitch-mode 1))
+(defun my/nov-mode-setup ()
+  "Set up the nov mode."
+  ;; (my/nov-font-setup)
+  (hl-line-mode -1)
+  (visual-fill-column-mode 1)
+  (visual-line-mode 1)
+  (variable-pitch-mode 1))
 
-  (defun my/toggle-header-line ()
-    "Toggle the display of the header line."
-    (interactive)
-    (if nov-header-line-format
-	(setq nov-header-line-format nil)
-      (setq nov-header-line-format "%t: %c"))
-    (nov-render-document))
+(defun my/toggle-header-line ()
+  "Toggle the display of the header line."
+  (interactive)
+  (if nov-header-line-format
+      (setq nov-header-line-format nil)
+    (setq nov-header-line-format "%t: %c"))
+  (nov-render-document))
 
-  (defun my/toggle-cursor-display ()
-    "Toggle between displaying a bar and no cursor."
-    (interactive)
-    (if cursor-type
-	(setq cursor-type nil)
-      (setq cursor-type 'bar)))
+(defun my/toggle-cursor-display ()
+  "Toggle between displaying a bar and no cursor."
+  (interactive)
+  (if cursor-type
+      (setq cursor-type nil)
+    (setq cursor-type 'bar)))
 
-  (use-package nov
-    :straight t
-    :mode ("\\.epub\\'" . nov-mode)
-    :config
-    (setq nov-text-width t)
-    (setq visual-fill-column-center-text t)
-    :bind
-    (:map nov-mode-map
-	  ("j" . (lambda () (interactive) (scroll-up 1)))
-	  ("k" . (lambda () (interactive) (scroll-down 1)))
-	  ("z" . visual-fill-column-mode)
-	  ("m" . nil)
-	  ("h" . nil)
-	  ("y" . org-store-link)
-	  ("m p" . mark-paragraph)
-	  ("m s" . my/mark-whole-sentence)
-	  ("h m" . org-remark-mark)
-	  ("h l" . org-remark-mark-line)
-	  ("h o" . org-remark-open)
-	  ("h n" . org-remark-next)
-	  ("h p" . org-remark-prev)
-	  ("h ]" . org-remark-view-next)
-	  ("h [" . org-remark-view-prev)
-	  ("h r" . org-remark-remove)
-	  ("h d" . org-remark-delete)
-	  ("h v" . org-remark-view)
-	  ("h q" . delete-other-windows)
-	  ("C-c t" . my/toggle-header-line)
-	  ("C-c v" . visual-line-mode)
-	  ("C-c c" . my/toggle-cursor-display)
-	  ("C-c b" . org-noter))
-    :hook (nov-mode . my/nov-mode-setup))
+(use-package nov
+  :straight t
+  :mode ("\\.epub\\'" . nov-mode)
+  :config
+  (setq nov-text-width t)
+  (setq visual-fill-column-center-text t)
+  :bind
+  (:map nov-mode-map
+	("j" . (lambda () (interactive) (scroll-up 1)))
+	("k" . (lambda () (interactive) (scroll-down 1)))
+	("z" . visual-fill-column-mode)
+	("m" . nil)
+	("h" . nil)
+	("y" . org-store-link)
+	("m p" . mark-paragraph)
+	("m s" . my/mark-whole-sentence)
+	("h m" . org-remark-mark)
+	("h l" . org-remark-mark-line)
+	("h o" . org-remark-open)
+	("h n" . org-remark-next)
+	("h p" . org-remark-prev)
+	("h ]" . org-remark-view-next)
+	("h [" . org-remark-view-prev)
+	("h r" . org-remark-remove)
+	("h d" . org-remark-delete)
+	("h v" . org-remark-view)
+	("h q" . delete-other-windows)
+	("C-c t" . my/toggle-header-line)
+	("C-c v" . visual-line-mode)
+	("C-c c" . my/toggle-cursor-display)
+	("C-c b" . org-noter))
+  :hook (nov-mode . my/nov-mode-setup))
 
-  ;; ** esxml
+;; ** esxml
 
-  (use-package esxml
-    :straight t)
+(use-package esxml
+  :straight t)
 
-  ;; ** ebib
+;; ** ebib
 
-  (use-package ebib
-    :disabled
-    :straight t
-    :config
-    (setq ebib-preload-bib-files '("~/Zotero/bibtex-export.bib")))
+(use-package ebib
+  :disabled
+  :straight t
+  :config
+  (setq ebib-preload-bib-files '("~/Zotero/bibtex-export.bib")))
 
-  ;; ** speed-type
+;; ** speed-type
 
-  (use-package speed-type
-    :straight t)
+(use-package speed-type
+  :straight t)
 
-  ;; ** fireplace
+;; ** fireplace
 
-  (use-package fireplace
-    :straight t)
+(use-package fireplace
+  :straight t)
 
-  ;; ** gptel
+;; ** gptel
 
-  (use-package gptel
-    :straight t
-    :bind
-    ("C-c S" . gptel)
-    ("C-c s" . gptel-menu)
-    :custom
-    (gptel-default-mode #'org-mode)
-    (gptel-directives '((default . "You are a large language model living in Emacs and a helpful assistant. Respond concisely.")
-			(programming . "You are a large language model and a careful programmer. Provide code and only code as output without any additional text, prompt or note.")
-			(writing . "You are a large language model and a writing assistant. Respond concisely.")
-			(chat . "You are a large language model and a conversation partner. Respond concisely."))))
+(use-package gptel
+  :straight t
+  :bind
+  ("C-c S" . gptel)
+  ("C-c s" . gptel-menu)
+  :custom
+  (gptel-default-mode #'org-mode)
+  (gptel-directives '((default . "You are a large language model living in Emacs and a helpful assistant. Respond concisely.")
+		      (programming . "You are a large language model and a careful programmer. Provide code and only code as output without any additional text, prompt or note.")
+		      (writing . "You are a large language model and a writing assistant. Respond concisely.")
+		      (chat . "You are a large language model and a conversation partner. Respond concisely."))))
 
-  (use-package gptel-extensions
-    :after gptel
-    :straight (gptel-extensions :host github :repo "kamushadenes/gptel-extensions.el" :files ("*.el")))
+(use-package gptel-extensions
+  :after gptel
+  :straight (gptel-extensions :host github :repo "kamushadenes/gptel-extensions.el" :files ("*.el")))
 
-  ;; ** anki-helper
+;; ** anki-helper
 
-  (defun my/show-anki ()
-    "Show the Anki app."
-    (interactive)
-    (shell-command "open -a Anki"))
+(defun my/show-anki ()
+  "Show the Anki app."
+  (interactive)
+  (shell-command "open -a Anki"))
 
-  (use-package anki-helper
-    :straight (anki-helper :type git :host github :repo "Elilif/emacs-anki-helper")
-    :bind (:map org-mode-map
-		("C-c r a" . anki-helper-entry-sync)
-		("C-c r A" . anki-helper-entry-sync-all)
-		("C-c r d" . anki-helper-entry-delete)
-		("C-c r D" . anki-helper-entry-delete-all)
-		("C-c r u" . anki-helper-entry-update)
-		("C-c r U" . anki-helper-entry-update-all)
-		("C-c r s" . my/show-anki)))
+(use-package anki-helper
+  :straight (anki-helper :type git :host github :repo "Elilif/emacs-anki-helper")
+  :bind (:map org-mode-map
+	      ("C-c r a" . anki-helper-entry-sync)
+	      ("C-c r A" . anki-helper-entry-sync-all)
+	      ("C-c r d" . anki-helper-entry-delete)
+	      ("C-c r D" . anki-helper-entry-delete-all)
+	      ("C-c r u" . anki-helper-entry-update)
+	      ("C-c r U" . anki-helper-entry-update-all)
+	      ("C-c r s" . my/show-anki)))
 
-  ;; ** pdf-view
+;; ** pdf-view
 
-  (defun my/background-pdf-view-refresh (_)
-    "Refresh the themed minor mode in pdf-view."
-    (cl-loop for buf in (buffer-list)
-	     collect
-	     (with-current-buffer buf
-	       (when (eq major-mode 'pdf-view-mode)
-		 (my/pdf-view-themed-minor-mode-refresh)))))
+(defun my/background-pdf-view-refresh (_)
+  "Refresh the themed minor mode in pdf-view."
+  (cl-loop for buf in (buffer-list)
+	   collect
+	   (with-current-buffer buf
+	     (when (eq major-mode 'pdf-view-mode)
+	       (my/pdf-view-themed-minor-mode-refresh)))))
 
-  (defun my/pdf-view-themed-minor-mode-refresh ()
-    "Refresh the themed minor mode in pdf-view."
-    (interactive)
-    (pdf-view-themed-minor-mode 1))
+(defun my/pdf-view-themed-minor-mode-refresh ()
+  "Refresh the themed minor mode in pdf-view."
+  (interactive)
+  (pdf-view-themed-minor-mode 1))
 
-  (defun my/pdf-view-current-page ()
-    "Show the current page number in the minibuffer."
-    (interactive)
-    (message "%d/%d" (pdf-view-current-page) (pdf-info-number-of-pages)))
+(defun my/pdf-view-current-page ()
+  "Show the current page number in the minibuffer."
+  (interactive)
+  (message "%d/%d" (pdf-view-current-page) (pdf-info-number-of-pages)))
 
-  (defun my/pdf-view-open-externally ()
-    "Open the current pdf in an external viewer."
-    (interactive)
-    (shell-command (concat "open '" buffer-file-name "'")))
+(defun my/pdf-view-open-externally ()
+  "Open the current pdf in an external viewer."
+  (interactive)
+  (shell-command (concat "open '" buffer-file-name "'")))
 
-  (use-package pdf-view
-    :after pdf-tools
-    :custom
-    (pdf-view-resize-factor 1.05)
-    (pdf-view-display-size 'fit-page)
-    (pdf-view-midnight-colors '("#E2E2E2" . "#070707"))
-    :hook (pdf-view-mode . pdf-view-themed-minor-mode)
-    :bind
-    (:map pdf-view-mode-map
-	  ("C-c C-o" . my/pdf-view-open-externally)
-	  ("C-c C-r r" . my/pdf-view-themed-minor-mode-refresh)
-	  ("c" . my/pdf-view-current-page)
-	  ("o" . pdf-outline)
-	  ("d" . dictionary-search)
-	  ("D" . osx-dictionary-search-input)
-	  ("C-c C-n" . org-noter))
-    :config
-    (add-to-list 'display-buffer-alist '("\\`\\*Outline.*\\*" nil (window-width . 0.3))))
+(use-package pdf-view
+  :after pdf-tools
+  :custom
+  (pdf-view-resize-factor 1.05)
+  (pdf-view-display-size 'fit-page)
+  (pdf-view-midnight-colors '("#E2E2E2" . "#070707"))
+  :hook (pdf-view-mode . pdf-view-themed-minor-mode)
+  :bind
+  (:map pdf-view-mode-map
+	("C-c C-o" . my/pdf-view-open-externally)
+	("C-c C-r r" . my/pdf-view-themed-minor-mode-refresh)
+	("c" . my/pdf-view-current-page)
+	("o" . pdf-outline)
+	("d" . dictionary-search)
+	("D" . osx-dictionary-search-input)
+	("C-c C-n" . org-noter))
+  :config
+  (add-to-list 'display-buffer-alist '("\\`\\*Outline.*\\*" nil (window-width . 0.3))))
 
 
-  (use-package saveplace-pdf-view
-    :straight t
-    :config
-    (save-place-mode 1))
+(use-package saveplace-pdf-view
+  :straight t
+  :config
+  (save-place-mode 1))
 
-  ;; ** pdf-tools
+;; ** pdf-tools
 
-  (use-package pdf-tools
-    :straight t
-    :defer 2
-    :hook (pdf-outline-buffer-mode . visual-line-mode)
-    :config
-    (pdf-tools-install :no-query)
-    (use-package pdf-occur))
+(use-package pdf-tools
+  :straight t
+  :defer 2
+  :hook (pdf-outline-buffer-mode . visual-line-mode)
+  :config
+  (pdf-tools-install :no-query)
+  (use-package pdf-occur))
 
-  ;; ** pdf-annot
+;; ** pdf-annot
 
-  (use-package pdf-annot
-    :after pdf-tools
-    :bind
-    (:map pdf-annot-minor-mode-map
-	  ("a D" . pdf-annot-delete)
-	  ("a a" . pdf-annot-attachment-dired)
-	  ("a h" . pdf-annot-add-highlight-markup-annotation)
-	  ("a l" . pdf-annot-list-annotations)
-	  ("a m" . pdf-annot-add-markup-annotation)
-	  ("a o" . pdf-annot-add-strikeout-markup-annotation)
-	  ("a s" . pdf-annot-add-squiggly-markup-annotation)
-	  ("a t" . pdf-annot-add-text-annotation)
-	  ("a u" . pdf-annot-add-underline-markup-annotation)))
+(use-package pdf-annot
+  :after pdf-tools
+  :bind
+  (:map pdf-annot-minor-mode-map
+	("a D" . pdf-annot-delete)
+	("a a" . pdf-annot-attachment-dired)
+	("a h" . pdf-annot-add-highlight-markup-annotation)
+	("a l" . pdf-annot-list-annotations)
+	("a m" . pdf-annot-add-markup-annotation)
+	("a o" . pdf-annot-add-strikeout-markup-annotation)
+	("a s" . pdf-annot-add-squiggly-markup-annotation)
+	("a t" . pdf-annot-add-text-annotation)
+	("a u" . pdf-annot-add-underline-markup-annotation)))
 
-  ;; ** image
+;; ** image
 
-  (use-package image
-    :bind
-    (:map image-slice-map
-	  ("C-<mouse-4>" . nil)
-	  ("C-<mouse-5>" . nil)
-	  ("C-<wheel-up>" . nil)
-	  ("C-<wheel-down>" . nil)))
-  ;; ** gnuplot
+(use-package image
+  :bind
+  (:map image-slice-map
+	("C-<mouse-4>" . nil)
+	("C-<mouse-5>" . nil)
+	("C-<wheel-up>" . nil)
+	("C-<wheel-down>" . nil)))
+;; ** gnuplot
 
-  (use-package gnuplot-mode
-    :straight t)
-  (use-package gnuplot
-    :straight t)
+(use-package gnuplot-mode
+  :straight t)
+(use-package gnuplot
+  :straight t)
 
-  ;; ** ebdb
+;; ** ebdb
 
-  (use-package ebdb
-    :straight t)
+(use-package ebdb
+  :straight t)
 
-  ;; ** ledger-mode
+;; ** ledger-mode
 
-  (use-package ledger-mode
-    :straight t
-    :hook
-    (ledger-mode . (lambda ()
-		     (setq-local tab-always-indent 'complete)
-		     (setq-local completion-cycle-threshold t)
-		     (setq-local ledger-complete-in-steps t))))
-  ;; :hook
-  ;; (ledger-mode . auto-revert-tail-mode)
-  ;; (ledger-mode-hook . (lambda () (setq tab-width 4)))
-  ;; :bind
-  ;; (:map ledger-mode-map
-  ;; 	("M-0" . (lambda () (interactive) (set-selective-display (* tab-width 0))))
-  ;; 	("M-1" . (lambda () (interactive) (set-selective-display (* tab-width 1)))))
-  ;; :mode
-  ;; ("\\.rules\\'" . conf-mode)
-  ;; ("\\.\\(h?ledger\\|journal\\|j\\)\\'" . ledger-mode)
-  ;; :custom
-  ;; (ledger-binary-path "~/.emacs.d/hledger.sh")
-  ;; (ledger-mode-should-check-version nil)
-  ;; (ledger-init-file-name " ")
-  ;; (ledger-post-amount-alignment-column 64)
-  ;; (ledger-highlight-xact-under-point nil)
-  ;; (ledger-report-links-in-register nil)
-  ;; (ledger-report-auto-width nil)
-  ;; (ledger-report-use-native-highlighting nil)
-  ;; :config
-  ;; (defun highlight-negative-amounts nil (interactive)
-  ;; 	 (highlight-regexp "\\(\\$-\\|-\\$\\)[.,0-9]+" (quote hi-red-b))))
+(use-package ledger-mode
+  :straight t
+  :hook
+  (ledger-mode . (lambda ()
+		   (setq-local tab-always-indent 'complete)
+		   (setq-local completion-cycle-threshold t)
+		   (setq-local ledger-complete-in-steps t))))
+;; :hook
+;; (ledger-mode . auto-revert-tail-mode)
+;; (ledger-mode-hook . (lambda () (setq tab-width 4)))
+;; :bind
+;; (:map ledger-mode-map
+;; 	("M-0" . (lambda () (interactive) (set-selective-display (* tab-width 0))))
+;; 	("M-1" . (lambda () (interactive) (set-selective-display (* tab-width 1)))))
+;; :mode
+;; ("\\.rules\\'" . conf-mode)
+;; ("\\.\\(h?ledger\\|journal\\|j\\)\\'" . ledger-mode)
+;; :custom
+;; (ledger-binary-path "~/.emacs.d/hledger.sh")
+;; (ledger-mode-should-check-version nil)
+;; (ledger-init-file-name " ")
+;; (ledger-post-amount-alignment-column 64)
+;; (ledger-highlight-xact-under-point nil)
+;; (ledger-report-links-in-register nil)
+;; (ledger-report-auto-width nil)
+;; (ledger-report-use-native-highlighting nil)
+;; :config
+;; (defun highlight-negative-amounts nil (interactive)
+;; 	 (highlight-regexp "\\(\\$-\\|-\\$\\)[.,0-9]+" (quote hi-red-b))))
 
-  ;; ** w3m
+;; ** w3m
 
-  (use-package w3m
-    :straight t
-    :custom-face
-    (w3m-tab-background ((t (:background unspecified)))))
+(use-package w3m
+  :straight t
+  :custom-face
+  (w3m-tab-background ((t (:background unspecified)))))
 
-  (use-package w3m-search
-    :after w3m
-    :custom
-    (w3m-search-default-engine "duckduckgo")
-    :config
-    (add-to-list 'w3m-search-engine-alist '("duckduckgo" "https://html.duckduckgo.com/html/?q=%s")))
+(use-package w3m-search
+  :after w3m
+  :custom
+  (w3m-search-default-engine "duckduckgo")
+  :config
+  (add-to-list 'w3m-search-engine-alist '("duckduckgo" "https://html.duckduckgo.com/html/?q=%s")))
 
-  ;; * enable all commands
+;; * enable all commands
 
-  (defun enable-all-commands ()
-    "Enable all commands, reporting on which were disabled."
-    (interactive)
-    (with-output-to-temp-buffer "*Commands that were disabled*"
-      (mapatoms
-       (function
-	(lambda (symbol)
-	  (when (get symbol 'disabled)
-	    (put symbol 'disabled nil)
-	    (prin1 symbol)
-	    (princ "\n")))))))
+(defun enable-all-commands ()
+  "Enable all commands, reporting on which were disabled."
+  (interactive)
+  (with-output-to-temp-buffer "*Commands that were disabled*"
+    (mapatoms
+     (function
+      (lambda (symbol)
+	(when (get symbol 'disabled)
+	  (put symbol 'disabled nil)
+	  (prin1 symbol)
+	  (princ "\n")))))))
 
-  ;; * center frame
-  ;; from https://christiantietze.de/posts/2022/04/emacs-center-window-current-monitor-simplified/
-  (defun my/frame-recenter (&optional frame)
-    "Center FRAME on the screen.
+;; * center frame
+;; from https://christiantietze.de/posts/2022/04/emacs-center-window-current-monitor-simplified/
+(defun my/frame-recenter (&optional frame)
+  "Center FRAME on the screen.
 FRAME can be a frame name, a terminal name, or a frame.
 If FRAME is omitted or nil, use currently selected frame."
-    (interactive)
-    (unless (eq 'maximised (frame-parameter nil 'fullscreen))
-      (modify-frame-parameters
-       frame '((user-position . t) (top . 0.5) (left . 0.5)))))
+  (interactive)
+  (unless (eq 'maximised (frame-parameter nil 'fullscreen))
+    (modify-frame-parameters
+     frame '((user-position . t) (top . 0.5) (left . 0.5)))))
 
-  ;; * CUSTOM LISP
-  ;; ** ox-11ty
+;; * CUSTOM LISP
+;; ** ox-11ty
 
-  (require 'ox-11ty)
+(require 'ox-11ty)
 
-  ;; ** custom-org
-  (require 'custom-org)
-  ;; ** xah
+;; ** custom-org
+(require 'custom-org)
+;; ** xah
 
-  (use-package xah
-    :bind
-    (:map lisp-interaction-mode-map
-	  ("M-a" . xah-backward-left-bracket)
-	  ("M-e" . xah-forward-right-bracket)
-	  ("C-a" . beginning-of-line)
-	  ("C-e" . end-of-line)
-	  ;;("(" . xah-insert-paren)
-	  ;;(")" . xah-insert-paren)
-	  ;;("{" . xah-insert-brace)
-	  ;;("}" . xah-insert-brace)
-	  ;;("[" . xah-insert-bracket)
-	  ;;("]" . xah-insert-bracket)
-	  ;;("\"" . xah-insert-ascii-double-quote)
-	  ("M-<DEL>" . xah-delete-backward-bracket-text))
-    (:map emacs-lisp-mode-map
-	  ("M-a" . xah-backward-left-bracket)
-	  ("M-e" . xah-forward-right-bracket)
-	  ("C-a" . beginning-of-line)
-	  ("C-e" . end-of-line)
-	  ;;("(" . xah-insert-paren)
-	  ;;(")" . xah-insert-paren)
-	  ;;("{" . xah-insert-brace)
-	  ;;("}" . xah-insert-brace)
-	  ;;("[" . xah-insert-bracket)
-	  ;;("]" . xah-insert-bracket)
-	  ;;("\"" . xah-insert-ascii-double-quote)
-	  ("M-<DEL>" . xah-delete-backward-bracket-text))
-    (:map lisp-data-mode-map
-	  ("M-a" . xah-backward-left-bracket)
-	  ("M-e" . xah-forward-right-bracket)
-	  ("C-a" . beginning-of-line)
-	  ("C-e" . end-of-line)
-	  ("M-<DEL>" . xah-delete-backward-bracket-text)))
+(use-package xah
+  :bind
+  (:map lisp-interaction-mode-map
+	("M-a" . xah-backward-left-bracket)
+	("M-e" . xah-forward-right-bracket)
+	("C-a" . beginning-of-line)
+	("C-e" . end-of-line)
+	;;("(" . xah-insert-paren)
+	;;(")" . xah-insert-paren)
+	;;("{" . xah-insert-brace)
+	;;("}" . xah-insert-brace)
+	;;("[" . xah-insert-bracket)
+	;;("]" . xah-insert-bracket)
+	;;("\"" . xah-insert-ascii-double-quote)
+	("M-<DEL>" . xah-delete-backward-bracket-text))
+  (:map emacs-lisp-mode-map
+	("M-a" . xah-backward-left-bracket)
+	("M-e" . xah-forward-right-bracket)
+	("C-a" . beginning-of-line)
+	("C-e" . end-of-line)
+	;;("(" . xah-insert-paren)
+	;;(")" . xah-insert-paren)
+	;;("{" . xah-insert-brace)
+	;;("}" . xah-insert-brace)
+	;;("[" . xah-insert-bracket)
+	;;("]" . xah-insert-bracket)
+	;;("\"" . xah-insert-ascii-double-quote)
+	("M-<DEL>" . xah-delete-backward-bracket-text))
+  (:map lisp-data-mode-map
+	("M-a" . xah-backward-left-bracket)
+	("M-e" . xah-forward-right-bracket)
+	("C-a" . beginning-of-line)
+	("C-e" . end-of-line)
+	("M-<DEL>" . xah-delete-backward-bracket-text)))
 
-  ;; ** lorem-ipsum
+;; ** lorem-ipsum
 
-  (use-package lorem-ipsum
-    :commands (Lorem-ipsum-insert-sentences Lorem-ipsum-insert-list Lorem-ipsum-insert-paragraphs))
+(use-package lorem-ipsum
+  :commands (Lorem-ipsum-insert-sentences Lorem-ipsum-insert-list Lorem-ipsum-insert-paragraphs))
 
-  ;; ** svelte-ts-mode
+;; ** svelte-ts-mode
 
-  (use-package svelte-ts-mode
-    :disabled
-    :commands (svelte-ts-mode)
-    :mode "\\.svelte\\'"
-    :hook
-    (svelte-ts-mode . (lambda () (apheleia-mode -1)))
-    (svelte-ts-mode . (lambda () (setq tab-width 2)))
-    :custom-face
-    (font-lock-bracket-face ((t (:foreground "tan3")))))
+(use-package svelte-ts-mode
+  :disabled
+  :commands (svelte-ts-mode)
+  :mode "\\.svelte\\'"
+  :hook
+  (svelte-ts-mode . (lambda () (apheleia-mode -1)))
+  (svelte-ts-mode . (lambda () (setq tab-width 2)))
+  :custom-face
+  (font-lock-bracket-face ((t (:foreground "tan3")))))
 
-  ;; * END OF FILE
-  ;; ** envrc
+;; * END OF FILE
+;; ** envrc
 
-  (use-package envrc
-    :straight t
-    :hook (after-init . envrc-global-mode)
-    :config
-    (define-key envrc-mode-map (kbd "C-c e") 'envrc-command-map))
+(use-package envrc
+  :straight t
+  :hook (after-init . envrc-global-mode)
+  :config
+  (define-key envrc-mode-map (kbd "C-c e") 'envrc-command-map))
 
-  ;; * LOCAL-VARIABLES
+;; * LOCAL-VARIABLES
 
-  ;; https://stackoverflow.com/questions/76388376/emacs-org-encrypt-entry-hangs-when-file-is-modified
-  ;; DO NOT USE THIS WITH SYMMETRICALLY ENCRYPTED FILES.
-  ;; MAY CAUSE FILE CORRUPTION.
-  (fset 'epg-wait-for-status 'ignore)
+;; https://stackoverflow.com/questions/76388376/emacs-org-encrypt-entry-hangs-when-file-is-modified
+;; DO NOT USE THIS WITH SYMMETRICALLY ENCRYPTED FILES.
+;; MAY CAUSE FILE CORRUPTION.
+(fset 'epg-wait-for-status 'ignore)
 
-  ;; Local Variables:
-  ;; outline-regexp: " *;; \\*+"
-  ;; page-delimiter: " *;; \\**"
-  ;; eval:(outline-minor-mode 1)
-  ;; eval:(outline-hide-body)
-  ;; eval:(flycheck-mode -1)
-  ;; coding: utf-8-unix
-  ;; End:
+;; Local Variables:
+;; outline-regexp: " *;; \\*+"
+;; page-delimiter: " *;; \\**"
+;; eval:(outline-minor-mode 1)
+;; eval:(outline-hide-body)
+;; eval:(flycheck-mode -1)
+;; coding: utf-8-unix
+;; End:
