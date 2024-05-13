@@ -1,0 +1,56 @@
+fundamental-mode ;; Available everywhere
+
+(today (format-time-string "%Y-%m-%d"))
+(todayde (format-time-string "%d/%m/%Y"))
+
+;; prog-mode
+
+;; (todo comment-start "TODO: " q)
+;; (note comment-start "NOTE: " q)
+;; (fail comment-start "FAIL: " q)
+;; (fixme comment-start "FIXME: " q)
+;; (review comment-start "REVIEW: " q)
+
+emacs-lisp-mode lisp-interaction-mode
+
+;; (bat "(bound-and-true-p " r ")")
+;; (todo ";; TODO: " q)
+;; (note ";; NOTE: " q)
+;; (fail ";; FAIL: " q)
+;; (fixme ";; FIXME: " q)
+;; (review ";; REVIEW: " q)
+
+python-ts-mode python-mode
+
+(ife "if " p ":" n> (p "pass") n> "else:" n> q)
+(elif "if " p ":" n> (p "pass") n> "elif " p ":" n> (p "pass") n> "else:" n> q)
+(try "try: " n> (p "pass") n> "except " p " as e:" n> q)
+(tryelse "try: " n> (p "pass") n> "except " p " as e:" n> (p "pass") n> "else:" n> q)
+
+org-mode
+
+(tc "[/]" :post (org-ctrl-c-ctrl-c))
+(tp "[%]" :post (org-ctrl-c-ctrl-c))
+(todoh "#+TODO: " r)
+(prop "#+PROPERTY: " q)
+(src "#+begin_src " p n r n "#+end_src" :post (org-edit-src-code))
+(jl "#+begin_src julia" n r n "#+end_src")
+(sh "#+begin_src sh" n r n "#+end_src" :post (org-edit-src-code))
+(fish "#+begin_src fish" n r n "#+end_src" :post (org-edit-src-code))
+(python "#+begin_src python" n r n "#+end_src" :post (org-edit-src-code))
+(oxhugo & ":PROPERTIES:"  n ":EXPORT_FILE_NAME: " (p (org-entry-get nil "ITEM")) n ":EXPORT_DATE: " (format-time-string "%Y-%m-%d") n ":EXPORT_HUGO_DRAFT: false" n ":END:" n q)
+(latex "#+begin_latex latex" n r n "#+end_latex" :post (org-edit-src-code))
+(elatex "#+begin_export latex" n r n "#+end_export" :post (org-edit-src-code))
+(slatex "#+begin_src latex :results raw :exports results" n r n "#+end_src" :post (org-edit-src-code))
+(startup "#+startup: " q )
+(el "#+begin_src emacs-lisp" n r n "#+end_src" :post (org-edit-src-code))
+(lorems (Lorem-ipsum-insert-sentences (read-number "Sentences: ")))
+(loremp (Lorem-ipsum-insert-paragraphs (read-number "Paragraphs: ")))
+(title (cadar (org-collect-keywords '("TITLE"))))
+(ttl "#+TITLE: " p n "#+date: Created on " (format-time-string "[%Y-%m-%d %a]") n n q)
+(hargs "#+property: header-args" p " :" q)
+
+;; Local Variables:
+;; mode: lisp-data
+;; outline-regexp: "[a-z]"
+;; End:

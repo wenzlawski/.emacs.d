@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: header
+# key: ;header
+# --
+#+title: `(when (buffer-file-name) (file-name-nondirectory (file-name-sans-extension (buffer-file-name))))`
+#+author: `user-full-name`
+#+date: Created on [`(format-time-string "%Y-%m-%d %a")`]
+#+startup: showall

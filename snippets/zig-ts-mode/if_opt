@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: if_opt
+# key: ifo
+# --
+if ($1) |${2:v}| {
+    `yas-selected-text`$0
+}

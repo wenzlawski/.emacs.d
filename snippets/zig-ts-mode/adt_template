@@ -1,0 +1,26 @@
+# -*- mode: snippet -*-
+# name: adt_template
+# key: adt_template
+# --
+const std = @import("std");
+const ExprTag = enum {
+    Num,
+    Plus,
+};
+const Expr = union(ExprTag) {
+    Num: i32,
+    Plus: struct{ e1: *const Expr, e2: *const Expr},
+};
+
+fn eval(e: *const Expr) i32 {
+    return switch (e.*) {
+        .Num => |n| n,
+        .Plus => |*plus_elem| eval(plus_elem.e1) + eval(plus_elem.e2),
+        else => unreachable,
+    };
+}
+
+pub fn main() void {
+    const e = &Expr{ .Plus = .{ .e1 = &Expr{ .Num = 6}, .e2 = &Expr{ .Num = 5}}};
+    std.debug.print("{}\\n", .{e});$0
+}

@@ -1,0 +1,8 @@
+* TODO %(my/read-it-later-attach "%^{Url}") %(cadar org-stored-links) 
+:PROPERTIES:
+:URL:      %c
+:Effort:   %(concat (org-minutes-to-clocksum-string ( / (string-to-number (string-trim (shell-command-to-string (concat "wc -w < '" (expand-file-name (substring (caar org-stored-links) 11) (save-window-excursion (org-id-open "F86FBB48-767F-436D-926E-D118F57AE534" nil) (org-attach-dir))) "'")))) 100)) %\1)
+:END:
+Available at: %(concat "[[" (caar org-stored-links) "][" (cadar org-stored-links) "]]" %\1)
+%a
+%?

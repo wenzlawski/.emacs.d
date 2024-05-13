@@ -1,0 +1,7 @@
+# key: malloct
+# name: malloct
+# --
+if ((${1:ptr} = ($2 *)malloc(sizeof($2)${3: * ${4:3}})) == NULL) {
+    perror("malloc");
+    exit(1);
+}

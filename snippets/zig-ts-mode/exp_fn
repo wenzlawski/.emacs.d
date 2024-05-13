@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: exp_fn
+# key: fnexp
+# --
+export fn ${1:name}($0) {
+       `yas-selected-text`
+}

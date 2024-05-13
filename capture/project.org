@@ -1,0 +1,6 @@
+* [/] %^{Title} %^{CATEGORY}p :project:
+** Project Statement
+%?
+** Project Plan
+** Project Notes
+** Project Resources

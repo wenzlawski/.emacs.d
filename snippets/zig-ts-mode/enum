@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: enum
+# key: enum
+# --
+const ${1:EnumName} = enum(${2:type}) {
+    `yas-selected-text`$0
+}

@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: for_val
+# key: for
+# --
+for (${1:seq}) |${2:v}| {
+    `yas-selected-text`$0
+}

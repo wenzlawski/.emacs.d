@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: for_else
+# key: fore
+# --
+for (${1:seq}) |${2:v}| {
+    `yas-selected-text`$0
+    break true;
+} else false;

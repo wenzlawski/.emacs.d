@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: for_val_index
+# key: forvi
+# --
+for (${1:seq}, 0..) |${2:v}, ${3:i}| {
+    `yas-selected-text`$0
+}

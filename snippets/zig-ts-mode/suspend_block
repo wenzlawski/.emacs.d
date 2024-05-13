@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: suspend_block
+# key: suspend
+# --
+suspend {
+    `yas-selected-text`$0
+}

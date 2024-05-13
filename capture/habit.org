@@ -1,0 +1,10 @@
+* TODO %^{Title}
+SCHEDULED: %t
+:PROPERTIES:
+:STYLE:    habit
+:LOGGING:  logrepeat
+:CATEGORY: Habit
+:END:
+:LOGBOOK:
+:END:
+

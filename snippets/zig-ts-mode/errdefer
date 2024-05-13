@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: errdefer
+# key: errdefer
+# --
+errdefer {
+    `yas-selected-text`
+}

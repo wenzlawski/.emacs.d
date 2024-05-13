@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: nullt
+# key: nullt
+# --
+if (${1:cond} == NULL) {
+    $0
+}

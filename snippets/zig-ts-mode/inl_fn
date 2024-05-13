@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: inl_fn
+# key: fninl
+# --
+inline fn ${1:name}($0) {
+    `yas-selected-text`
+}

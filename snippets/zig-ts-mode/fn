@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: fn
+# key: fn
+# --
+fn ${1:fn_name}(${2:args}) {
+  `yas-selected-text`$0
+}

@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: union
+# key: union
+# --
+const ${1:UnionName} = union(${2:enum}) {
+    `yas-selected-text`$0
+}

@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: if_else_opt
+# key: ifeo
+# --
+if ($1) |v| {
+    `yas-selected-text`$0
+} else |err| switch(err) {
+    => ,
+    else => ,
+}

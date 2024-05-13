@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: comptime
+# key: comp
+# --
+comptime {
+    `yas-selected-text`$0
+}

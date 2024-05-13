@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: for_inline
+# key: fori
+# --
+inline for ($0) |${1:v}| {
+    `yas-selected-text`
+}

@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: fn_gen
+# key: fng
+# --
+pub fn ${1:name}($0) {
+    `yas-selected-text`
+}

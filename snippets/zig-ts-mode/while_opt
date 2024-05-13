@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: while_opt
+# key: whileo
+# --
+while ($0) |${1:v}| {
+    `yas-selected-text`
+} else |err| {
+    
+}

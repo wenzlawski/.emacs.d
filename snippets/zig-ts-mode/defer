@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: defer
+# key: defer
+# --
+defer {
+    `yas-selected-text`
+}

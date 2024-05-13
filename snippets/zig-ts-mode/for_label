@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: for_label
+# key: forl
+# --
+$1: for (${2:seq}) |_| {
+    for (iter) |_| {
+        `yas-selected-text`$0
+	break :$1;
+    }
+}

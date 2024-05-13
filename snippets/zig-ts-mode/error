@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: error
+# key: error
+# --
+error {
+    `yas-selected-text`
+}

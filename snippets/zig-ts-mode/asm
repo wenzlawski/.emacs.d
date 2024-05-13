@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: asm
+# key: asm
+# --
+asm $0 (
+    `yas-selected-text`
+);

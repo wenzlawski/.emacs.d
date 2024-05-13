@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: ext
+# key: ext
+# --
+extern "${1:sourceName}" stdcallcc fn ${2:name}() $0;

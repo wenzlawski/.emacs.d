@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: arr_init
+# key: arr
+# --
+[_:${1:sentinel}]${1:type}{$0};

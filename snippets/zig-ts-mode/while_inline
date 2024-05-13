@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: while_inline
+# key: whilei
+# --
+inline while ($0) () {
+    `yas-selected-text`
+}

@@ -1,0 +1,4 @@
+# -*- mode: snippet -*-
+# name: date
+# --
+#+date: $1[`(format-time-string "%Y-%m-%d %a")`]$0

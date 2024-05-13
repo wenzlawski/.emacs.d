@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: while
+# key: while
+# --
+while ($0) : () {
+    `yas-selected-text`
+    break true;
+} else false;

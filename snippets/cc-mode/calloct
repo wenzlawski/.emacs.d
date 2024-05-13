@@ -1,0 +1,7 @@
+# key: calloct
+# name: calloct
+# --
+if ((${1:ptr} = (${2} *)calloc(${3:count}, ${4:size})) == NULL) {
+    perror("malloc");
+    exit(1);
+}

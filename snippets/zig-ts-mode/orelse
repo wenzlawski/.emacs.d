@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: orelse
+# key: orelse
+# --
+orelse return $0

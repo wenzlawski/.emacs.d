@@ -1,0 +1,18 @@
+#+title: feeds
+#+author: Marc Wenzlawski
+#+date: Created on [2024-02-17 Sat]
+#+startup: showall
+
+Categories: politics, tech, news, culture
+
+Keep categories to a minimum, they are to organise and filter.
+Can also do subtrees to organise.
+
+* Magazines                                                 :elfeed:magazine:
+** Leftist Magazines                                               :politics:
+*** [[https://thebaffler.com/feed][The Baffler]]
+*** [[https://monthlyreview.org/feed][Monthly Review]]
+*** [[https://newleftreview.org/feed/][New Left Review]]
+* Blogs                                                         :elfeed:blog:
+* News                                                          :elfeed:news:
+** Mainstream News

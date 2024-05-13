@@ -1,0 +1,4 @@
+# key: calloc
+# name: calloc
+# --
+calloc(${1:count}, ${2:size});
