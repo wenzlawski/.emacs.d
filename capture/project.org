@@ -1,6 +1,5 @@
-* [/] %^{Title} %^{CATEGORY}p :project:
-** Project Statement
+* [0/1] %^{Title} %^{CATEGORY}p :project:
 %?
-** Project Plan
-** Project Notes
-** Project Resources
+** Notes
+** NEXT Plan the project
+Set out a goal, and estimate steps and effort.

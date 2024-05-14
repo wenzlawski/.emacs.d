@@ -115,7 +115,7 @@ New frames are instructed to call `prot-emacs-re-enable-frame-theme'."
 ;; Set the frame padding and fringe
 (modify-all-frames-parameters
  '((right-divider-width . 20)
-   (internal-border-width . 10)))
+   (internal-border-width . 8)))
 
 (set-face-background 'fringe (face-attribute 'default :background))
 

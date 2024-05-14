@@ -1267,6 +1267,8 @@ This function can be used as the value of the user option
   ("C-c 4 t" . vterm-other-window)
   (:map vterm-mode-map
 	("<deletechar>" . vterm-send-delete))
+  :init
+  (setq vterm-shell (executable-find "fish"))
   :custom
   (vterm-eval-cmds
    '(("find-file" find-file)
@@ -1277,8 +1279,8 @@ This function can be used as the value of the user option
      ("man" man)
      ("tldr" tldr)
      ("ediff-files" ediff-files)))
-  (vterm-max-scrollback 10000)
-  (vterm-shell (executable-find "fish")))
+  (vterm-max-scrollback 10000))
+
 
 ;; ** orderless
 
