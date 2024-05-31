@@ -2265,8 +2265,9 @@ See URL `http://pypi.python.org/pypi/ruff'."
    '((:name "inbox" :query "tag:inbox" :key "i")
      (:name "unread" :query "tag:unread" :key "u")
      (:name "archive" :query "tag:archive" :key "r")
-     (:name "arbeit" :query "from:@company-name.de")
-     (:name "icloud" :query "to:marc.wenzlawski@icloud.com", :key "icloud")
+     (:name "sent" :query "tag:sent" :key "s")
+     (:name "icloud" :query "to:marc.wenzlawski@icloud.com" :key "c")
+     (:name "posteo" :query "to:marcwenzlawski@posteo.com" :key "p")
      (:name "all" :query "*" :key "a"))
    )
   :bind

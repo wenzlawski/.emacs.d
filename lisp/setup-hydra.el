@@ -20,7 +20,6 @@
     ("c" #'calendar "Calendar")
     ("e" #'eww "EWW")
     ("m" #'notmuch "Mail")
-    ("n" (lambda () (interactive) (find-file "~/Org/personal.org")) "Notes")
     ("o" #'ebdb "Contacts")
     ("t" #'vterm "Terminal"))
    "Utilities"
@@ -29,6 +28,7 @@
     ("i" (lambda () (interactive) (find-file user-init-file)) "init")
     ("j" (lambda () (interactive) (let ((projectile-project-root "~/.emacs.d/")) (projectile-find-file))) "configs")
     ("l" #'consult-line "Line")
+    ("p" (lambda () (interactive) (find-file "~/Dropbox/Org/personal.org")) "Personal")
     ("r" #'ielm "REPL")
     ("s" (lambda () (interactive) (switch-to-buffer "*scratch*")) "Scratch")
     ("D" toggle-debug-on-error "debug on error" :toggle (default-value 'debug-on-error))

@@ -81,10 +81,11 @@ abort `\\[org-capture-kill]'."))))
 	org-todo-keywords '((sequence "TODO" "IN-PROGRESS" "WAITING" "|" "DONE"))
 	org-hide-emphasis-markers t
 	org-latex-compiler "xelatex"
-	org-refile-targets '((nil :maxlevel . 3)
-			     (org-agenda-files :maxlevel . 5)
+	org-refile-targets '((nil :level . 5)
+			     (org-agenda-files :level . 5)
 			     ("refile.org" :level . 0)
-			     ("resources.org" :level . 0))
+			     ("resources.org" :level . 1))
+	org-refile-use-outline-path 'file
 	org-ellipsis "↴"
 	org-src-preserve-indentation t
 	org-edit-src-content-indentation 0
@@ -104,7 +105,6 @@ abort `\\[org-capture-kill]'."))))
 	org-auto-align-tags nil
 	org-tags-exclude-from-inheritance '("ARCHIVE" "project")
 	org-global-properties '(("Effort_ALL" . "0:15 0:30 1:00 2:00 4:00 8:00"))
-	org-refile-use-outline-path 'file
 	org-log-into-drawer t
 	org-habit-graph-column 55
 	org-attach-use-inheritance t
@@ -215,7 +215,7 @@ Triggered by a custom macOS Quick Action with a keyboard shortcut."
 	  ("lL" "Read later librewolf edit" entry (file "refile.org")
 	   "* %(my/org-mac-link-librewolf-get-frontmost-url) :link:\n%U\n%?" :prepend t)
 	  ("w" "Web template" entry (file "refile.org")
-           "* %?%:description\nSource: %:url,\n\nTitle: %:description\n\n#+begin_quote\n%i\n#+end_quote" :empty-lines 1)
+           "* %?%:description\nSource: %:link\n\nTitle: %:description\n\n#+begin_quote\n%i\n#+end_quote" :empty-lines 1)
 	  ))
 
   ;; ** org-capture frame
@@ -431,6 +431,10 @@ first-level entry for writing comments."
 		 (if headline (org-find-exact-headline-in-buffer headline)))))
       (org-refile arg nil (list headline file nil pos)))
     (switch-to-buffer (current-buffer)))
+
+  (defun my/refile-this-file ()
+    (interactive)
+    (my/refile buffer-file-name))
   
   ;; ** END
 
