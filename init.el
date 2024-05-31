@@ -2248,6 +2248,36 @@ See URL `http://pypi.python.org/pypi/ruff'."
 (require 'setup-org)
 
 
+;; * Mail
+
+(use-package sendmail
+  :custom
+  (send-mail-function 'sendmail-send-it))
+
+(setq user-mail-address "marc.wenzlawski@icloud.com")
+
+;; ** notmuch
+
+(use-package notmuch
+  :straight t
+  :custom
+  (notmuch-saved-searches
+   '((:name "inbox" :query "tag:inbox" :key "i")
+     (:name "unread" :query "tag:unread" :key "u")
+     (:name "archive" :query "tag:archive" :key "r")
+     (:name "arbeit" :query "from:@company-name.de")
+     (:name "icloud" :query "to:marc.wenzlawski@icloud.com", :key "icloud")
+     (:name "all" :query "*" :key "a"))
+   )
+  :bind
+  (:map notmuch-show-mode-map
+	("a" . (lambda ()
+		 "archive message"
+		 (interactive)
+		 (notmuch-show-tag (list "+archive" "-inbox" "-unread"))))))
+
+;; ** Multiple smtp accounts
+
 ;; * APPLICATIONS
 ;; ** smudge spotify
 
@@ -2276,11 +2306,6 @@ See URL `http://pypi.python.org/pypi/ruff'."
   (setq rmh-elfeed-org-files '("~/.emacs.d/feeds.org"))
   (setopt elfeed-search-title-max-width 100)
   (elfeed-org))
-
-;; ** notmuch
-
-(use-package notmuch
-  :straight t)
 
 ;; ** eww
 

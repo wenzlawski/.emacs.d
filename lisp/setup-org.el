@@ -215,7 +215,7 @@ Triggered by a custom macOS Quick Action with a keyboard shortcut."
 	  ("lL" "Read later librewolf edit" entry (file "refile.org")
 	   "* %(my/org-mac-link-librewolf-get-frontmost-url) :link:\n%U\n%?" :prepend t)
 	  ("w" "Web template" entry (file "refile.org")
-           "* %?Capture from web\nSource: %:link,\n\nTitle: %:description\n\n#+begin_quote\n%i\n#+end_quote" :empty-lines 1)
+           "* %?%:description\nSource: %:url,\n\nTitle: %:description\n\n#+begin_quote\n%i\n#+end_quote" :empty-lines 1)
 	  ))
 
   ;; ** org-capture frame
