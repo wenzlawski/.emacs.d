@@ -243,7 +243,12 @@ Triggered by a custom macOS Quick Action with a keyboard shortcut."
 	(progn
 	  (delete-frame)
 	  (if (eq 'darwin system-type)
-	      (ns-do-applescript "tell application \"LibreWolf\" to activate")))))
+	      (ns-do-applescript "tell application \"System Events\"
+    tell process \"finder\"
+        activate
+        keystroke tab using {command down}
+    end tell
+end tell")))))
 
   (with-eval-after-load 'org-capture
     (defun my/org-capture-finalize (&optional stay-with-capture)

@@ -2573,6 +2573,24 @@ and \"apikey\" as USER."
         secret)
     (user-error "No `gptel-api-key' found in the auth source"))))
 
+(defun my/make-ai-frame ()
+    "Create a new frame and run `gptel'."
+    (interactive)
+    (make-frame '((name . "ai")
+                  (top . 300)
+                  (left . 700)
+                  (width . 105)
+                  (height . 25)))
+    (select-frame-by-name "ai")
+    (my/frame-recenter)
+    ;; (delete-other-windows)
+    (noflet ((switch-to-buffer-other-window (buf) (switch-to-buffer buf)))
+      (condition-case ex
+	  (progn (gptel "Chat") (switch-to-buffer "Chat"))
+	('error
+	 ;;(message "org-capture: %s" (error-message-string ex))
+	 (delete-frame)))))
+
 ;; ** anki-helper
 
 (defun my/show-anki ()
