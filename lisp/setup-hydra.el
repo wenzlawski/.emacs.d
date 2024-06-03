@@ -22,20 +22,28 @@
     ("m" #'notmuch "Mail")
     ("o" #'ebdb "Contacts")
     ("t" #'vterm "Terminal"))
-   "Utilities"
-   (("f" #'dired "Files")
-    ("h" #'helpful-at-point "Help")
+   "Files"
+   (
     ("i" (lambda () (interactive) (find-file user-init-file)) "init")
-    ("j" (lambda () (interactive) (let ((projectile-project-root "~/.emacs.d/")) (projectile-find-file))) "configs")
-    ("l" #'consult-line "Line")
-    ("p" (lambda () (interactive) (find-file "~/Dropbox/Org/personal.org")) "Personal")
+    ("j" (lambda () (interactive) (let ((projectile-project-root "~/.emacs.d/")) (projectile-find-file))) ".emacs.d")
+    ("p" (lambda () (interactive) (find-file "~/Dropbox/Org/personal.org")) "personal")
+    )
+   "Programs"
+   (("C-z" (lambda () (interactive) (shell-command "open /Applications/Zotero.app")) "Zotero")
+    ("C-c" (lambda () (interactive) (shell-command "open /Applications/Calibre.app")) "Calibre")
+    ("C-l" (lambda () (interactive) (shell-command "open /Applications/LibreWolf.app")) "LibreWolf")
+    ("C-s" (lambda () (interactive) (shell-command "open /Applications/Spotify.app")) "Spotify"))
+   "Utilities"
+   (("f" #'dired "Dired")
+    ("h" #'helpful-at-point "Help")
     ("r" #'ielm "REPL")
     ("s" (lambda () (interactive) (switch-to-buffer "*scratch*")) "Scratch")
     ("D" toggle-debug-on-error "debug on error" :toggle (default-value 'debug-on-error))
     ("X" toggle-debug-on-quit "debug on quit" :toggle (default-value 'debug-on-quit))
-    )))
+    )
+   ))
 
-(bind-key "C-`" #'my/hydra-launch-menu/body)
+(bind-key "C-," #'my/hydra-launch-menu/body)
 
 ;;; Toggle Menu
 (defvar my/hydra-toggle-menu)

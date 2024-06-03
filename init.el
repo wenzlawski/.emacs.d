@@ -571,6 +571,7 @@ Containing LEFT, and RIGHT aligned respectively."
   ("C-j" . reindent-then-newline-and-indent)
   ("C-c r r" . query-replace-regexp)
   ("C-c r s" . replace-string)
+  ("C-x C-b" . ibuffer)
   (:map tab-prefix-map
 	("h" . tab-bar-mode)
 	("s" . tab-switcher))
@@ -744,7 +745,6 @@ Containing LEFT, and RIGHT aligned respectively."
 ;; ** exec-path-from-shell
 
 (use-package exec-path-from-shell
-  :disabled
   :straight t
   :when (memq window-system '(mac ns x))
   :custom
@@ -1010,7 +1010,7 @@ Append with current prefix arg."
 
 (use-package pandoc-mode
   :straight t
-  :hook ((text-mode doc-view-mode pdf-view-mode) . pandoc-mode)
+  :hook (text-mode . pandoc-mode)
   :config
   (bind-key "C-c p" #'pandoc-main-hydra/body 'pandoc-mode-map)
   (bind-key "C-c /" nil 'pandoc-mode-map))
@@ -2666,8 +2666,7 @@ The browser to used is specified by the
 
 ;; ** ebdb
 
-(use-package ebdb
-  :straight t)
+(require 'setup-ebdb)
 
 ;; ** ledger-mode
 

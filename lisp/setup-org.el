@@ -1093,6 +1093,11 @@ is active, that will be the link's description."
 (use-package org-web-tools
   :straight t)
 
+;; ** org-vcard
+
+(use-package org-vcard
+  :straight t)
+
 ;; ** mixed-pitch-mode
 
 (use-package mixed-pitch
