@@ -1431,6 +1431,8 @@ This function can be used as the value of the user option
 (use-package fd-dired
   :straight t)
 
+(when (memq window-system '(mac ns x)) (require 'dired-qlmanage))
+
 ;; ** magit / git
 
 (use-package magit
@@ -2553,6 +2555,23 @@ The browser to used is specified by the
 (use-package gptel-extensions
   :after gptel
   :straight (gptel-extensions :host github :repo "kamushadenes/gptel-extensions.el" :files ("*.el")))
+
+(with-eval-after-load 'gptel
+  (defun gptel-api-key-from-auth-source (&optional host user)
+  "Lookup api key in the auth source.
+By default, the LLM host for the active backend is used as HOST,
+and \"apikey\" as USER."
+  (if-let ((secret
+            (plist-get
+             (car (auth-source-search
+                   :host (or host (gptel-backend-host gptel-backend))
+                   :user (list (or user "apikey"))
+                   :require '(:secret)))
+                              :secret)))
+      (if (functionp secret)
+          (encode-coding-string (funcall secret) 'utf-8)
+        secret)
+    (user-error "No `gptel-api-key' found in the auth source"))))
 
 ;; ** anki-helper
 

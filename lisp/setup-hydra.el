@@ -43,6 +43,7 @@
     )
    ))
 
+(bind-key "C-`" #'my/hydra-launch-menu/body)
 (bind-key "C-," #'my/hydra-launch-menu/body)
 
 ;;; Toggle Menu
