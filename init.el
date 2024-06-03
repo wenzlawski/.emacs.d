@@ -671,6 +671,11 @@ Containing LEFT, and RIGHT aligned respectively."
   (:map Man-mode-map
 	("g" . consult-imenu)))
 
+;; ** abbrev
+
+(use-package abbrev
+  :hook text-mode)
+
 ;; ** editorconfig
 
 (use-package editorconfig
@@ -2775,6 +2780,26 @@ If FRAME is omitted or nil, use currently selected frame."
   (unless (eq 'maximised (frame-parameter nil 'fullscreen))
     (modify-frame-parameters
      frame '((user-position . t) (top . 0.5) (left . 0.5)))))
+
+;; * buffer local key
+
+(defun buffer-local-set-key (key func)
+      (interactive "KSet key on this buffer: \naCommand: ")
+      (let* ((mode-name (format "%s-magic" (buffer-name)))
+             (name (intern mode-name))
+             (map-name (format "%s-map" mode-name))
+             (map (intern map-name)))
+        (unless (boundp map)
+          (set map (make-sparse-keymap)))
+        (eval
+         `(define-minor-mode ,name
+            ,(concat
+              "Automagically built minor mode to define buffer-local keys.\n"
+              "\\{" map-name "}")
+            nil " Editing" ,map))
+        (eval
+         `(define-key ,map ,key ',func))
+        (funcall name t)))
 
 ;; * CUSTOM LISP
 ;; ** ox-11ty

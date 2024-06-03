@@ -1,4 +1,28 @@
-;; -*- lexical-binding: t; -*-
+;;; custom-org.el --- Custom org functions -*- lexical-binding: t; -*-
+;;; Commentary:
+;;; Code:
+
+(defun my/org-get-subtree-contents ()
+  "Get the contents of the subtree at point."
+  (if (org-before-first-heading-p)
+      (message "Not in or on an org heading")
+    (save-excursion
+      ;; If inside heading contents, move the point back to the heading
+      ;; otherwise `org-agenda-get-some-entry-text' won't work.
+      (unless (org-on-heading-p) (org-previous-visible-heading 1))
+      (let ((contents (substring-no-properties
+                       (org-agenda-get-some-entry-text
+                        (point-marker)
+                        most-positive-fixnum))))
+	contents))))
+
+(defun my/org-copy-subtree-contents ()
+  "Get the content text of the subtree at point and add it to the `kill-ring'.
+Excludes the heading and any child subtrees."
+  (interactive)
+      (let ((contents (my/org-get-subtree-contents)))
+        (message "Copied: %s" contents)
+        (kill-new contents)))
 
 (defun my/compose-letter nil
   "compose the job application letter
@@ -14,6 +38,7 @@ then opened in a new buffer."
     (if (not (cdr (assoc "ID" props)))
 	(progn (org-id-get-create) (setq props (org-entry-properties))))
     (setq file (format "%s.pdf" (cdr (assoc "ID" props))))
+    (push (list "CONTENT" (my/org-get-subtree-contents)) props)
 
     ;; save the props to a temp file
     (with-temp-file (format "cv/%s" tmp)
@@ -30,6 +55,5 @@ then opened in a new buffer."
 	(find-file-other-window (expand-file-name file "letters")))) ; otherwise open it
     ))
 
-(bind-key "C-c g" #'my/compose-letter 'org-mode-map)
-
 (provide 'custom-org)
+;;; custom-org.el ends here

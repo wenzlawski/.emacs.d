@@ -3,7 +3,9 @@
 ;;; Code:
 
 (use-package ebdb
-  :straight t)
+  :straight t
+  :custom
+  (ebdb-record-self "B68E4266-4799-40A6-AB02-E704A8EBE879"))
 
 (with-eval-after-load 'ebdb
   (defclass ebdb-field-name-complex (ebdb-field-name)
