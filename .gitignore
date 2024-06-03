@@ -34,3 +34,4 @@ smudge
 irony
 org-clock-save.el
 *.csv
+/ielm-history.eld
