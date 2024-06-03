@@ -43,7 +43,8 @@
 	   (loc (org-id-find-id-in-file uuid "/Users/mw/Dropbox/denote/20240603T001002--contacts.org")))
       (if loc
 	  (progn (find-file "/Users/mw/Dropbox/denote/20240603T001002--contacts.org")
-		 (goto-char (cdr loc)))
+		 (goto-char (cdr loc))
+		 (org-fold-show-subtree))
 	(progn (if (y-or-n-p "No note found. Create one?")
 		   (progn (find-file "/Users/mw/Dropbox/denote/20240603T001002--contacts.org")
 			  (goto-char (point-max))
