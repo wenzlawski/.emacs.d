@@ -676,6 +676,17 @@ Containing LEFT, and RIGHT aligned respectively."
 (use-package abbrev
   :hook text-mode)
 
+;; ** autoinsert
+
+(use-package autoinsert
+  :custom
+  (auto-insert-directory (locate-user-emacs-file "autoinsert"))
+  :config
+  (define-auto-insert "shell.nix$" "default-shell.nix")
+  (define-auto-insert "flake.nix$" "default-flake.nix")
+  (auto-insert-mode 1)
+  )
+
 ;; ** editorconfig
 
 (use-package editorconfig
