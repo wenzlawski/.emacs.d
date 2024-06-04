@@ -22,7 +22,7 @@
   ("M-g m" . consult-mark)
   ("M-g M" . consult-global-mark)
   ("M-g o" . consult-outline)
-  ("M-o" . consult-outline)
+  ;; ("M-o" . consult-outline)
   ;; M-s bindings in `search-map'
   ("M-s d" . consult-fd)
   ("M-s c" . consult-locate)

@@ -5,7 +5,7 @@ let
 in
 pkgs.mkShell {
   nativeBuildInputs = with pkgs; [
-    ffmpeg
+    ffmpeg$1
   ];
 }
-
+$0

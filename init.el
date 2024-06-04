@@ -678,14 +678,18 @@ Containing LEFT, and RIGHT aligned respectively."
 
 ;; ** autoinsert
 
+(defun my/autoinsert-yas-expand()
+  "Replace text in yasnippet template."
+  (yas-expand-snippet (buffer-string) (point-min) (point-max)))
+
 (use-package autoinsert
   :custom
   (auto-insert-directory (locate-user-emacs-file "autoinsert"))
   :config
-  (define-auto-insert "shell.nix$" "default-shell.nix")
-  (define-auto-insert "flake.nix$" "default-flake.nix")
-  (auto-insert-mode 1)
-  )
+  (define-auto-insert "shell.nix$" ["default-shell.nix" my/autoinsert-yas-expand])
+  (define-auto-insert "flake.nix$" ["default-flake.nix" my/autoinsert-yas-expand])
+  (define-auto-insert "\\.el\\'"   ["default-elisp.el" my/autoinsert-yas-expand])
+  (auto-insert-mode 1))
 
 ;; ** editorconfig
 
@@ -920,6 +924,13 @@ Append with current prefix arg."
   :bind
   ("C-x o" . ace-window)
   ("C-<tab>" . ace-window))
+;; ** ace-link
+
+(use-package ace-link
+  :straight t
+  :config
+  (with-eval-after-load 'org (define-key org-mode-map (kbd "M-o") 'ace-link-org))
+  (ace-link-setup-default))
 
 ;; ** avy
 
@@ -1907,9 +1918,6 @@ See URL `http://pypi.python.org/pypi/ruff'."
 
 (use-package ert)
 
-(use-package ert-runner
-  :straight t)
-
 (use-package epdh
   :disabled
   :straight (:host github :repo "alphapapa/emacs-package-dev-handbook"))
@@ -2354,12 +2362,14 @@ See URL `http://pypi.python.org/pypi/ruff'."
 	("d" . my/scroll-up-half)
 	("u" . my/scroll-down-half)
 	("U" . eww-up-url))
-  :config
-  (setq eww-browse-url-new-window-is-tab nil)
-  (setq eww-restore-desktop t)
-  (setq eww-desktop-remove-duplicates t)
-  (setq eww-header-line-format nil)
+  :custom
+  (eww-browse-url-new-window-is-tab nil)
+  (eww-restore-desktop t)
+  (eww-desktop-remove-duplicates t)
+  (eww-header-line-format nil)
+  (eww-search-prefix "https://html.duckduckgo.com/html/?q="))
 
+(with-eval-after-load 'eww
   (defun eww-browse-with-external-browser (&optional url)
     "Browse the current URL with an external browser.
 The browser to used is specified by the
@@ -2378,8 +2388,22 @@ The browser to used is specified by the
   :bind
   (:map shr-map
 	("u" . nil))
-  :config
-  (setq shr-max-image-proportion 0.4))
+  :custom
+  (shr-max-image-proportion 0.4)
+  (shr-use-colors nil)
+  (shr-use-fonts nil)
+  (shr-folding-mode t))
+
+;; ** url-vars browse url
+
+(use-package url-vars
+  :custom
+  (url-privacy-level '(email agent cookies lastloc)))
+
+(use-package browse-url
+  :custom
+  (browse-url-browser-function '(("youtube\\.com" . browse-url-default-browser)
+				 ("."             . eww-browse-url))))
 
 ;; ** denote
 
@@ -2563,10 +2587,12 @@ The browser to used is specified by the
   ("C-c s" . gptel-menu)
   :custom
   (gptel-default-mode #'org-mode)
-  (gptel-directives '((default . "You are a large language model living in Emacs and a helpful assistant. Respond concisely.")
-		      (programming . "You are a large language model and a careful programmer. Provide code and only code as output without any additional text, prompt or note.")
-		      (writing . "You are a large language model and a writing assistant. Respond concisely.")
-		      (chat . "You are a large language model and a conversation partner. Respond concisely."))))
+  (gptel-model "gpt-4o")
+  (gptel-directives
+   '((default . "You are a large language model living in Emacs and a helpful assistant. Respond concisely.")
+     (programming . "You are a large language model and a careful programmer. Provide code and only code as output without any additional text, prompt or note.")
+     (writing . "You are a large language model and a writing assistant. Respond concisely.")
+     (chat . "You are a large language model and a conversation partner. Respond concisely."))))
 
 (use-package gptel-extensions
   :after gptel
@@ -2574,38 +2600,38 @@ The browser to used is specified by the
 
 (with-eval-after-load 'gptel
   (defun gptel-api-key-from-auth-source (&optional host user)
-  "Lookup api key in the auth source.
+    "Lookup api key in the auth source.
 By default, the LLM host for the active backend is used as HOST,
 and \"apikey\" as USER."
-  (if-let ((secret
-            (plist-get
-             (car (auth-source-search
-                   :host (or host (gptel-backend-host gptel-backend))
-                   :user (list (or user "apikey"))
-                   :require '(:secret)))
-                              :secret)))
-      (if (functionp secret)
-          (encode-coding-string (funcall secret) 'utf-8)
-        secret)
-    (user-error "No `gptel-api-key' found in the auth source"))))
+    (if-let ((secret
+              (plist-get
+               (car (auth-source-search
+                     :host (or host (gptel-backend-host gptel-backend))
+                     :user (list (or user "apikey"))
+                     :require '(:secret)))
+               :secret)))
+	(if (functionp secret)
+            (encode-coding-string (funcall secret) 'utf-8)
+          secret)
+      (user-error "No `gptel-api-key' found in the auth source"))))
 
 (defun my/make-ai-frame ()
-    "Create a new frame and run `gptel'."
-    (interactive)
-    (make-frame '((name . "ai")
-                  (top . 300)
-                  (left . 700)
-                  (width . 105)
-                  (height . 25)))
-    (select-frame-by-name "ai")
-    (my/frame-recenter)
-    ;; (delete-other-windows)
-    (noflet ((switch-to-buffer-other-window (buf) (switch-to-buffer buf)))
-      (condition-case ex
-	  (progn (gptel "Chat") (switch-to-buffer "Chat"))
-	('error
-	 ;;(message "org-capture: %s" (error-message-string ex))
-	 (delete-frame)))))
+  "Create a new frame and run `gptel'."
+  (interactive)
+  (make-frame '((name . "ai")
+                (top . 300)
+                (left . 700)
+                (width . 105)
+                (height . 25)))
+  (select-frame-by-name "ai")
+  (my/frame-recenter)
+  ;; (delete-other-windows)
+  (noflet ((switch-to-buffer-other-window (buf) (switch-to-buffer buf)))
+    (condition-case ex
+	(progn (gptel "Chat") (switch-to-buffer "Chat"))
+      ('error
+       ;;(message "org-capture: %s" (error-message-string ex))
+       (delete-frame)))))
 
 ;; ** anki-helper
 
@@ -2795,22 +2821,22 @@ If FRAME is omitted or nil, use currently selected frame."
 ;; * buffer local key
 
 (defun buffer-local-set-key (key func)
-      (interactive "KSet key on this buffer: \naCommand: ")
-      (let* ((mode-name (format "%s-magic" (buffer-name)))
-             (name (intern mode-name))
-             (map-name (format "%s-map" mode-name))
-             (map (intern map-name)))
-        (unless (boundp map)
-          (set map (make-sparse-keymap)))
-        (eval
-         `(define-minor-mode ,name
-            ,(concat
-              "Automagically built minor mode to define buffer-local keys.\n"
-              "\\{" map-name "}")
-            nil " Editing" ,map))
-        (eval
-         `(define-key ,map ,key ',func))
-        (funcall name t)))
+  (interactive "KSet key on this buffer: \naCommand: ")
+  (let* ((mode-name (format "%s-magic" (buffer-name)))
+         (name (intern mode-name))
+         (map-name (format "%s-map" mode-name))
+         (map (intern map-name)))
+    (unless (boundp map)
+      (set map (make-sparse-keymap)))
+    (eval
+     `(define-minor-mode ,name
+        ,(concat
+          "Automagically built minor mode to define buffer-local keys.\n"
+          "\\{" map-name "}")
+        nil " Editing" ,map))
+    (eval
+     `(define-key ,map ,key ',func))
+    (funcall name t)))
 
 ;; * CUSTOM LISP
 ;; ** ox-11ty
