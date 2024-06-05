@@ -396,23 +396,23 @@ Containing LEFT, and RIGHT aligned respectively."
 (setq-default mode-line-format
               '((:eval
                  (simple-mode-line-render
-                  (quote ("%e"
-                          prot-modeline-kbd-macro
-                          prot-modeline-narrow
-                          prot-modeline-buffer-status
-                          prot-modeline-input-method
-                          prot-modeline-buffer-identification
-                          "  "
-                          prot-modeline-major-mode
-                          prot-modeline-process
-                          "  "
-                          prot-modeline-vc-branch
-                          "  "
-                          prot-modeline-eglot))
-		  (quote (
-			  " "
-			  prot-modeline-misc-info
-			  " "))))))
+                  '("%e"
+                    prot-modeline-kbd-macro
+                    prot-modeline-narrow
+                    prot-modeline-buffer-status
+                    prot-modeline-input-method
+                    prot-modeline-buffer-identification
+		    " "
+		    mode-line-position
+                    prot-modeline-major-mode
+                    prot-modeline-process
+                    "  "
+                    prot-modeline-vc-branch
+                    "  "
+                    prot-modeline-eglot)
+		  '(" "
+		    prot-modeline-misc-info
+		    " ")))))
 ;;(prot-modeline-subtle-mode)
 
 ;; ** highlight visual line
@@ -634,6 +634,12 @@ Containing LEFT, and RIGHT aligned respectively."
   (push '(lambda (_) (menu-bar-mode -1)) (cdr (last after-make-frame-functions)))
   (add-to-list 'default-frame-alist '(font . "Iosevka-18")))
 
+;; ** simple
+
+(use-package simple
+  :config
+  (line-number-mode -1))
+
 ;; ** CUSTOM FILE
 
 (use-package cus-edit
@@ -841,6 +847,15 @@ Append with current prefix arg."
 
 (use-package esup
   :straight t)
+
+;; ** texfrag
+
+(use-package texfrag
+  :straight t
+  :custom
+  (texfrag-scale 0.75)
+  :config
+  (texfrag-global-mode 1))
 
 ;; * HELP
 ;; ** tldr
@@ -2398,7 +2413,7 @@ The browser to used is specified by the
 
 (use-package url-vars
   :custom
-  (url-privacy-level '(email agent cookies lastloc)))
+  (url-privacy-level '(email cookies lastloc)))
 
 (use-package browse-url
   :custom
