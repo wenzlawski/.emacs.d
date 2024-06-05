@@ -225,7 +225,7 @@
   ;; 		      :bold t :underline nil :background (modus-themes-get-color-value 'bg-yellow-intense))
   )
 
-(add-hook 'modus-themes-after-load-theme-hook #'my/modus-theme-on-toggle)
+;; (add-hook 'modus-themes-after-load-theme-hook #'my/modus-theme-on-toggle)
 
 (defun my/modus-themes-invisible-dividers (&rest _)
   "Make window dividers for THEME invisible."

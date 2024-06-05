@@ -1,4 +1,4 @@
-;;; custom-org.el --- Custom org functions -*- lexical-binding: t; -*-
+;;; custom-org.el --- Custom org functions
 ;;; Commentary:
 ;;; Code:
 
@@ -20,9 +20,9 @@
   "Get the content text of the subtree at point and add it to the `kill-ring'.
 Excludes the heading and any child subtrees."
   (interactive)
-      (let ((contents (my/org-get-subtree-contents)))
-        (message "Copied: %s" contents)
-        (kill-new contents)))
+  (let ((contents (my/org-get-subtree-contents)))
+    (message "Copied: %s" contents)
+    (kill-new contents)))
 
 (defun my/compose-letter nil
   "compose the job application letter
@@ -31,7 +31,7 @@ pass them to the justfile to generate the letter. The letter is
 then opened in a new buffer."
   (interactive)
   (let ((props (org-entry-properties))
-	 (tmp ".tmp.json"))
+	(tmp ".tmp.json"))
 
     ;; check for an id property, if no create one
     ;; this is important for the file name
@@ -54,6 +54,21 @@ then opened in a new buffer."
 	  (switch-to-buffer-other-window buffer) ; if already open, switch to it
 	(find-file-other-window (expand-file-name file "letters")))) ; otherwise open it
     ))
+
+;; ** org open other window
+
+(defun my/org-open-at-point-other-window ()
+  "Open at point other window"
+  (interactive)
+  (let ((org-link-frame-setup (append '((file . find-file-other-window)) org-link-frame-setup)))
+    (org-open-at-point)))
+
+(defun my/org-open-at-point-other-frame ()
+  "Open at point other frame"
+  (interactive)
+  (let ((org-link-frame-setup (append '((file . find-file-other-frame)) org-link-frame-setup)))
+    (org-open-at-point)))
+
 
 (provide 'custom-org)
 ;;; custom-org.el ends here

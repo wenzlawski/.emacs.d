@@ -151,7 +151,6 @@ abort `\\[org-capture-kill]'."))))
   (setq org-agenda-include-diary t)
   
   ;; ** org-capture
-
   (defun my/read-later-template (url)
     "capture template for read later"
     (let* ((article (my/read-it-later-attach url))
@@ -165,7 +164,7 @@ abort `\\[org-capture-kill]'."))))
 				       (concat "wc -w < '" (expand-file-name file dir)"'")))) 100))))
       (concat "* TODO " name "\n:PROPERTIES:\n:URL: " url "\n:Effort: " effort "\n:END:\n%U\nAvailable at: [[attachment:" file "][" name "]]\n%?")))
 
-  
+
   (defun my/read-later-template-from-kill ()
     (require 'org-web-tools)
     (my/read-later-template (org-web-tools--get-first-url)))
@@ -182,9 +181,9 @@ Triggered by a custom macOS Quick Action with a keyboard shortcut."
     (ignore-errors)
     (org-capture-finalize)
     nil)
-  
+
   (setq org-capture-templates
-        '(("r" "refile" entry (file "refile.org")
+	'(("r" "refile" entry (file "refile.org")
 	   "* %^{Title}\n%U\n\n%i%?" :prepend t :empty-lines-after 1)
 	  ;; ("t" "today" entry (file+olp+datetree "daily.org")
 	  ;;  "* %^{Title}\n\n%?")
@@ -214,12 +213,13 @@ Triggered by a custom macOS Quick Action with a keyboard shortcut."
 	   "* %(my/org-mac-link-librewolf-get-frontmost-url) :link:\n%U" :immediate-finish t :prepend t)
 	  ("lL" "Read later librewolf edit" entry (file "refile.org")
 	   "* %(my/org-mac-link-librewolf-get-frontmost-url) :link:\n%U\n%?" :prepend t)
+	  ("lb" "Bookmark" entry (id "23CDFA52-0EE4-4DAA-8B8B-E2D105E6293E") "*** [[%:link][%:description]] %^g\nSCHEDULED: %T%?")
 	  ("w" "Web template" entry (file "refile.org")
            "* %?%:description\nSource: %:link\n\nTitle: %:description\n\n#+begin_quote\n%i\n#+end_quote" :empty-lines 1)
 	  ))
 
   ;; ** org-capture frame
-  
+
   (defun my/make-capture-frame ()
     "Create a new frame and run `org-capture'."
     (interactive)
@@ -393,19 +393,6 @@ first-level entry for writing comments."
 	    (org-link--add-to-stored-links (concat "attachment:" (buffer-name)) name)
 	    (list name (buffer-name) attach-dir url))))))
 
-  ;; ** org open other window
-
-  (defun my/org-open-at-point-other-window ()
-    "Open at point other window"
-    (interactive)
-    (let ((org-link-frame-setup (append '((file . find-file-other-window)) org-link-frame-setup)))
-      (org-open-at-point)))
-
-  (defun my/org-open-at-point-other-frame ()
-    "Open at point other frame"
-    (interactive)
-    (let ((org-link-frame-setup (append '((file . find-file-other-frame)) org-link-frame-setup)))
-      (org-open-at-point)))
 
   ;; ** org-babel
 
@@ -440,7 +427,7 @@ first-level entry for writing comments."
   (defun my/refile-this-file ()
     (interactive)
     (my/refile buffer-file-name))
-  
+
   ;; ** END
 
   )
@@ -778,6 +765,21 @@ end #OB-JULIA-VTERM_END\n"))
 			   (-1 . -1)
 			   :color "gray80" :style flat-button)
 		    :background "gray96")
+
+(add-hook 'modus-themes-after-load-theme-hook
+	  (lambda ()
+	    (set-face-attribute 'org-modern-date-active nil :height 1.1 :overline "gray80"
+				:box '(:line-width
+				       (-1 . -1)
+				       :color "gray80" :style flat-button)
+				:background (modus-themes-get-color-value 'bg-mode-line-inactive)
+				:foreground (modus-themes-get-color-value 'fg-mode-line-inactive))
+	    (set-face-attribute 'org-modern-date-inactive nil :height 1.1 :overline "gray80"
+				:box '(:line-width
+				       (-1 . -1)
+				       :color "gray80" :style flat-button)
+				:background (modus-themes-get-color-value 'bg-mode-line-inactive)
+				:foreground (modus-themes-get-color-value 'fg-mode-line-inactive))))
 
 (setopt org-modern-keyword nil
 	org-modern-checkbox nil
