@@ -852,10 +852,9 @@ Append with current prefix arg."
 
 (use-package texfrag
   :straight t
+  :hook (html-mode eww-mode)
   :custom
-  (texfrag-scale 0.75)
-  :config
-  (texfrag-global-mode 1))
+  (texfrag-scale 0.75))
 
 ;; * HELP
 ;; ** tldr
