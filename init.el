@@ -739,6 +739,12 @@ Containing LEFT, and RIGHT aligned respectively."
 (use-package tabspaces
   :straight t)
 
+;; ** register
+
+(use-package register)
+
+;; https://www.emacswiki.org/emacs/better-registers.el
+
 ;; ** outline
 
 (use-package outline
@@ -770,7 +776,14 @@ Containing LEFT, and RIGHT aligned respectively."
 
 ;; ** exec-path-from-shell
 
+;; use when starting Emacs in MacOS from the .app
+;; when starting from shell it is not needed.
+;; in MacOS, generally use an Automator app, with the command
+;; /full/path/to/fish -c emacs
+;; as this will inherit PATH better than the plugin does.
+
 (use-package exec-path-from-shell
+  :disabled
   :straight t
   :when (memq window-system '(mac ns x))
   :custom
