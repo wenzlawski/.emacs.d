@@ -748,6 +748,29 @@ end #OB-JULIA-VTERM_END\n"))
   :config
   (org-babel-do-load-languages 'org-babel-load-languages '((ledger . t))))
 
+;; * ORG LINK
+
+(with-eval-after-load 'ol
+  (defun org-attach-complete-link ()
+  "Advise the user with the available files in the attachment directory."
+  (let ((attach-dir (org-attach-dir)))
+    (if attach-dir
+	(let* ((attached-dir (expand-file-name attach-dir))
+	       ;; Patch this to immediately show files in attach dir
+	       (file (read-file-name "File: " (concat attached-dir "/")))
+	       (pwd (file-name-as-directory attached-dir))
+               (pwd-relative (file-name-as-directory
+			      (abbreviate-file-name attached-dir))))
+	  (cond
+	   ((string-match (concat "^" (regexp-quote pwd-relative) "\\(.+\\)") file)
+	    (concat "attachment:" (match-string 1 file)))
+	   ((string-match (concat "^" (regexp-quote pwd) "\\(.+\\)")
+			  (expand-file-name file))
+	    (concat "attachment:" (match-string 1 (expand-file-name file))))
+	   (t (concat "attachment:" file))))
+      (error "No attachment directory exist"))))
+)
+
 ;; * PLUGINS
 ;; ** org-modern
 
