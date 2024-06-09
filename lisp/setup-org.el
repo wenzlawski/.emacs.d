@@ -115,6 +115,11 @@ abort `\\[org-capture-kill]'."))))
 			       " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄")
 	org-agenda-current-time-string
 	"◀── now ─────────────────────────────────────────────────"
+	org-file-apps '((auto-mode . emacs)
+			(directory . emacs)
+			("\\.mm\\'" . default)
+			("\\.x?html?\\'" . default)
+			("\\.pdf\\'" . emacs))
 	)
   ;; (org-clock-persistence-insinuate)
   (add-to-list 'org-babel-load-languages '(shell . t))
