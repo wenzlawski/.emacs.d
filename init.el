@@ -638,7 +638,8 @@ Containing LEFT, and RIGHT aligned respectively."
 
 (use-package window
   :custom
-  (split-width-threshold 0))
+  (split-width-threshold 60)
+  (split-height-threshold 80))
 
 ;; ** simple
 
@@ -957,6 +958,7 @@ Append with current prefix arg."
   :bind
   ("C-x o" . ace-window)
   ("C-<tab>" . ace-window))
+
 ;; ** ace-link
 
 (use-package ace-link

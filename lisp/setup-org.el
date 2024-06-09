@@ -1093,6 +1093,7 @@ is active, that will be the link's description."
 	("C-c C-x n s" . org-noter-create-skeleton))
   :custom
   (org-noter-notes-search-path '("/Users/mw/Library/CloudStorage/Dropbox/Org"))
+  (org-noter--show-arrow-hook nil)
   :config
   ;; (add-to-list 'display-buffer-alist '("Notes of" (window-width . 0.3)))
   (bind-key "C-c C-n" #'org-noter 'pdf-view-mode-map)
