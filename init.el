@@ -634,6 +634,12 @@ Containing LEFT, and RIGHT aligned respectively."
   (push '(lambda (_) (menu-bar-mode -1)) (cdr (last after-make-frame-functions)))
   (add-to-list 'default-frame-alist '(font . "Iosevka-18")))
 
+;; ** window
+
+(use-package window
+  :custom
+  (split-width-threshold 0))
+
 ;; ** simple
 
 (use-package simple
