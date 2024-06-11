@@ -2934,6 +2934,14 @@ If FRAME is omitted or nil, use currently selected frame."
   :custom-face
   (font-lock-bracket-face ((t (:foreground "tan3")))))
 
+;; ** always yes
+
+;; https://goykhman.ca/gene/blog/2024-06-09-always-yes-in-emacs-lisp.html
+(defun always-yes (&rest args)
+  (cl-letf (((symbol-function 'yes-or-no-p) #'always)
+            ((symbol-function 'y-or-n-p) #'always))
+    (funcall-interactively (car args) (cdr args))))
+
 ;; * END OF FILE
 ;; ** envrc
 
