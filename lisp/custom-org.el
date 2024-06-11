@@ -58,13 +58,19 @@ then opened in a new buffer."
 ;; ** org open other window
 
 (defun my/org-open-at-point-other-window ()
-  "Open at point other window"
+  "Open org link at point in other window."
   (interactive)
-  (let ((org-link-frame-setup (append '((file . find-file-other-window)) org-link-frame-setup)))
-    (org-open-at-point)))
+  (let ((org-link-frame-setup (append '((file . find-file-other-window)) org-link-frame-setup))
+	(fill-col-p visual-fill-column-mode)
+	(prev-buf (current-buffer)))
+    (visual-fill-column-mode -1)
+    (org-open-at-point)
+    (if fill-col-p
+	(with-current-buffer prev-buf
+	  (visual-fill-column-mode fill-col-p)))))
 
 (defun my/org-open-at-point-other-frame ()
-  "Open at point other frame"
+  "Open org link at point in other frame."
   (interactive)
   (let ((org-link-frame-setup (append '((file . find-file-other-frame)) org-link-frame-setup)))
     (org-open-at-point)))

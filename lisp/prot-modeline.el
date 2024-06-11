@@ -46,6 +46,10 @@
   "String length after which truncation should be done in small windows."
   :type 'natnum)
 
+(defcustom prot-modeline-string-max-length 60
+  "String length after which truncation should be done in small windows."
+  :type 'natnum)
+
 ;;;; Faces
 
 (defface prot-modeline-indicator-red
@@ -188,7 +192,9 @@ This is a more general and less stringent variant of
 Truncation is done up to `prot-modeline-string-truncate-length'."
   (if (prot-modeline--string-truncate-p str)
       (concat (substring str 0 prot-modeline-string-truncate-length) "...")
-    str))
+    (if (> (length str) prot-modeline-string-max-length)
+	(concat (substring str 0 prot-modeline-string-max-length) "...")
+      str)))
 
 (defun prot-modeline-string-truncate-end (str)
   "Like `prot-modeline-string-truncate' but truncate from string beginning."

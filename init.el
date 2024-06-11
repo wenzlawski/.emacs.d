@@ -381,6 +381,8 @@
   (prot-modeline-subtle-mode 1))
 
 (setq mode-line-compact nil) ; Emacs 28
+(setopt prot-modeline-string-truncate-length 15)
+(setopt prot-modeline-string-max-length 40)
 ;; write a function to do the spacing
 (defun simple-mode-line-render (left right)
   "Return a string of `window-width' length.
@@ -388,10 +390,12 @@ Containing LEFT, and RIGHT aligned respectively."
   (let ((available-width
          (- (window-total-width)
             (+ (length (format-mode-line left))
-               (length (format-mode-line right))))))
+               (length (format-mode-line right)))
+	    2)))
     (append left
             (list (format (format "%%%ds" available-width) ""))
             right)))
+
 ;; (setq mode-line-right-align-edge 'right-margin)
 (setq-default mode-line-format
               '((:eval
@@ -404,13 +408,13 @@ Containing LEFT, and RIGHT aligned respectively."
                     prot-modeline-buffer-identification
 		    " "
 		    mode-line-position
-                    prot-modeline-major-mode
                     prot-modeline-process
-                    "  "
+                    " "
                     prot-modeline-vc-branch
                     "  "
                     prot-modeline-eglot)
 		  '(" "
+                    prot-modeline-major-mode
 		    prot-modeline-misc-info
 		    " ")))))
 ;;(prot-modeline-subtle-mode)
@@ -638,7 +642,7 @@ Containing LEFT, and RIGHT aligned respectively."
 
 (use-package window
   :custom
-  (split-width-threshold 60)
+  (split-width-threshold 90)
   (split-height-threshold 80))
 
 ;; ** simple
