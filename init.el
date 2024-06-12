@@ -1452,7 +1452,6 @@ This function can be used as the value of the user option
 ;; ** anzu
 
 (use-package anzu
-  :disabled
   :straight t
   :bind
   ([remap query-replace] . anzu-query-replace)
