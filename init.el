@@ -1449,6 +1449,17 @@ This function can be used as the value of the user option
   ("C-c r >" . substitute-target-to-end-of-buffer)
   ("C-c r <" . substitute-target-to-beginning-of-buffer))
 
+;; ** anzu
+
+(use-package anzu
+  :disabled
+  :straight t
+  :bind
+  ([remap query-replace] . anzu-query-replace)
+  ([remap query-replace-regexp] . anzu-query-replace-regexp)
+  :config
+  (global-anzu-mode 1))
+
 ;; ** occur-x
 
 (use-package occur-x
@@ -2307,6 +2318,11 @@ See URL `http://pypi.python.org/pypi/ruff'."
 	("C-c C-t r" . go-test-current-test-cache)
 	("C-c C-t b" . go-test-current-file-benchmarks)
 	("C-c C-t B" . go-test-current-project-benchmarks)))
+
+;; ** html
+
+(use-package sgml-mode
+  :hook (html-mode . (lambda () (setq tab-width 2))))
 
 ;; * ORG
 
