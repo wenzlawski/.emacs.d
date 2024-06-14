@@ -2357,6 +2357,11 @@ See URL `http://pypi.python.org/pypi/ruff'."
 (use-package yaml-mode
   :straight t)
 
+;; ** toml
+
+(use-package toml-mode
+  :straight t)
+
 ;; * ORG
 
 (require 'setup-org)
