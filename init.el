@@ -2696,13 +2696,18 @@ and \"apikey\" as USER."
 
 (setq my/gptel-save-dir "~/Dropbox/ai/")
 
+(defun my/gptel-set-save-dir ()
+  "Set the save dir for gptel conversations."
+  (if my/gptel-save-dir (cd my/gptel-save-dir)))
+
+(add-hook 'gptel-mode-hook #'my/gptel-set-save-dir)
+
 (defun my/focus-or-make-ai-frame ()
   "Focus or create a new frame and run `gptel'."
   (interactive)
   (condition-case nil
       (select-frame-by-name "ai")
     (error (my/make-ai-frame)))
-  (if my/gptel-save-dir (cd my/gptel-save-dir))
   nil)
 
 ;; ** anki-helper
