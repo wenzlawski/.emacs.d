@@ -1011,10 +1011,12 @@ Append with current prefix arg."
 	       '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
 		 nil
 		 (window-parameters (mode-line-format . none)))))
+
 (use-package embark-consult
   :straight t
   :after consult embark
   :hook (embark-collect-mode . consult-preview-at-point-mode))
+
 (use-package dash
   :straight t)
 (use-package embark-vc
@@ -2349,6 +2351,11 @@ See URL `http://pypi.python.org/pypi/ruff'."
 
 (use-package sgml-mode
   :hook (html-mode . (lambda () (setq tab-width 2))))
+
+;; ** yaml
+
+(use-package yaml-mode
+  :straight t)
 
 ;; * ORG
 
