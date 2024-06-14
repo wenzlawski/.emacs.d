@@ -2646,6 +2646,7 @@ The browser to used is specified by the
   :custom
   (gptel-default-mode #'org-mode)
   (gptel-model "gpt-4o")
+  (gptel-expert-commands t)
   (gptel-directives
    '((default . "You are a large language model living in Emacs and a helpful assistant. Respond concisely.")
      (programming . "You are a large language model and a careful programmer. Provide code and only code as output without any additional text, prompt or note.")
@@ -2690,12 +2691,19 @@ and \"apikey\" as USER."
        ;;(message "org-capture: %s" (error-message-string ex))
        (delete-frame)))))
 
+(defvar my/gptel-save-dir nil
+  "Default dir to save gptel conversations to.")
+
+(setq my/gptel-save-dir "~/Dropbox/ai/")
+
 (defun my/focus-or-make-ai-frame ()
   "Focus or create a new frame and run `gptel'."
   (interactive)
   (condition-case nil
       (select-frame-by-name "ai")
-    (error (my/make-ai-frame))))
+    (error (my/make-ai-frame)))
+  (if my/gptel-save-dir (cd my/gptel-save-dir))
+  nil)
 
 ;; ** anki-helper
 
