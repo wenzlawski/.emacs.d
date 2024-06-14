@@ -409,13 +409,13 @@ Containing LEFT, and RIGHT aligned respectively."
 		    " "
 		    mode-line-position
                     prot-modeline-process
+                    prot-modeline-major-mode
                     " "
-                    prot-modeline-vc-branch
+		    prot-modeline-vc-branch
                     "  "
                     prot-modeline-eglot)
 		  '(" "
-                    prot-modeline-major-mode
-		    prot-modeline-misc-info
+      		    prot-modeline-misc-info
 		    " ")))))
 ;;(prot-modeline-subtle-mode)
 
@@ -596,7 +596,7 @@ Containing LEFT, and RIGHT aligned respectively."
 	auto-save-default t
 	inhibit-compacting-font-caches t
 	truncate-string-ellipsis "…"
-	shell-file-name (executable-find "fish")
+	shell-file-name (executable-find "zsh")
 	confirm-kill-emacs 'yes-or-no-p
 	redisplay-dont-pause t
 	sentence-end-double-space nil
@@ -1496,7 +1496,10 @@ This function can be used as the value of the user option
   :bind-keymap
   ("C-x p" . projectile-command-map)
   :bind
-  (:map projectile-command-map ("b" . consult-project-buffer))
+  (:map projectile-command-map
+	("b" . consult-project-buffer)
+	("s s" . projectile-ripgrep)
+	("s a" . projectile-ag))
   :config
   (setq projectile-project-search-path
 	'("~/fun/" "~/fun/web/" "~/fun/python" "~/fun/julia" "~/fun/projects" "~/dotfiles" "~/Dropbox/repos"))

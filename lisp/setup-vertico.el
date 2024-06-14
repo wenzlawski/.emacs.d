@@ -7,19 +7,6 @@
 ;;; Commentary:
 ;;; Code:
 
-;; Adapted from vertico-reverse
-(defun vertico-bottom--display-candidates (lines)
-  "Display LINES in bottom."
-  (move-overlay (bound-and-true-p vertico--candidates-ov) (point-min) (point-min))
-  (unless (eq (bound-and-true-p vertico-resize) t)
-    (setq lines (nconc (make-list (max 0 (- (bound-and-true-p vertico-count) (length lines))) "\n") lines)))
-  (let ((string (apply #'concat lines)))
-    (add-face-text-property 0 (length string) 'default 'append string)
-    (overlay-put (bound-and-true-p vertico--candidates-ov) 'before-string string)
-    (overlay-put (bound-and-true-p vertico--candidates-ov) 'after-string nil))
-  (vertico--resize-window (length lines)))
-
-;; Enable vertico
 (use-package vertico
   :straight t
   :custom-face
@@ -52,14 +39,6 @@
      (file (vertico-sort-function . sort-directories-first)
            (+vertico-transform-functions . +vertico-highlight-directory)))))
 
-(defun my/vertico-quick-jump-select ()
-  "Jump to candidate using quick keys and select."
-  (interactive)
-  (vertico-quick-jump)
-  (vertico-directory-enter))
-
-(bind-key "`" #'my/vertico-quick-jump-select 'vertico-map)
-
 (use-package vertico-quick
   :after vertico
   :bind
@@ -80,6 +59,25 @@
               ("M-DEL" . vertico-directory-delete-word))
   ;; Tidy shadowed file names
   :hook (rfn-eshadow-update-overlay . vertico-directory-tidy))
+
+(defun my/vertico-quick-jump-select ()
+  "Jump to candidate using quick keys and select."
+  (interactive)
+  (vertico-quick-jump)
+  (vertico-directory-enter))
+
+(bind-key "`" #'my/vertico-quick-jump-select 'vertico-map)
+
+(defun vertico-bottom--display-candidates (lines)
+  "Display LINES in bottom."
+  (move-overlay (bound-and-true-p vertico--candidates-ov) (point-min) (point-min))
+  (unless (eq (bound-and-true-p vertico-resize) t)
+    (setq lines (nconc (make-list (max 0 (- (bound-and-true-p vertico-count) (length lines))) "\n") lines)))
+  (let ((string (apply #'concat lines)))
+    (add-face-text-property 0 (length string) 'default 'append string)
+    (overlay-put (bound-and-true-p vertico--candidates-ov) 'before-string string)
+    (overlay-put (bound-and-true-p vertico--candidates-ov) 'after-string nil))
+  (vertico--resize-window (length lines)))
 
 ;; *** Highlight files in completing read
 
