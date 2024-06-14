@@ -6,6 +6,12 @@
   :straight t
   :commands (consult-customize)
   :hook (completion-list-mode . consult-preview-at-point-mode)
+  :custom
+  (consult-locate-args "locate")
+  (consult-narrow-key "<")
+  (consult-async-refresh-delay 0.15)
+  (consult-async-input-throttle 0.2)
+  (consult-async-input-debounce 0.1)
   :bind
   ([remap Info-search] . consult-info)
   ;; C-x bindings in `ctl-x-map'
@@ -26,7 +32,7 @@
   ;; ("M-o" . consult-outline)
   ;; M-s bindings in `search-map'
   ("M-s d" . consult-fd)
-  ("M-s c" . consult-locate)
+  ;; ("M-s c" . consult-locate)
   ("M-s g" . consult-grep)
   ("M-s G" . consult-git-grep)
   ("M-s R" . consult-ripgrep)
@@ -105,7 +111,19 @@
       (consult-notes)))
 
   ;; NOTE: ' and #' don't seem to work here.
-  (consult-customize consult-notes my/consult-notes-other-window :preview-key "M-."))
+  (consult-customize consult-notes my/consult-notes-other-window :preview-key "M-.")
+
+  (consult-customize
+   consult-theme
+   :preview-key (list "C-SPC" :debounce 0.5 'any))
+
+  (consult-customize
+   consult-ripgrep consult-git-grep consult-grep
+   consult-bookmark consult-recent-file
+   consult--source-recent-file consult--source-project-recent-file consult--source-bookmark
+   :preview-key "C-SPC")
+
+  )
 
 ;;; consult-notes-denote padding
 (with-eval-after-load 'consult-notes-denote

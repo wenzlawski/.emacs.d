@@ -49,6 +49,10 @@
   (vertico-quick1 "arstgm")
   (vertico-quick2 "neluykh"))
 
+(use-package vertico-repeat
+  :after vertico
+  :hook (minibuffer-setup . vertico-repeat-save))
+
 ;; Configure directory extension.
 (use-package vertico-directory
   :after vertico
