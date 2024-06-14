@@ -81,8 +81,9 @@ abort `\\[org-capture-kill]'."))))
 	org-todo-keywords '((sequence "TODO" "IN-PROGRESS" "WAITING" "|" "DONE"))
 	org-hide-emphasis-markers t
 	org-latex-compiler "xelatex"
-	org-refile-targets '((nil :level . 5)
-			     (org-agenda-files :level . 5)
+	org-refile-targets '((nil :level . 8)
+			     (org-agenda-files :level . 8)
+			     ("personal.org" :maxlevel . 3)
 			     ("refile.org" :level . 0)
 			     ("resources.org" :level . 1))
 	org-refile-use-outline-path 'file
@@ -220,7 +221,7 @@ Triggered by a custom macOS Quick Action with a keyboard shortcut."
 	   "* %(my/org-mac-link-librewolf-get-frontmost-url) :link:\n%U\n%?" :prepend t)
 	  ("lb" "Bookmark" entry (id "23CDFA52-0EE4-4DAA-8B8B-E2D105E6293E") "*** [[%:link][%:description]] %^g\nSCHEDULED: %T%?")
 	  ("w" "Web template" entry (file "refile.org")
-           "* %?%:description\nSource: %:link\n\nTitle: %:description\n\n#+begin_quote\n%i\n#+end_quote" :empty-lines 1)
+           "* %?%:description\nSource: %:link\n\nTitle: %:description\n\n#+begin_quote\n%i\n#+end_quote" :empty-lines 1 :prepend t)
 	  ))
 
   ;; ** org-capture frame
@@ -247,13 +248,14 @@ Triggered by a custom macOS Quick Action with a keyboard shortcut."
     (if (equal "capture" (frame-parameter nil 'name))
 	(progn
 	  (delete-frame)
-	  (if (eq 'darwin system-type)
-	      (ns-do-applescript "tell application \"System Events\"
-    tell process \"finder\"
-        activate
-        keystroke tab using {command down}
-    end tell
-end tell")))))
+	  ;; (if (eq 'darwin system-type)
+;; 	      (ns-do-applescript "tell application \"System Events\"
+;;     tell process \"finder\"
+;;         activate
+;;         keystroke tab using {command down}
+;;     end tell
+;; end tell"))
+	  )))
 
   (with-eval-after-load 'org-capture
     (defun my/org-capture-finalize (&optional stay-with-capture)

@@ -606,6 +606,7 @@ Containing LEFT, and RIGHT aligned respectively."
 	;; frame-title-format '("" "what the %b")
 	ns-use-proxy-icon t
 	cursor-type t
+	;; cursor-type ‘(hbar . 8))
 	blink-cursor-delay 1
 	blink-cursor-interval 0.3
 	register-preview-delay 0.25
@@ -876,7 +877,6 @@ Append with current prefix arg."
 
 (use-package texfrag
   :straight t
-  :hook (html-mode eww-mode)
   :custom
   (texfrag-scale 0.75))
 
@@ -2409,6 +2409,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
     2)))
 
 (use-package eww
+  :hook (eww-mode . outline-minor-mode)
   :bind
   ("C-c w" . eww)
   (:map eww-mode-map
@@ -2446,7 +2447,8 @@ The browser to used is specified by the
   (shr-max-image-proportion 0.4)
   (shr-use-colors nil)
   (shr-use-fonts nil)
-  (shr-folding-mode t))
+  (shr-folding-mode t)
+  (shr-max-width 120))
 
 ;; ** url-vars browse url
 
@@ -2457,6 +2459,8 @@ The browser to used is specified by the
 (use-package browse-url
   :custom
   (browse-url-browser-function '(("youtube\\.com" . browse-url-default-browser)
+				 ("github\\.com" . browse-url-default-browser)
+				 ("wikipedia\\.org" . browse-url-default-browser)
 				 ("."             . eww-browse-url))))
 
 ;; ** denote
@@ -2670,8 +2674,7 @@ and \"apikey\" as USER."
       (user-error "No `gptel-api-key' found in the auth source"))))
 
 (defun my/make-ai-frame ()
-  "Create a new frame and run `gptel'."
-  (interactive)
+  "Make a new frame and run `gptel'."
   (make-frame '((name . "ai")
                 (top . 300)
                 (left . 700)
@@ -2686,6 +2689,13 @@ and \"apikey\" as USER."
       ('error
        ;;(message "org-capture: %s" (error-message-string ex))
        (delete-frame)))))
+
+(defun my/focus-or-make-ai-frame ()
+  "Focus or create a new frame and run `gptel'."
+  (interactive)
+  (condition-case nil
+      (select-frame-by-name "ai")
+    (error (my/make-ai-frame))))
 
 ;; ** anki-helper
 
