@@ -1362,44 +1362,7 @@ This function can be used as the value of the user option
 
 ;; ** vertico
 
-;; Adapted from vertico-reverse
-(defun vertico-bottom--display-candidates (lines)
-  "Display LINES in bottom."
-  (move-overlay (bound-and-true-p vertico--candidates-ov) (point-min) (point-min))
-  (unless (eq (bound-and-true-p vertico-resize) t)
-    (setq lines (nconc (make-list (max 0 (- (bound-and-true-p vertico-count) (length lines))) "\n") lines)))
-  (let ((string (apply #'concat lines)))
-    (add-face-text-property 0 (length string) 'default 'append string)
-    (overlay-put (bound-and-true-p vertico--candidates-ov) 'before-string string)
-    (overlay-put (bound-and-true-p vertico--candidates-ov) 'after-string nil))
-  (vertico--resize-window (length lines)))
-
-;; Enable vertico
-(use-package vertico
-  :straight t
-  :custom-face
-  ;;(vertico-current ((t (:background "slate"))))
-  :custom
-  (vertico-scroll-margin 0)
-  (vertico-count 10)
-  (vertico-resize 'grow-only)
-  :init
-  (vertico-mode)
-  ;; (advice-add #'vertico--display-candidates
-  ;; 	      :override #'vertico-bottom--display-candidates)
-  :config
-  (bind-key "C-c C-n" #'vertico-quick-jump 'vertico-map))
-
-
-(use-package vertico-multiform
-  :straight nil
-  :after vertico
-  :init
-  (vertico-multiform-mode)
-  :custom
-  (vertico-multiform-commands
-   '((consult-ripgrep buffer)
-     (consult-buffer flat))))
+(require 'setup-vertico)
 
 ;; ** consult
 
