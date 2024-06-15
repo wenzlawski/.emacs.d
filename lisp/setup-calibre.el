@@ -24,17 +24,18 @@
 	     calibredb-tag-width
 	     calibredb-ids-width
 	     calibredb-condense-comments)
-  :config
-  (setq calibredb-root-dir "~/Dropbox/Calibre Library"
-	calibredb-db-dir (expand-file-name "metadata.db" calibredb-root-dir)
-	calibredb-id-width 5
-	calibredb-title-width 55
-	calibredb-preferred-format 'pdf
-	calibredb-library-alist '(("~/Dropbox/Calibre Library"))))
+  :bind
+  (:map calibredb-search-mode-map
+	("f" . calibredb-add-format))
+  :custom
+  (calibredb-root-dir "~/Dropbox/Calibre Library")
+  (calibredb-db-dir (expand-file-name "metadata.db" calibredb-root-dir))
+  (calibredb-id-width 5)
+  (calibredb-title-width 55)
+  (calibredb-preferred-format 'pdf)
+  (calibredb-library-alist '(("~/Dropbox/Calibre Library"))))
 
 ;;; Fix the author display
-(require 'calibredb)
-(require 's)
 
 (with-eval-after-load 'calibredb
   (defun calibredb-all-author-sort nil "Get all author-sort and return as a list."

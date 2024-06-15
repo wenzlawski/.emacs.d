@@ -2785,7 +2785,10 @@ and \"apikey\" as USER."
 (defun my/pdf-view-current-page ()
   "Show the current page number in the minibuffer."
   (interactive)
-  (message "%d/%d" (pdf-view-current-page) (pdf-info-number-of-pages)))
+  (let* ((page (pdf-view-current-page))
+	 (total (pdf-info-number-of-pages))
+	 (percent (/ (* 100 page) total)))
+    (message "%d/%d %d%%" page total percent )))
 
 (defun my/pdf-view-open-externally ()
   "Open the current pdf in an external viewer."
