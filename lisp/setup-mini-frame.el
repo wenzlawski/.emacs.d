@@ -3,12 +3,6 @@
 ;;; Commentary:
 ;;; Code:
 
-;; TODO Somehow need to find a way to update the position of the child frame to
-;; fit the updated dimensions of the frame on each new minibuffer session. Can
-;; either be done with a hook on the minibuffer, or with before advice on the
-;; display function.
-
-
 (use-package mini-frame
   :straight t
   :custom
@@ -21,19 +15,21 @@
      debugger-eval-expression))
   (mini-frame-color-shift-step 0)
   (mini-frame-background-color-function (lambda () (modus-themes-get-color-value 'bg-blue-nuanced)))
-  (mini-frame-show-parameters
-   `((top . 0.25)
-     (width . 160)
-     (left . 0.5)
-     )))
+  (mini-frame-show-parameters #'my/mini-frame-show-parameters))
 
 (with-eval-after-load 'mini-frame
 
   (defun my/mini-frame-show-parameters ()
     "Determine the frame parameters on show."
-    ;; 0.6 on large monitor (250w) (120 col)
-    ;; 0.8 on small monitor (120w) (100 col))
-    )
+    (let ((params '((top . 0.25)
+		    (left . 0.5)))
+	  (framew (frame-width)))
+      (cond
+       ((when (> framew 200)
+	  (push '(width . 0.6) params)))
+       ((when (> framew 120)
+	  (push '(width . 0.8) params)))
+       (t (push '(width . 1.0) params)))))
   
   (defun my/mini-frame-update-color ()
     "Update the color of the posframe"
