@@ -22,6 +22,11 @@
   :config
   (bind-key "C-c C-n" #'vertico-quick-jump 'vertico-map))
 
+(use-package vertico-grid
+  :after vertico
+  :custom
+  (vertico-grid-min-columns 3))
+
 (use-package vertico-multiform
   :after vertico
   :init
@@ -31,6 +36,7 @@
    `((consult-ripgrep buffer)
      (consult-buffer flat (vertico-cycle . t))
      (projectile-find-file grid)
+     (projectile-switch-project grid)
      (execute-extended-command 
       (+vertico-transform-functions . +vertico-highlight-enabled-mode))
      ))
@@ -65,10 +71,14 @@
   :hook (rfn-eshadow-update-overlay . vertico-directory-tidy))
 
 (defun my/vertico-quick-jump-select ()
-  "Jump to candidate using quick keys and select."
+  "Jump to candidate using quick keys."
   (interactive)
-  (vertico-quick-jump)
-  (vertico-directory-enter))
+  (if (= vertico--total 0)
+      (and (minibuffer-message "No match") nil)
+    (let ((idx (vertico-quick--read)))
+      (when (consp idx) (setq idx (vertico-quick--read (car idx))))
+      (when idx (setq vertico--index idx)
+	    (vertico-directory-enter)))))
 
 (bind-key "`" #'my/vertico-quick-jump-select 'vertico-map)
 

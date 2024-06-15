@@ -75,5 +75,5 @@
     (my/mini-frame-update-color)
     ))
 
-(provide 'setup-popup)
-;;; setup-popup.el ends here
+(provide 'setup-mini-frame)
+;;; setup-mini-frame.el ends here

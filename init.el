@@ -1439,7 +1439,7 @@ This function can be used as the value of the user option
 
 ;; ** mini-frame
 
-(require 'setup-popup)
+(require 'setup-mini-frame)
 
 ;; ** grep
 
