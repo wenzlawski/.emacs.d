@@ -881,6 +881,13 @@ Append with current prefix arg."
   (texfrag-scale 0.75))
 
 ;; * HELP
+;; ** help
+
+(use-package help
+  :bind
+  (:map help-map
+	("n" . nil)))
+
 ;; ** tldr
 
 (use-package tldr
@@ -1154,7 +1161,7 @@ Append with current prefix arg."
 		(bound-and-true-p vertico--input))
       (setq-local corfu-auto nil)       ; Ensure auto completion is disabled
       (corfu-mode 1)))
-  (add-hook 'minibuffer-setup-hook #'corfu-enable-always-in-minibuffer 1)
+  ;; (add-hook 'minibuffer-setup-hook #'corfu-enable-always-in-minibuffer 1)
 
   (defun my-corfu-combined-sort (candidates)
     "Sort CANDIDATES using both display-sort-function and corfu-sort-function."
@@ -1429,6 +1436,10 @@ This function can be used as the value of the user option
 ;; ** consult
 
 (require 'setup-consult)
+
+;; ** mini-frame
+
+(require 'setup-popup)
 
 ;; ** grep
 

@@ -51,24 +51,29 @@
 (pretty-hydra-define my/hydra-toggle-menu
   (:title "Toggle Menu" :quit-key "q" :color pink)
   ("Modes"
-   (("l" visual-line-mode "visual line" :toggle t)
-    ("v" visual-fill-column-mode "fill column" :toggle t)
-    ("p" variable-pitch-mode "variable pitch" :toggle (default-value (bound-and-true-p buffer-face-mode)))
+   (
+    ("c" centered-cursor-mode "center cursor" :toggle t)
     ("h" hl-line-mode "hl-line" :toggle t)
+    ("l" visual-line-mode "visual line" :toggle t)
     ("m" hide-mode-line-mode "mode line" :toggle t)
-    ("c" centered-cursor-mode "center cursor" :toggle t))
+    ("p" variable-pitch-mode "variable pitch" :toggle (default-value (bound-and-true-p buffer-face-mode)))
+    ("v" visual-fill-column-mode "fill column" :toggle t)
+    )
    "Display"
-   (("t" #'consult-theme "theme")
-    ("T" #'fontaine-set-preset "font" :exit t)
+   (
     ("d" #'toggle-frame-fullscreen "fullscreen" :toggle (frame-parameter nil 'fullscreen))
+    ("e" (lambda () (interactive) (setq visual-fill-column-center-text (not (bound-and-true-p visual-fill-column-center-text)))) "center text" :toggle (default-value (bound-and-true-p visual-fill-column-center-text)))
+    ("t" #'consult-theme "theme")
+    ("T" #'fontaine-set-preset "font" :exit t)
+    ("u" mini-frame-mode "mini-frame" :toggle t :exit t)
     ("w" #'my/distraction-free "writing" :toggle (default-value (bound-and-true-p olivetti-mode)))
-    ("e" (lambda () (interactive) (setq visual-fill-column-center-text (not (bound-and-true-p visual-fill-column-center-text)))) "center text"
-     :toggle (default-value (bound-and-true-p visual-fill-column-center-text))))
+    )
    "Editing"
-   (("i" #'indent-guide-mode "indent guide")
-    ("s" display-line-numbers-mode "line numbers" :toggle t)
+   (
     ("a" copilot-mode "copilot" :toggle t)
     ("f" flycheck-mode "flycheck" :toggle t)
+    ("i" #'indent-guide-mode "indent guide")
+    ("s" display-line-numbers-mode "line numbers" :toggle t)
     ("x" (lambda () (interactive) (setopt corfu-auto (not corfu-auto)) (corfu-mode -1) (corfu-mode)) "corfu auto" :toggle (default-value corfu-auto))
     ("y" yas-minor-mode "yasnippet" :toggle t)
     )))
