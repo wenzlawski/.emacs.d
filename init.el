@@ -1001,6 +1001,11 @@ Append with current prefix arg."
      (?z . avy-action-zap-to-char)))
   (avy-keys '(?a ?r ?s ?t ?g ?m ?n ?e ?i ?o)))
 
+;; ** emacs-everywhere
+
+(use-package emacs-everywhere
+  :straight t)
+
 ;; ** embark
 
 (use-package embark
@@ -1119,7 +1124,8 @@ Append with current prefix arg."
   ;; Enable Corfu only for certain modes.
   :hook ((prog-mode . corfu-mode)
          (shell-mode . corfu-mode)
-         (eshell-mode . corfu-mode))
+         (eshell-mode . corfu-mode)
+	 (comint-mode . corfu-mode))
 
   ;; Recommended: Enable Corfu globally.  This is recommended since Dabbrev can
   ;; be used globally (M-/).  See also the customization variable
@@ -1161,6 +1167,8 @@ Append with current prefix arg."
 		(bound-and-true-p vertico--input))
       (setq-local corfu-auto nil)       ; Ensure auto completion is disabled
       (corfu-mode 1)))
+  ;; FIXME: mini-frame breaks this, as corfu is not quit when exiting and ghost
+  ;; fragments remain on display
   ;; (add-hook 'minibuffer-setup-hook #'corfu-enable-always-in-minibuffer 1)
 
   (defun my-corfu-combined-sort (candidates)
@@ -2017,11 +2025,59 @@ See URL `http://pypi.python.org/pypi/ruff'."
   :config
   (ctrlf-mode))
 
+;; ** slime sly
+
+(use-package slime
+  :disabled
+  :straight t
+  :bind
+  (:map slime-parent-map
+	("C-h C-h" . slime-describe-symbol))
+  :init
+  (setq inferior-lisp-program "sbcl"))
+
+(with-eval-after-load 'slime
+  (defun my/slime-capf ()
+    ;; (add-hook 'orderless-style-dispatchers #'my/orderless-dispatch-flex-first nil 'local)
+    (setq-local completion-at-point-functions
+		(list (cape-capf-super
+		       #'yasnippet-capf
+		       #'tempel-expand
+		       #'slime-simple-completion-at-point
+		       #'cape-file))))
+
+  (add-hook 'slime-mode-hook #'my/slime-capf)
+  (add-hook 'slime-repl-mode-hook #'my/slime-capf))
+
+(use-package sly
+  :straight t
+  :init
+  (setq inferior-lisp-program "sbcl"))
+
+;; (with-eval-after-load 'sly
+;;   (defun my/sly-capf ()
+;;     ;; (add-hook 'orderless-style-dispatchers #'my/orderless-dispatch-flex-first nil 'local)
+;;     (setq-local completion-at-point-functions
+;; 		(list (cape-capf-super
+;; 		       #'yasnippet-capf
+;; 		       #'tempel-expand
+;; 		       #'sly-complete-symbol
+;; 		       #'cape-file))))
+
+;;   (remove-hook 'sly-mode-hook #'sly--setup-completion)
+;;   (add-hook 'sly-mode-hook #'my/sly-capf)
+;;   )
+
+
 ;; * LANGUAGE MODES
 ;; ** lisp
 
 (use-package lisp-mode
   :hook (lisp-data-mode . electric-pair-mode))
+
+(use-package hyperspec
+  :custom
+  (common-lisp-hyperspec-root "file:///nix/store/la0s72z56hgh6zi641bcdxhhcr85ldlr-sbcl-clhs-0.6.3/HyperSpec-7-0/HyperSpec/"))
 
 ;; ** elisp
 
@@ -2372,6 +2428,13 @@ See URL `http://pypi.python.org/pypi/ruff'."
 
 (use-package toml-mode
   :straight t)
+
+;; ** js json
+
+(use-package js
+  :hook (js-json-mode . (lambda () (setq tab-width 2)))
+  :custom
+  (js-indent-level 2))
 
 ;; * ORG
 

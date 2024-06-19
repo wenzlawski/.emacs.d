@@ -35,14 +35,11 @@
   (vertico-multiform-commands
    `((consult-ripgrep buffer)
      (consult-buffer flat (vertico-cycle . t))
-     (projectile-find-file grid)
-     (projectile-switch-project grid)
      (execute-extended-command 
       (+vertico-transform-functions . +vertico-highlight-enabled-mode))
      ))
   (vertico-multiform-categories
-   '((buffer flat (vertico-cycle . t))
-     (file (vertico-sort-function . sort-directories-first)
+   '((file (vertico-sort-function . sort-directories-first)
            (+vertico-transform-functions . +vertico-highlight-directory)))))
 
 (use-package vertico-quick

@@ -11,29 +11,20 @@
   (shell-command "awk -f ~/.emacs.d/scripts/escape_comma.awk /tmp/cat.bib > ~/cat.bib"))
 
 (use-package calibredb
-  :straight t
-  :commands (calibredb-getattr
-	     calibredb-format-column
-	     calibredb-get-file-path
-	     calibredb-attach-icon-for
-	     calibredb-title-face
-	     calibredb-title-width
-	     calibredb-format-width
-	     calibredb-date-width
-	     calibredb-author-width
-	     calibredb-tag-width
-	     calibredb-ids-width
-	     calibredb-condense-comments)
+  :straight t)
+
+(use-package calibredb-search
+  :after calibredb
   :bind
   (:map calibredb-search-mode-map
-	("f" . calibredb-add-format))
-  :custom
-  (calibredb-root-dir "~/Dropbox/Calibre Library")
-  (calibredb-db-dir (expand-file-name "metadata.db" calibredb-root-dir))
-  (calibredb-id-width 5)
-  (calibredb-title-width 55)
-  (calibredb-preferred-format 'pdf)
-  (calibredb-library-alist '(("~/Dropbox/Calibre Library"))))
+	("f" . calibredb-add-format)))
+
+(setopt calibredb-root-dir "~/Dropbox/Calibre Library"
+	calibredb-db-dir (expand-file-name "metadata.db" calibredb-root-dir)
+	calibredb-id-width 5
+	calibredb-title-width 55
+	calibredb-preferred-format 'pdf
+	calibredb-library-alist '(("~/Dropbox/Calibre Library")))
 
 ;;; Fix the author display
 
