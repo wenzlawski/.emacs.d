@@ -50,6 +50,12 @@ org-mode
 (ttl "#+TITLE: " p n "#+date: Created on " (format-time-string "[%Y-%m-%d %a]") n n q)
 (hargs "#+property: header-args" p " :" q)
 
+lisp-mode sly-mrepl-mode
+
+(lsy "asdf:load-system '" q)
+(dp "defparameter " q)
+(dv "defvar " q)
+
 ;; Local Variables:
 ;; mode: lisp-data
 ;; outline-regexp: "[a-z]"

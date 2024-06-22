@@ -106,7 +106,7 @@
   (unless (file-exists-p bootstrap-file)
     (with-current-buffer
         (url-retrieve-synchronously
-	 f         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
          'silent 'inhibit-cookies)
       (goto-char (point-max))
       (eval-print-last-sexp)))
@@ -949,34 +949,41 @@ Append with current prefix arg."
 
 (use-package ace-window
   :straight t
-  :custom
-  (aw-keys '(?a ?r ?s ?t ?g ?m ?n ?e ?i))
-  (aw-scope 'frame)
-  (aw-reverse-frame-list t)
-  (aw-dispatch-alist
-   '((?x aw-delete-window "Delete Window")
-     (?f aw-swap-window "Swap Windows")
-     (?F aw-move-window "Move Window")
-     (?c aw-copy-window "Copy Window")
-     (?j aw-switch-buffer-in-window "Select Buffer")
-     (?p aw-flip-window)
-     (?u aw-switch-buffer-other-window "Switch Buffer Other Window")
-     (?c aw-split-window-fair "Split Fair Window")
-     (?v aw-split-window-vert "Split Vert Window")
-     (?b aw-split-window-horz "Split Horz Window")
-     (?o delete-other-windows "Delete Other Windows")
-     (?? aw-show-dispatch-help)))
+  :init
+  (setopt aw-keys '(?a ?r ?s ?t ?g ?m ?n ?e ?i)
+	  aw-scope 'frame
+	  aw-reverse-frame-list t
+	  aw-dispatch-alist
+	  '((?x aw-delete-window "Delete Window")
+	    (?f aw-swap-window "Swap Windows")
+	    (?F aw-move-window "Move Window")
+	    (?c aw-copy-window "Copy Window")
+	    (?j aw-switch-buffer-in-window "Select Buffer")
+	    (?p aw-flip-window)
+	    (?u aw-switch-buffer-other-window "Switch Buffer Other Window")
+	    (?c aw-split-window-fair "Split Fair Window")
+	    (?v aw-split-window-vert "Split Vert Window")
+	    (?b aw-split-window-horz "Split Horz Window")
+	    (?o delete-other-windows "Delete Other Windows")
+	    (?? aw-show-dispatch-help)))
   :bind
   ("C-x o" . ace-window)
   ("C-<tab>" . ace-window))
 
-;; ** ace-link
+;; ** ace-link link-hint
 
 (use-package ace-link
+  :disabled
   :straight t
   :config
   (with-eval-after-load 'org (define-key org-mode-map (kbd "M-o") 'ace-link-org))
   (ace-link-setup-default))
+
+(use-package link-hint
+  :straight t
+  :commands (link-hint-open-link link-hint-copy-link)
+  :config
+  (with-eval-after-load 'org (define-key org-mode-map (kbd "M-o") 'link-hint-open-link)))
 
 ;; ** avy
 
@@ -1109,22 +1116,22 @@ Append with current prefix arg."
   (corfu-quit-at-boundary 'separator)   ;; Never quit at completion boundary
   (corfu-quit-no-match t) ;; Never quit, even if there is no match
   (corfu-preview-current nil)    ;; Disable current candidate preview
-  (corfu-preselect 'first)      ;; Preselect the prompt
-  (corfu-on-exact-match 'show)     ;; Configure handling of exact matches
+  (corfu-preselect 'valid)      ;; Preselect the prompt
+  (corfu-on-exact-match 'insert)     ;; Configure handling of exact matches
   (corfu-min-width 40)
   (corfu-max-width 40)
   (corfu-scroll-margin 3)        ;; Use scroll margin
   :bind
   (:map corfu-map
-        ;; Option 1: Unbind RET completely
-        ("RET" . nil))
+	;; Option 1: Unbind RET completely
+	("RET" . nil))
   ;; Option 2: Use RET only in shell modes
   ;; ("<return>" . (menu-item "" nil :filter corfu-insert-shell-filter)))
 
   ;; Enable Corfu only for certain modes.
   :hook ((prog-mode . corfu-mode)
-         (shell-mode . corfu-mode)
-         (eshell-mode . corfu-mode)
+	 (shell-mode . corfu-mode)
+	 (eshell-mode . corfu-mode)
 	 (comint-mode . corfu-mode))
 
   ;; Recommended: Enable Corfu globally.  This is recommended since Dabbrev can
@@ -1174,12 +1181,12 @@ Append with current prefix arg."
   (defun my-corfu-combined-sort (candidates)
     "Sort CANDIDATES using both display-sort-function and corfu-sort-function."
     (let ((candidates
-           (let ((display-sort-func (corfu--metadata-get 'display-sort-function)))
-             (if display-sort-func
+	   (let ((display-sort-func (corfu--metadata-get 'display-sort-function)))
+	     (if display-sort-func
 		 (funcall display-sort-func candidates)
 	       candidates))))
       (if corfu-sort-function
-          (funcall corfu-sort-function candidates)
+	  (funcall corfu-sort-function candidates)
 	candidates)))
 
   (setq corfu-sort-override-function #'my-corfu-combined-sort)
@@ -1261,12 +1268,12 @@ Append with current prefix arg."
   (setq-local completion-at-point-functions
 	      `(,(cape-capf-super
 		  #'yasnippet-capf
-                  (cape-capf-predicate
-                   #'elisp-completion-at-point
-                   #'my/ignore-elisp-keywords)
-                  #'cape-dabbrev
+		  (cape-capf-predicate
+		   #'elisp-completion-at-point
+		   #'my/ignore-elisp-keywords)
+		  #'cape-dabbrev
 		  #'tempel-complete)
-                cape-file)
+		cape-file)
 	      cape-dabbrev-min-length 5))
 
 (add-hook 'emacs-lisp-mode-hook #'my/setup-elisp)
@@ -1374,9 +1381,9 @@ This function can be used as the value of the user option
   (defun +orderless--consult-suffix ()
     "Regexp which matches the end of string with Consult tofu support."
     (if (and (boundp 'consult--tofu-char) (boundp 'consult--tofu-range))
-        (format "[%c-%c]*$"
-                consult--tofu-char
-                (+ consult--tofu-char consult--tofu-range -1))
+	(format "[%c-%c]*$"
+		consult--tofu-char
+		(+ consult--tofu-char consult--tofu-range -1))
       "$"))
 
   ;; Recognizes the following patterns:
@@ -1389,8 +1396,8 @@ This function can be used as the value of the user option
       `(orderless-regexp . ,(concat (substring word 0 -1) (+orderless--consult-suffix))))
      ;; File extensions
      ((and (or minibuffer-completing-file-name
-               (derived-mode-p 'eshell-mode))
-           (string-match-p "\\`\\.." word))
+	       (derived-mode-p 'eshell-mode))
+	   (string-match-p "\\`\\.." word))
       `(orderless-regexp . ,(concat "\\." (substring word 1) (+orderless--consult-suffix))))))
 
   ;; Define orderless style with initialism by default
@@ -1422,20 +1429,20 @@ This function can be used as the value of the user option
   ;; Combine substring, orderless and basic.
   ;;
   (setq completion-styles '(orderless basic)
-        completion-category-defaults nil
+	completion-category-defaults nil
         ;;; Enable partial-completion for files.
         ;;; Either give orderless precedence or partial-completion.
         ;;; Note that completion-category-overrides is not really an override,
         ;;; but rather prepended to the default completion-styles.
-        ;; completion-category-overrides '((file (styles orderless partial-completion))) ;; orderless is tried first
-        completion-category-overrides '((file (styles partial-completion)) ;; partial-completion is tried first
-                                        ;; enable initialism by default for symbols
-                                        (command (styles +orderless-with-initialism))
-                                        (variable (styles +orderless-with-initialism))
-                                        (symbol (styles +orderless-with-initialism)))
-        orderless-component-separator #'orderless-escapable-split-on-space ;; allow escaping space with backslash!
-        orderless-style-dispatchers (list #'+orderless-consult-dispatch
-                                          #'orderless-affix-dispatch)))
+	;; completion-category-overrides '((file (styles orderless partial-completion))) ;; orderless is tried first
+	completion-category-overrides '((file (styles partial-completion)) ;; partial-completion is tried first
+					;; enable initialism by default for symbols
+					(command (styles +orderless-with-initialism))
+					(variable (styles +orderless-with-initialism))
+					(symbol (styles +orderless-with-initialism)))
+	orderless-component-separator #'orderless-escapable-split-on-space ;; allow escaping space with backslash!
+	orderless-style-dispatchers (list #'+orderless-consult-dispatch
+					  #'orderless-affix-dispatch)))
 
 ;; ** vertico
 
@@ -1947,9 +1954,11 @@ See URL `http://pypi.python.org/pypi/ruff'."
 
   (add-to-list 'apheleia-mode-alist '(python-mode . ruff-isort))
   (add-to-list 'apheleia-mode-alist '(python-ts-mode . ruff-isort))
+
   (push
    '(zig-fmt zig-zig-bin "fmt" inplace) apheleia-formatters)
-
+  (push
+   '(nixfmt "alejandra") apheleia-formatters)
   (add-to-list 'apheleia-mode-alist '(zig-ts-mode . zig-fmt))
 
   (apheleia-global-mode))
@@ -2025,49 +2034,54 @@ See URL `http://pypi.python.org/pypi/ruff'."
   :config
   (ctrlf-mode))
 
-;; ** slime sly
+;; ** sly
 
-(use-package slime
-  :disabled
+(use-package sly
   :straight t
+  :custom-face
+  (sly-db-section-face ((t (:box (:line-width (2 . 2) :style flat-button :color "gray80")))))
   :bind
-  (:map slime-parent-map
-	("C-h C-h" . slime-describe-symbol))
+  (:map sly-mode-map
+	("C-j" . sly-eval-print-last-expression)
+	("C-h C-h" . sly-hyperspec-lookup))
   :init
   (setq inferior-lisp-program "sbcl"))
 
-(with-eval-after-load 'slime
-  (defun my/slime-capf ()
+(use-package sly-mrepl
+  :after sly
+  :bind
+  (:map sly-mrepl-mode-map
+	("C-h C-h" . sly-documentation-lookup)))
+
+(with-eval-after-load 'sly
+  (defun my/sly-capf ()
     ;; (add-hook 'orderless-style-dispatchers #'my/orderless-dispatch-flex-first nil 'local)
     (setq-local completion-at-point-functions
 		(list (cape-capf-super
 		       #'yasnippet-capf
 		       #'tempel-expand
-		       #'slime-simple-completion-at-point
+		       #'sly-complete-symbol
 		       #'cape-file))))
 
-  (add-hook 'slime-mode-hook #'my/slime-capf)
-  (add-hook 'slime-repl-mode-hook #'my/slime-capf))
+  (remove-hook 'sly-mode-hook #'sly--setup-completion)
+  (add-hook 'sly-mode-hook #'my/sly-capf)
 
-(use-package sly
-  :straight t
-  :init
-  (setq inferior-lisp-program "sbcl"))
+  (defun my/sly-update-color ()
+    "Update sly colors"
+    (set-face-attribute 'sly-db-section-face nil
+			:box '(:line-width (2 . 2) :style flat-button :color "gray80")))
+  )
 
-;; (with-eval-after-load 'sly
-;;   (defun my/sly-capf ()
-;;     ;; (add-hook 'orderless-style-dispatchers #'my/orderless-dispatch-flex-first nil 'local)
-;;     (setq-local completion-at-point-functions
-;; 		(list (cape-capf-super
-;; 		       #'yasnippet-capf
-;; 		       #'tempel-expand
-;; 		       #'sly-complete-symbol
-;; 		       #'cape-file))))
+;; ** hyperspec
 
-;;   (remove-hook 'sly-mode-hook #'sly--setup-completion)
-;;   (add-hook 'sly-mode-hook #'my/sly-capf)
-;;   )
+(with-eval-after-load 'hyperspec
+  (defun my/common-lisp-hyperspec-after (_)
+    "after advice for hyperspec."
+    (setq shr-inhibit-images t)
+    (eww-reload)
+    (scroll-up 7))
 
+  (advice-add #'common-lisp-hyperspec :after #'my/common-lisp-hyperspec-after))
 
 ;; * LANGUAGE MODES
 ;; ** lisp
@@ -2436,6 +2450,11 @@ See URL `http://pypi.python.org/pypi/ruff'."
   :custom
   (js-indent-level 2))
 
+;; ** graphviz
+
+(use-package graphviz-dot-mode
+  :straight t)
+
 ;; * ORG
 
 (require 'setup-org)
@@ -2776,24 +2795,24 @@ The browser to used is specified by the
 By default, the LLM host for the active backend is used as HOST,
 and \"apikey\" as USER."
     (if-let ((secret
-              (plist-get
-               (car (auth-source-search
-                     :host (or host (gptel-backend-host gptel-backend))
-                     :user (list (or user "apikey"))
-                     :require '(:secret)))
-               :secret)))
+	      (plist-get
+	       (car (auth-source-search
+		     :host (or host (gptel-backend-host gptel-backend))
+		     :user (list (or user "apikey"))
+		     :require '(:secret)))
+	       :secret)))
 	(if (functionp secret)
-            (encode-coding-string (funcall secret) 'utf-8)
-          secret)
+	    (encode-coding-string (funcall secret) 'utf-8)
+	  secret)
       (user-error "No `gptel-api-key' found in the auth source"))))
 
 (defun my/make-ai-frame ()
   "Make a new frame and run `gptel'."
   (make-frame '((name . "ai")
-                (top . 300)
-                (left . 700)
-                (width . 105)
-                (height . 25)))
+		(top . 300)
+		(left . 700)
+		(width . 105)
+		(height . 25)))
   (select-frame-by-name "ai")
   (my/frame-recenter)
   ;; (delete-other-windows)
@@ -3016,17 +3035,17 @@ If FRAME is omitted or nil, use currently selected frame."
 (defun buffer-local-set-key (key func)
   (interactive "KSet key on this buffer: \naCommand: ")
   (let* ((mode-name (format "%s-magic" (buffer-name)))
-         (name (intern mode-name))
-         (map-name (format "%s-map" mode-name))
-         (map (intern map-name)))
+	 (name (intern mode-name))
+	 (map-name (format "%s-map" mode-name))
+	 (map (intern map-name)))
     (unless (boundp map)
       (set map (make-sparse-keymap)))
     (eval
      `(define-minor-mode ,name
-        ,(concat
-          "Automagically built minor mode to define buffer-local keys.\n"
-          "\\{" map-name "}")
-        nil " Editing" ,map))
+	,(concat
+	  "Automagically built minor mode to define buffer-local keys.\n"
+	  "\\{" map-name "}")
+	nil " Editing" ,map))
     (eval
      `(define-key ,map ,key ',func))
     (funcall name t)))
@@ -3097,7 +3116,7 @@ If FRAME is omitted or nil, use currently selected frame."
 ;; https://goykhman.ca/gene/blog/2024-06-09-always-yes-in-emacs-lisp.html
 (defun always-yes (&rest args)
   (cl-letf (((symbol-function 'yes-or-no-p) #'always)
-            ((symbol-function 'y-or-n-p) #'always))
+	    ((symbol-function 'y-or-n-p) #'always))
     (funcall-interactively (car args) (cdr args))))
 
 ;; * END OF FILE
