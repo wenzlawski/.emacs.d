@@ -8,11 +8,15 @@ Categories: politics, tech, news, culture
 Keep categories to a minimum, they are to organise and filter.
 Can also do subtrees to organise.
 
-* Magazines                                                 :elfeed:magazine:
-** Leftist Magazines                                               :politics:
+* Magazines :magazine:
+** Leftist Magazines :politics:
 *** [[https://thebaffler.com/feed][The Baffler]]
 *** [[https://monthlyreview.org/feed][Monthly Review]]
 *** [[https://newleftreview.org/feed/][New Left Review]]
-* Blogs                                                         :elfeed:blog:
-* News                                                          :elfeed:news:
+* Blogs :elfeed:blog:
+* News :elfeed:news:
 ** Mainstream News
+* Arxiv :elfeed:arxiv:
+** [[http://export.arxiv.org/api/query?search_query=cat:stat.ML&start=0&max_results=100&sortBy=submittedDate&sortOrder=descending][Arxiv stat.ML]]
+** [[http://export.arxiv.org/api/query?search_query=cat:cs.LG&start=0&max_results=100&sortBy=submittedDate&sortOrder=descending][Arxiv cs.LG]]
+** [[http://export.arxiv.org/api/query?search_query=cat:cs.CL&start=0&max_results=100&sortBy=submittedDate&sortOrder=descending][Arxiv cs.CL]]

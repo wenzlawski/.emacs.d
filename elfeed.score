@@ -1,0 +1,21 @@
+;;; Elfeed score file                                     -*- lisp -*-
+((version 10)
+ ("title"
+  (:text "Transformer" :value 10 :type s)
+  (:text "Summarization" :value -50 :type s))
+ ("content")
+ ("title-or-content"
+  (:text "Gender Bias" :title-value 50 :content-value 50 :type s)
+  (:text "BERT" :title-value 100 :content-value 50 :type S)
+  (:text "Generalization" :title-value 30 :content-value 20 :type s)
+  (:text "out-of-distribution" :title-value 20 :content-value 30 :type s)
+  (:text "language model" :title-value 20 :content-value 30 :type s))
+ ("tag")
+ ("authors"
+  (:text "Percy Liang" :value 200 :type w)
+  (:text "Sebastian Ruder" :value 200 :type w))
+ ("feed")
+ ("link")
+ ("udf")
+ (mark nil)
+ ("adjust-tags"))

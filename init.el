@@ -2074,6 +2074,11 @@ See URL `http://pypi.python.org/pypi/ruff'."
 
 ;; ** hyperspec
 
+(use-package hyperspec
+  :after sly
+  :custom
+  (common-lisp-hyperspec-root "file:///nix/store/la0s72z56hgh6zi641bcdxhhcr85ldlr-sbcl-clhs-0.6.3/HyperSpec-7-0/HyperSpec/"))
+
 (with-eval-after-load 'hyperspec
   (defun my/common-lisp-hyperspec-after (_)
     "after advice for hyperspec."
@@ -2089,9 +2094,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
 (use-package lisp-mode
   :hook (lisp-data-mode . electric-pair-mode))
 
-(use-package hyperspec
-  :custom
-  (common-lisp-hyperspec-root "file:///nix/store/la0s72z56hgh6zi641bcdxhhcr85ldlr-sbcl-clhs-0.6.3/HyperSpec-7-0/HyperSpec/"))
+
 
 ;; ** elisp
 
@@ -2109,7 +2112,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
   :bind
   (:map python-ts-mode-map
 	("C-c M-e" . eglot)
-	("M-i" . completion-at-point)
+	("<C-i>" . completion-at-point)
 	("M-o" . consult-imenu)))
 
 (use-package pyenv-mode
@@ -2118,7 +2121,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
   (setq pyenv-mode-map
 	(let ((map (make-sparse-keymap)))
 	  map))
-  :hook (python-ts-mode .  pyenv-mode)
+  :hook (python-ts-mode . pyenv-mode)
   :bind
   (:map python-ts-mode-map
 	("C-c C-s" . pyenv-mode-set)
@@ -2508,17 +2511,35 @@ See URL `http://pypi.python.org/pypi/ruff'."
 
 (use-package elfeed
   :straight t
-  :disabled)
+  :hook (elfeed-search-mode . elfeed-update)
+  :custom
+  (elfeed-search-filter "@2-week-ago +unread"))
+
+(use-package elfeed-search
+  :after elfeed
+  :custom
+  (elfeed-search-date-format '("%y-%m-%d" 10 :left))
+  (elfeed-search-title-max-width 120))
 
 (use-package elfeed-org
-  :disabled
   :straight t
   :after elfeed
-  :commands elfeed-org
+  :custom
+  (rmh-elfeed-org-files '("~/.emacs.d/feeds.org"))
   :config
-  (setq rmh-elfeed-org-files '("~/.emacs.d/feeds.org"))
-  (setopt elfeed-search-title-max-width 100)
   (elfeed-org))
+
+(use-package elfeed-protocol
+  :straight t
+  :after elfeed)
+
+(use-package elfeed-score
+  :straight t
+  :after elfeed
+  :config
+  (elfeed-score-load-score-file "~/.emacs.d/elfeed.score") ; See the elfeed-score documentation for the score file syntax
+  (elfeed-score-enable)
+  (define-key elfeed-search-mode-map "=" elfeed-score-map))
 
 ;; ** eww
 

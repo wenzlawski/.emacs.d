@@ -19,6 +19,7 @@
     ("b" #'calibredb "Calibre")
     ("c" #'calendar "Calendar")
     ("e" #'eww "EWW")
+    ("f" #'elfeed "Elfeed")
     ("m" #'notmuch "Mail")
     ("o" #'ebdb "Contacts")
     ("t" #'vterm "Terminal"))
@@ -34,7 +35,7 @@
     ("C-l" (lambda () (interactive) (shell-command "open /Applications/LibreWolf.app")) "LibreWolf")
     ("C-s" (lambda () (interactive) (shell-command "open /Applications/Spotify.app")) "Spotify"))
    "Utilities"
-   (("f" #'dired "Dired")
+   (("d" #'dired "Dired")
     ("h" #'helpful-at-point "Help")
     ("r" #'ielm "REPL")
     ("s" (lambda () (interactive) (switch-to-buffer "*scratch*")) "Scratch")
