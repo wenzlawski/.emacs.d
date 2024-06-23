@@ -880,6 +880,13 @@ Append with current prefix arg."
   :custom
   (texfrag-scale 0.75))
 
+;; ** tramp
+
+(use-package tramp
+  :custom
+  (tramp-default-method "ssh")
+  )
+
 ;; * HELP
 ;; ** help
 
@@ -1590,7 +1597,7 @@ This function can be used as the value of the user option
 	("s a" . projectile-ag))
   :custom
   (projectile-project-search-path
-   '("~/fun/" "~/dotfiles" "~/Dropbox/repos"))
+   '("~/personal/fun/" "~/personal/repos"))
   :config
   (projectile-mode 1))
 
@@ -1954,6 +1961,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
 
   (add-to-list 'apheleia-mode-alist '(python-mode . ruff-isort))
   (add-to-list 'apheleia-mode-alist '(python-ts-mode . ruff-isort))
+  (add-to-list 'apheleia-mode-alist '(sh-mode . shfmt))
 
   (push
    '(zig-fmt zig-zig-bin "fmt" inplace) apheleia-formatters)
@@ -2369,9 +2377,9 @@ See URL `http://pypi.python.org/pypi/ruff'."
   :when (package-installed-p 'org-ref)
   :straight (bibtex-completion :type git :flavor melpa :files ("bibtex-completion.el" "bibtex-completion-pkg.el") :host github :repo "tmalsburg/helm-bibtex")
   :custom
-  (bibtex-completion-bibliography '("~/zotero/bibtex-export.bib" "~/cat.bib"))
-  (bibtex-completion-library-path '("~/zotero/storage"))
-  (bibtex-completion-notes-path "~/Dropbox/Org/articles.org")
+  (bibtex-completion-bibliography '("~/Zotero/bibtex-export.bib" "~/cat.bib"))
+  (bibtex-completion-library-path '("~/Zotero/storage"))
+  (bibtex-completion-notes-path "~/personal/Org/articles.org")
   (bibtex-completion-notes-template-multiple-files "* ${author-or-editor}, ${title}, ${journal}, (${year}) :${=type=}: \n\nSee [[cite:&${=key=}]]\n")
   (bibtex-completion-pdf-field "file")
   (bibtex-completion-additional-search-fields '("keywords"))
@@ -2649,8 +2657,8 @@ The browser to used is specified by the
   ("C-c n t" . denote-template)
   ("C-c n z" . denote-signature)
   :custom
-  (denote-directory (expand-file-name "~/Dropbox/denote"))
-  (denote-dired-directories '("~/Dropbox/denote"))
+  (denote-directory (expand-file-name "~/personal/denote"))
+  (denote-dired-directories '("~/personal/denote"))
   (denote-infer-keywords t)
   (denote-sort-keywords t)
   (denote-file-type nil) ; Org is the default, set others here
@@ -2849,7 +2857,7 @@ and \"apikey\" as USER."
 (defvar my/gptel-save-dir nil
   "Default dir to save gptel conversations to.")
 
-(setq my/gptel-save-dir "~/Dropbox/ai/")
+(setq my/gptel-save-dir "~/files/ai/")
 
 (defun my/gptel-set-save-dir ()
   "Set the save dir for gptel conversations."

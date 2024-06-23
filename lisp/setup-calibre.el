@@ -8,7 +8,7 @@
   "Refresh the calibre bib file."
   (interactive)
   (shell-command "calibredb catalog /tmp/cat.bib --fields=title,authors,formats,id,isbn,pubdate,tags,uuid,identifiers --entry-type mixed" )
-  (shell-command "awk -f ~/.emacs.d/scripts/escape_comma.awk /tmp/cat.bib > ~/cat.bib"))
+  (shell-command "awk -f ~/.emacs.d/scripts/escape_comma.awk /tmp/cat.bib > ~/files/calibre.bib"))
 
 (use-package calibredb
   :straight t)
@@ -19,12 +19,12 @@
   (:map calibredb-search-mode-map
 	("f" . calibredb-add-format)))
 
-(setopt calibredb-root-dir "~/Dropbox/Calibre Library"
+(setopt calibredb-root-dir "~/Calibre Library"
 	calibredb-db-dir (expand-file-name "metadata.db" calibredb-root-dir)
 	calibredb-id-width 5
 	calibredb-title-width 55
 	calibredb-preferred-format 'pdf
-	calibredb-library-alist '(("~/Dropbox/Calibre Library")))
+	calibredb-library-alist '(("~/Calibre Library")))
 
 ;;; Fix the author display
 

@@ -92,8 +92,8 @@
   ("C-c n X" . consult-notes-search-in-all-notes)
   ("C-c n 4 o" . my/consult-notes-other-window)
   :custom
-  (consult-notes-file-dir-sources '(("Org" ?o "~/Dropbox/Org/")))
-  (consult-notes-org-headings-files '("~/Dropbox/Org/"))
+  (consult-notes-file-dir-sources '(("Org" ?o "~/personal/Org/")))
+  (consult-notes-org-headings-files '("~/personal/Org/"))
   ;; search only for text files in denote dir
   :config
   (when (locate-library "denote")

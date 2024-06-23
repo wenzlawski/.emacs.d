@@ -77,7 +77,7 @@ abort `\\[org-capture-kill]'."))))
   ;;          (window-height . )))))
   :config
   (setf (cdr (assoc 'file org-link-frame-setup)) 'find-file)
-  (setq org-directory "~/Dropbox/Org/"
+  (setq org-directory "~/personal/Org/"
 	org-todo-keywords '((sequence "TODO" "IN-PROGRESS" "WAITING" "|" "DONE"))
 	org-hide-emphasis-markers t
 	org-latex-compiler "xelatex"
@@ -249,12 +249,12 @@ Triggered by a custom macOS Quick Action with a keyboard shortcut."
 	(progn
 	  (delete-frame)
 	  ;; (if (eq 'darwin system-type)
-;; 	      (ns-do-applescript "tell application \"System Events\"
-;;     tell process \"finder\"
-;;         activate
-;;         keystroke tab using {command down}
-;;     end tell
-;; end tell"))
+	  ;; 	      (ns-do-applescript "tell application \"System Events\"
+	  ;;     tell process \"finder\"
+	  ;;         activate
+	  ;;         keystroke tab using {command down}
+	  ;;     end tell
+	  ;; end tell"))
 	  )))
 
   (with-eval-after-load 'org-capture
@@ -759,24 +759,24 @@ end #OB-JULIA-VTERM_END\n"))
 
 (with-eval-after-load 'ol
   (defun org-attach-complete-link ()
-  "Advise the user with the available files in the attachment directory."
-  (let ((attach-dir (org-attach-dir)))
-    (if attach-dir
-	(let* ((attached-dir (expand-file-name attach-dir))
-	       ;; Patch this to immediately show files in attach dir
-	       (file (read-file-name "File: " (concat attached-dir "/")))
-	       (pwd (file-name-as-directory attached-dir))
-               (pwd-relative (file-name-as-directory
-			      (abbreviate-file-name attached-dir))))
-	  (cond
-	   ((string-match (concat "^" (regexp-quote pwd-relative) "\\(.+\\)") file)
-	    (concat "attachment:" (match-string 1 file)))
-	   ((string-match (concat "^" (regexp-quote pwd) "\\(.+\\)")
-			  (expand-file-name file))
-	    (concat "attachment:" (match-string 1 (expand-file-name file))))
-	   (t (concat "attachment:" file))))
-      (error "No attachment directory exist"))))
-)
+    "Advise the user with the available files in the attachment directory."
+    (let ((attach-dir (org-attach-dir)))
+      (if attach-dir
+	  (let* ((attached-dir (expand-file-name attach-dir))
+		 ;; Patch this to immediately show files in attach dir
+		 (file (read-file-name "File: " (concat attached-dir "/")))
+		 (pwd (file-name-as-directory attached-dir))
+		 (pwd-relative (file-name-as-directory
+				(abbreviate-file-name attached-dir))))
+	    (cond
+	     ((string-match (concat "^" (regexp-quote pwd-relative) "\\(.+\\)") file)
+	      (concat "attachment:" (match-string 1 file)))
+	     ((string-match (concat "^" (regexp-quote pwd) "\\(.+\\)")
+			    (expand-file-name file))
+	      (concat "attachment:" (match-string 1 (expand-file-name file))))
+	     (t (concat "attachment:" file))))
+	(error "No attachment directory exist"))))
+  )
 
 ;; * PLUGINS
 ;; ** org-modern
@@ -957,7 +957,7 @@ that."
   ;; (org-remark-global-tracking-mode +1)
   :hook (org-remark-open . (lambda () (org-cycle-hide-drawers 'all)))
   :custom
-  (org-remark-notes-file-name "~/Dropbox/Org/remark.org")
+  (org-remark-notes-file-name "~/personal/Org/remark.org")
   (org-remark-line-minimum-left-margin-width 1)
   (org-remark-line-heading-title-max-length 70))
 ;;(use-package org-remark-nov  :after nov  :config (org-remark-nov-mode +1)))
@@ -1094,7 +1094,7 @@ is active, that will be the link's description."
 	("C-c C-x n k" . org-noter-kill-session)
 	("C-c C-x n s" . org-noter-create-skeleton))
   :custom
-  (org-noter-notes-search-path '("/Users/mw/Library/CloudStorage/Dropbox/Org"))
+  (org-noter-notes-search-path '("/Users/mw/personal/Org"))
   (org-noter--show-arrow-hook nil)
   :config
   ;; (add-to-list 'display-buffer-alist '("Notes of" (window-width . 0.3)))
