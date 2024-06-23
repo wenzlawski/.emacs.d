@@ -2648,19 +2648,20 @@ The browser to used is specified by the
   ("C-c n s" . denote-subdirectory)
   ("C-c n t" . denote-template)
   ("C-c n z" . denote-signature)
+  :custom
+  (denote-directory (expand-file-name "~/Dropbox/denote"))
+  (denote-dired-directories '("~/Dropbox/denote"))
+  (denote-infer-keywords t)
+  (denote-sort-keywords t)
+  (denote-file-type nil) ; Org is the default, set others here
+  (denote-prompts '(title keywords))
+  (denote-rename-confirmations nil)
+  (denote-excluded-directories-regexp nil)
+  (denote-excluded-keywords-regexp nil)
+  (denote-date-prompt-use-org-read-date t)
+  (denote-date-format nil)
+  (denote-backlinks-show-context t)
   :config
-  (setq denote-directory (expand-file-name "~/Dropbox/denote"))
-  (setq denote-dired-directories '("~/Dropbox/denote"))
-  (setq denote-infer-keywords t)
-  (setq denote-sort-keywords t)
-  (setq denote-rename-no-confirm t)
-  (setq denote-file-type nil) ; Org is the default, set others here
-  (setq denote-prompts '(title keywords))
-  (setq denote-excluded-directories-regexp nil)
-  (setq denote-excluded-keywords-regexp nil)
-  (setq denote-date-prompt-use-org-read-date t)
-  (setq denote-date-format nil)
-  (setq denote-backlinks-show-context t)
   (denote-rename-buffer-mode))
 
 (use-package denote-org-extras
@@ -2882,33 +2883,17 @@ and \"apikey\" as USER."
 	      ("C-c r U" . anki-helper-entry-update-all)
 	      ("C-c r s" . my/show-anki)))
 
-;; ** pdf-view
+;; ** pdf-tools
 
-(defun my/background-pdf-view-refresh (_)
-  "Refresh the themed minor mode in pdf-view."
-  (cl-loop for buf in (buffer-list)
-	   collect
-	   (with-current-buffer buf
-	     (when (eq major-mode 'pdf-view-mode)
-	       (my/pdf-view-themed-minor-mode-refresh)))))
+(use-package pdf-tools
+  :straight t
+  :defer 2
+  :hook (pdf-outline-buffer-mode . visual-line-mode)
+  :config
+  (pdf-tools-install :no-query))
 
-(defun my/pdf-view-themed-minor-mode-refresh ()
-  "Refresh the themed minor mode in pdf-view."
-  (interactive)
-  (pdf-view-themed-minor-mode 1))
-
-(defun my/pdf-view-current-page ()
-  "Show the current page number in the minibuffer."
-  (interactive)
-  (let* ((page (pdf-view-current-page))
-	 (total (pdf-info-number-of-pages))
-	 (percent (/ (* 100 page) total)))
-    (message "%d/%d %d%%" page total percent )))
-
-(defun my/pdf-view-open-externally ()
-  "Open the current pdf in an external viewer."
-  (interactive)
-  (shell-command (concat "open '" buffer-file-name "'")))
+(use-package pdf-occur
+  :after pdf-tools)
 
 (use-package pdf-view
   :after pdf-tools
@@ -2929,23 +2914,37 @@ and \"apikey\" as USER."
   :config
   (add-to-list 'display-buffer-alist '("\\`\\*Outline.*\\*" nil (window-width . 0.3))))
 
+(with-eval-after-load 'pdf-view
+  (defun my/background-pdf-view-refresh (_)
+    "Refresh the themed minor mode in pdf-view."
+    (cl-loop for buf in (buffer-list)
+	     collect
+	     (with-current-buffer buf
+	       (when (eq major-mode 'pdf-view-mode)
+		 (my/pdf-view-themed-minor-mode-refresh)))))
+
+  (defun my/pdf-view-themed-minor-mode-refresh ()
+    "Refresh the themed minor mode in pdf-view."
+    (interactive)
+    (pdf-view-themed-minor-mode 1))
+
+  (defun my/pdf-view-current-page ()
+    "Show the current page number in the minibuffer."
+    (interactive)
+    (let* ((page (pdf-view-current-page))
+	   (total (pdf-info-number-of-pages))
+	   (percent (/ (* 100 page) total)))
+      (message "%d/%d %d%%" page total percent )))
+
+  (defun my/pdf-view-open-externally ()
+    "Open the current pdf in an external viewer."
+    (interactive)
+    (shell-command (concat "open '" buffer-file-name "'"))))
 
 (use-package saveplace-pdf-view
   :straight t
   :config
   (save-place-mode 1))
-
-;; ** pdf-tools
-
-(use-package pdf-tools
-  :straight t
-  :defer 2
-  :hook (pdf-outline-buffer-mode . visual-line-mode)
-  :config
-  (pdf-tools-install :no-query)
-  (use-package pdf-occur))
-
-;; ** pdf-annot
 
 (use-package pdf-annot
   :after pdf-tools
