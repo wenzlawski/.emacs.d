@@ -2536,8 +2536,9 @@ See URL `http://pypi.python.org/pypi/ruff'."
 (use-package elfeed-score
   :straight t
   :after elfeed
+  :custom
+  (elfeed-score-log-level 'error)
   :config
-  (elfeed-score-load-score-file "~/.emacs.d/elfeed.score") ; See the elfeed-score documentation for the score file syntax
   (elfeed-score-enable)
   (define-key elfeed-search-mode-map "=" elfeed-score-map))
 

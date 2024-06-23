@@ -1,0 +1,26 @@
+;;; Elfeed score rule stats file DO NOT EDIT       -*- lisp -*-
+(:version 1 :stats
+	  #s(hash-table test equal data
+			(#s(elfeed-score-title-or-content-rule "language model"
+							       20 30 s nil nil
+							       nil)
+			   #s(elfeed-score-rule-stats 431 1719093612.871463)
+			   #s(elfeed-score-title-or-content-rule
+			      "Generalization" 30 20 s nil nil nil)
+			   #s(elfeed-score-rule-stats 75 1719093612.868876)
+			   #s(elfeed-score-title-rule "Summarization" -50 s nil
+						      nil nil)
+			   #s(elfeed-score-rule-stats 6 1719093612.51593)
+			   #s(elfeed-score-title-or-content-rule "BERT" 100 50
+								 S nil nil nil)
+			   #s(elfeed-score-rule-stats 15 1719093612.506765)
+			   #s(elfeed-score-title-rule "Transformer" 10 s nil
+						      nil nil)
+			   #s(elfeed-score-rule-stats 23 1719093612.877397)
+			   #s(elfeed-score-title-or-content-rule "Gender Bias"
+								 50 50 s nil
+								 nil nil)
+			   #s(elfeed-score-rule-stats 6 1719093612.521924)
+			   #s(elfeed-score-title-or-content-rule
+			      "out-of-distribution" 20 30 s nil nil nil)
+			   #s(elfeed-score-rule-stats 7 1719093612.722228))))

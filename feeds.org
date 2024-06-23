@@ -17,6 +17,8 @@ Can also do subtrees to organise.
 * News :elfeed:news:
 ** Mainstream News
 * Arxiv :elfeed:arxiv:
-** [[http://export.arxiv.org/api/query?search_query=cat:stat.ML&start=0&max_results=100&sortBy=submittedDate&sortOrder=descending][Arxiv stat.ML]]
-** [[http://export.arxiv.org/api/query?search_query=cat:cs.LG&start=0&max_results=100&sortBy=submittedDate&sortOrder=descending][Arxiv cs.LG]]
-** [[http://export.arxiv.org/api/query?search_query=cat:cs.CL&start=0&max_results=100&sortBy=submittedDate&sortOrder=descending][Arxiv cs.CL]]
+** [[http://export.arxiv.org/api/query?search_query=cat:stat.ML&start=0&max_results=100&sortBy=submittedDate&sortOrder=descending][stat.ML]] :ml:
+** [[http://export.arxiv.org/api/query?search_query=cat:cs.CL&start=0&max_results=100&sortBy=submittedDate&sortOrder=descending][cs.CL]] :cl:
+** [[http://export.arxiv.org/api/query?search_query=cat:cs.AI&start=0&max_results=100&sortBy=submittedDate&sortOrder=descending][cs.AI]] :ai:
+** [[http://export.arxiv.org/api/query?search_query=cat:cs.LG&start=0&max_results=100&sortBy=submittedDate&sortOrder=descending][cs.LG]] :ml:
+** [[http://export.arxiv.org/api/query?search_query=cat:cs.NE&start=0&max_results=100&sortBy=submittedDate&sortOrder=descending][cs.NE]] :ne:
