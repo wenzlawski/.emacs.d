@@ -2473,9 +2473,19 @@ See URL `http://pypi.python.org/pypi/ruff'."
 
 ;; * Mail
 
+(use-package message
+  :custom
+  (message-sendmail-f-is-evil nil)
+  (message-sendmail-extra-arguments nil)
+  (message-sendmail-envelope-from 'header)
+  (message-send-mail-function 'message-send-mail-with-sendmail))
+
 (use-package sendmail
   :custom
-  (send-mail-function 'sendmail-send-it))
+  (send-mail-function 'sendmail-send-it)
+  (mail-envelope-from 'header)
+  (mail-specify-envelope-from t)
+  (sendmail-program "~/.local/bin/msmtpq"))
 
 (setq user-mail-address "marc.wenzlawski@icloud.com")
 
