@@ -2485,32 +2485,16 @@ See URL `http://pypi.python.org/pypi/ruff'."
   (send-mail-function 'sendmail-send-it)
   (mail-envelope-from 'header)
   (mail-specify-envelope-from t)
+  ;; https://lists.gnu.org/archive/html/help-gnu-emacs/2018-11/msg00102.html
+  ;; https://github.com/NixOS/nixpkgs/issues/195532
+  ;; had to comment out all logging as it made emacs think it failed.
   (sendmail-program "~/.local/bin/msmtpq"))
 
 (setq user-mail-address "marc.wenzlawski@icloud.com")
 
 ;; ** notmuch
 
-(use-package notmuch
-  :straight t
-  :custom
-  (notmuch-saved-searches
-   '((:name "inbox" :query "tag:inbox" :key "i")
-     (:name "unread" :query "tag:unread" :key "u")
-     (:name "archive" :query "tag:archive" :key "r")
-     (:name "sent" :query "tag:sent" :key "s")
-     (:name "icloud" :query "to:marc.wenzlawski@icloud.com" :key "c")
-     (:name "posteo" :query "to:marcwenzlawski@posteo.com" :key "p")
-     (:name "all" :query "*" :key "a"))
-   )
-  :bind
-  (:map notmuch-show-mode-map
-	("a" . (lambda ()
-		 "archive message"
-		 (interactive)
-		 (notmuch-show-tag (list "+archive" "-inbox" "-unread"))))))
-
-;; ** Multiple smtp accounts
+(require 'setup-notmuch)
 
 ;; * APPLICATIONS
 ;; ** smudge spotify

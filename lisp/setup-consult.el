@@ -243,6 +243,10 @@
 	("C-c & C-v" . consult-yasnippet-visit-snippet-file)
 	("C-c & v" . consult-yasnippet-visit-snippet-file)))
 
+
+(use-package consult-notmuch
+  :straight t)
+
 (require 'consult-ripgrep-all)
 
 (provide 'setup-consult)
