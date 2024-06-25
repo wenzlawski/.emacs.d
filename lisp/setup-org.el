@@ -127,7 +127,7 @@ abort `\\[org-capture-kill]'."))))
 
   ;; ** org-agenda
   
-  (setq org-agenda-files '("daily.org" "personal.org" "phone.org" "read.org"))
+  (setq org-agenda-files '("daily.org" "personal.org" "phone.org" "read.org" "calendar.org"))
   ;; after https://emacs.stackexchange.com/questions/75822/ignoring-non-existent-org-mode-agenda-files
   (setq org-agenda-skip-unavailable-files t)
   (setq org-agenda-custom-commands 	; a,e,t,m,s,T,M,S,C

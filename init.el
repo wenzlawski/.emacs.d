@@ -2981,6 +2981,19 @@ and \"apikey\" as USER."
 ;; ** ebdb
 
 (require 'setup-ebdb)
+;; ** khalel
+
+(use-package khalel
+  :straight t
+  :custom
+  (khalel-import-org-file-confirm-overwrite nil)
+  :config
+  (khalel-add-capture-template))
+
+;; ** khardel
+
+(use-package khardel
+  :straight t )
 
 ;; ** ledger-mode
 
