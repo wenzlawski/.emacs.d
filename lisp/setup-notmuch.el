@@ -28,11 +28,12 @@
   (notmuch-saved-searches
    '((:name "inbox" :query "tag:inbox" :key "i")
      (:name "unread" :query "tag:unread" :key "u")
-     (:name "archive" :query "tag:archive" :key "r")
      (:name "sent" :query "tag:sent" :key "s")
+     (:name "flagged" :query "tag:flagged" :key "f")
+     (:name "drafts" :query "tag:draft" :key "d")
      (:name "icloud" :query "to:marc.wenzlawski@icloud.com" :key "c")
      (:name "posteo" :query "to:marcwenzlawski@posteo.com" :key "p")
-     (:name "all" :query "*" :key "a"))
+     (:name "all mail" :query "*" :key "a"))
    )
   (notmuch-search-oldest-first nil)
   (notmuch-search-result-format
@@ -63,7 +64,6 @@
      ;; when the window is split and you don't see the tags.
      ("flag" . italic)))
   (notmuch-show-empty-saved-searches t)
-  (notmuch-archive-tags nil) ; I do not archive email
   (notmuch-message-replied-tags '("+replied"))
   (notmuch-message-forwarded-tags '("+forwarded"))
   (notmuch-show-mark-read-tags '("-unread"))
@@ -94,13 +94,6 @@
   (notmuch-unthreaded-show-out nil)
   (notmuch-message-headers '("To" "Cc" "Subject" "Date"))
   (notmuch-message-headers-visible t)
-
-  :bind
-  (:map notmuch-show-mode-map
-	("a" . (lambda ()
-		 "archive message"
-		 (interactive)
-		 (notmuch-show-tag (list "+archive" "-inbox" "-unread")))))
   :config
   (let ((count most-positive-fixnum)) ; I don't like the buttonisation of long quotes
     (setq notmuch-wash-citation-lines-prefix count

@@ -8,6 +8,8 @@
   (ebdb-record-self "B68E4266-4799-40A6-AB02-E704A8EBE879"))
 
 (with-eval-after-load 'ebdb
+  (with-eval-after-load 'notmuch (require 'ebdb-notmuch))
+  (require 'ebdb-message)
   (defclass ebdb-field-name-complex (ebdb-field-name)
     ((surname
       :initarg :surname
