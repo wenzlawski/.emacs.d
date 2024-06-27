@@ -622,6 +622,12 @@ of those blocks falls back to the respective exporters."
   :custom
   (org-latex-pdf-process (list "latexmk -shell-escape -bibtex -f -pdf %f")))
 
+;; ** ox-icalendar
+
+(use-package ox-icalendar
+  :custom
+  (org-icalendar-include-body 100))
+
 ;; * ORG BABEL
 ;; ** ob-python
 
@@ -1134,6 +1140,7 @@ is active, that will be the link's description."
 ;; ** org-vcard
 
 (use-package org-vcard
+  :disabled
   :straight t)
 
 ;; ** mixed-pitch-mode

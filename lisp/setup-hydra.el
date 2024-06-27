@@ -21,7 +21,6 @@
     ("e" #'eww "EWW")
     ("f" #'elfeed "Elfeed")
     ("m" #'notmuch "Mail")
-    ("o" #'ebdb "Contacts")
     ("t" #'vterm "Terminal"))
    "Files"
    (

@@ -572,7 +572,6 @@ Containing LEFT, and RIGHT aligned respectively."
   ("C-c C" . calendar)
   ("C-c <SPC>" . mode-line-other-buffer)
   ("<C-i>" . completion-at-point)
-  ("C-j" . reindent-then-newline-and-indent)
   ("C-c r r" . query-replace-regexp)
   ("C-c r s" . replace-string)
   ("C-x C-b" . ibuffer)
@@ -2110,7 +2109,8 @@ See URL `http://pypi.python.org/pypi/ruff'."
   :hook (emacs-lisp-mode . electric-pair-mode)
   :bind
   (:map emacs-lisp-mode-map
-	("M-i" . completion-at-point))
+	("M-i" . completion-at-point)
+	("C-j" . eval-print-last-sexp))
   (:map lisp-interaction-mode-map
 	("M-i" . completion-at-point)))
 
@@ -2980,7 +2980,9 @@ and \"apikey\" as USER."
 
 ;; ** ebdb
 
-(require 'setup-ebdb)
+;; being replaced by khardel
+;; (require 'setup-ebdb)
+
 ;; ** khalel
 
 (use-package khalel
@@ -2989,6 +2991,8 @@ and \"apikey\" as USER."
   (khalel-import-org-file-confirm-overwrite nil)
   :config
   (khalel-add-capture-template))
+
+(require 'custom-khalel)
 
 ;; ** khardel
 
