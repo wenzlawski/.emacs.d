@@ -453,75 +453,77 @@ Containing LEFT, and RIGHT aligned respectively."
 
 ;; ** fontaine
 
-(setq fontaine-presets
-      '(
-	(input :default-family "Input Mono")
-	(jetbrains :default-family "JetBrains Mono")
-	(source-code-pro :default-family "Source Code Pro")
-	(dejavu-sans-mono :default-family "DejaVu Sans Mono")
-	(fira-code :default-family "Fira Code"
-		   :line-spacing nil)
-	(iosevka :default-family "Iosevka")
-	(menlo :default-family "Menlo")
-	(unifont :default-family "Unifont")
-	(go-mono :default-family "Go Mono")
-	(regular)
-	(t :default-family "Iosevka"
-	   :default-weight regular
-	   :default-slant normal
-	   :default-height 170
-	   :fixed-pitch-family nil
-	   :fixed-pitch-weight nil
-	   :fixed-pitch-slant nil
-	   :fixed-pitch-height 1.0
-	   :fixed-pitch-serif-family nil
-	   :fixed-pitch-serif-weight nil
-	   :fixed-pitch-serif-slant nil
-	   :fixed-pitch-serif-height 1.0
-	   :variable-pitch-family "iA Writer Quattro V"
-	   :variable-pitch-weight nil
-	   :variable-pitch-slant nil
-	   :variable-pitch-height 1.0
-	   :mode-line-active-family nil
-	   :mode-line-active-weight nil
-	   :mode-line-active-slant nil
-	   :mode-line-active-height 1.0
-	   :mode-line-inactive-family nil
-	   :mode-line-inactive-weight nil
-	   :mode-line-inactive-slant nil
-	   :mode-line-inactive-height 1.0
-	   :header-line-family nil
-	   :header-line-weight nil
-	   :header-line-slant nil
-	   :header-line-height 1.0
-	   :line-number-family nil
-	   :line-number-weight nil
-	   :line-number-slant nil
-	   :line-number-height 1.0
-	   :tab-bar-family nil
-	   :tab-bar-weight nil
-	   :tab-bar-slant nil
-	   :tab-bar-height 1.0
-	   :tab-line-family nil
-	   :tab-line-weight nil
-	   :tab-line-slant nil
-	   :tab-line-height 1.0
-	   :bold-family nil
-	   :bold-slant nil
-	   :bold-weight bold
-	   :bold-height 1.0
-	   :italic-family nil
-	   :italic-weight nil
-	   :italic-slant italic
-	   :italic-height 1.0
-	   :line-spacing 0.05)
-	))
-
 (use-package fontaine
   :straight t
   :demand t
   :hook
   (enable-theme-functions . fontaine-apply-current-preset)
+  :custom
+  (fontaine-presets
+   '(
+     (input :default-family "Input Mono"
+	    :line-spacing nil)
+     (jetbrains :default-family "JetBrains Mono")
+     (source-code-pro :default-family "Source Code Pro"
+		      :line-spacing nil)
+     (dejavu-sans-mono :default-family "DejaVuSansM Nerd Font")
+     (fira-code :default-family "Fira Code"
+		:line-spacing nil)
+     (iosevka :default-family "Iosevka")
+     (menlo :default-family "Menlo")
+     (unifont :default-family "Unifont")
+     (go-mono :default-family "GoMono Nerd Font")
+     (regular)
+     (t :default-family "Iosevka"
+	:default-weight regular
+	:default-slant normal
+	:default-height 170
+	:fixed-pitch-family nil
+	:fixed-pitch-weight nil
+	:fixed-pitch-slant nil
+	:fixed-pitch-height 1.0
+	:fixed-pitch-serif-family nil
+	:fixed-pitch-serif-weight nil
+	:fixed-pitch-serif-slant nil
+	:fixed-pitch-serif-height 1.0
+	:variable-pitch-family "iA Writer Quattro V"
+	:variable-pitch-weight nil
+	:variable-pitch-slant nil
+	:variable-pitch-height 1.0
+	:mode-line-active-family nil
+	:mode-line-active-weight nil
+	:mode-line-active-slant nil
+	:mode-line-active-height 1.0
+	:mode-line-inactive-family nil
+	:mode-line-inactive-weight nil
+	:mode-line-inactive-slant nil
+	:mode-line-inactive-height 1.0
+	:header-line-family nil
+	:header-line-weight nil
+	:header-line-slant nil
+	:header-line-height 1.0
+	:line-number-family nil
+	:line-number-weight nil
+	:line-number-slant nil
+	:line-number-height 1.0
+	:tab-bar-family nil
+	:tab-bar-weight nil
+	:tab-bar-slant nil
+	:tab-bar-height 1.0
+	:tab-line-family nil
+	:tab-line-weight nil
+	:tab-line-slant nil
+	:tab-line-height 1.0
+	:bold-family nil
+	:bold-slant nil
+	:bold-weight bold
+	:bold-height 1.0
+	:italic-family nil
+	:italic-weight nil
+	:italic-slant italic
+	:italic-height 1.0
+	:line-spacing 0.05)
+     ))
   :config
   (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
   (fontaine-mode 1))
@@ -2738,7 +2740,7 @@ The browser to used is specified by the
     (setq cursor-type 'bar)))
 
 (use-package nov
-  :straight t
+  :straight (:host github :repo "emacsmirror/nov.git")
   :mode ("\\.epub\\'" . nov-mode)
   :config
   (setq nov-text-width t)
