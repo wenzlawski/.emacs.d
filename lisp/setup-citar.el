@@ -13,7 +13,7 @@
   :hook (org-mode . citar-capf-setup)
   :custom
   ;; NOTE: Having large bibtex files slows down org-mode through bibtex
-  (org-cite-global-bibliography '("~/Zotero/bibtex-export.bib" "~/files/calibre.bib"))
+  (org-cite-global-bibliography '("~/Zotero/bibtex-export.bib" "~/Calibre Library/calibre.bib"))
   (org-cite-insert-processor 'citar)
   (org-cite-follow-processor 'citar)
   (org-cite-activate-processor 'citar)

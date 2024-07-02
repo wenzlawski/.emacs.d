@@ -1088,7 +1088,9 @@ Append with current prefix arg."
   (bookmark-save-flag 1))
 
 (use-package bookmark+
-  :straight (bookmark+))
+  :straight (bookmark+)
+  :custom
+  (bmkp-last-as-first-bookmark-file "~/.emacs.d/bookmarks"))
 
 ;; ** scratch
 
@@ -2740,6 +2742,7 @@ The browser to used is specified by the
     (setq cursor-type 'bar)))
 
 (use-package nov
+  :disabled
   :straight (:host github :repo "emacsmirror/nov.git")
   :mode ("\\.epub\\'" . nov-mode)
   :config
