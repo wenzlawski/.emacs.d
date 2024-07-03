@@ -55,7 +55,7 @@
     ("c" centered-cursor-mode "center cursor" :toggle t)
     ("h" hl-line-mode "hl-line" :toggle t)
     ("l" visual-line-mode "visual line" :toggle t)
-    ("m" hide-mode-line-mode "mode line" :toggle t)
+    ("m" hide-mode-line-mode "mode line" :toggle t :exit t)
     ("p" variable-pitch-mode "variable pitch" :toggle (default-value (bound-and-true-p buffer-face-mode)))
     ("v" visual-fill-column-mode "fill column" :toggle t)
     )

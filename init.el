@@ -862,7 +862,7 @@ Append with current prefix arg."
   :custom
   (savehist-additional-variables '(tablist-named-filter kill-ring search-ring regexp-search-ring))
   :init
-  (savehist-mode))
+  (savehist-mode 1))
 
 ;; ** htmlize
 
@@ -2667,6 +2667,7 @@ The browser to used is specified by the
   (denote-date-prompt-use-org-read-date t)
   (denote-date-format nil)
   (denote-backlinks-show-context t)
+  (denote-excluded-directories-regexp "data")
   :config
   (denote-rename-buffer-mode))
 
@@ -2917,6 +2918,7 @@ and \"apikey\" as USER."
 	("o" . pdf-outline)
 	("d" . dictionary-search)
 	("D" . osx-dictionary-search-input)
+	("v" . pdf-view-goto-page)
 	("C-c C-n" . org-noter))
   :config
   (add-to-list 'display-buffer-alist '("\\`\\*Outline.*\\*" nil (window-width . 0.3))))
@@ -2978,10 +2980,9 @@ and \"apikey\" as USER."
 	("C-<wheel-down>" . nil)))
 ;; ** gnuplot
 
-(use-package gnuplot-mode
-  :straight t)
 (use-package gnuplot
-  :straight t)
+  :straight t
+  :mode ("\\.gp\\'" . gnuplot-mode))
 
 ;; ** ebdb
 
@@ -3090,7 +3091,7 @@ If FRAME is omitted or nil, use currently selected frame."
 	,(concat
 	  "Automagically built minor mode to define buffer-local keys.\n"
 	  "\\{" map-name "}")
-	nil " Editing" ,map))
+	:init-value nil :lighter " Editing" :keymap ,map))
     (eval
      `(define-key ,map ,key ',func))
     (funcall name t)))

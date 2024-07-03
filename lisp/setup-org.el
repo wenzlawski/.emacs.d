@@ -1143,6 +1143,12 @@ is active, that will be the link's description."
   :disabled
   :straight t)
 
+;; ** org-pdftools
+
+(use-package org-pdftools
+  :straight t
+  :hook (org-mode . org-pdftools-setup-link))
+
 ;; ** mixed-pitch-mode
 
 (use-package mixed-pitch
