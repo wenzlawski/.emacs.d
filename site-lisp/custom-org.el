@@ -16,6 +16,7 @@
                         most-positive-fixnum))))
 	contents))))
 
+;;;###autoload
 (defun my/org-copy-subtree-contents ()
   "Get the content text of the subtree at point and add it to the `kill-ring'.
 Excludes the heading and any child subtrees."
@@ -24,6 +25,7 @@ Excludes the heading and any child subtrees."
     (message "Copied: %s" contents)
     (kill-new contents)))
 
+;;;###autoload
 (defun my/compose-letter nil
   "compose the job application letter
 Get the properties of the current entry, encode them as JSON, and
@@ -57,6 +59,7 @@ then opened in a new buffer."
 
 ;; ** org open other window
 
+;;;###autoload
 (defun my/org-open-at-point-other-window ()
   "Open org link at point in other window."
   (interactive)
@@ -69,6 +72,7 @@ then opened in a new buffer."
 	(with-current-buffer prev-buf
 	  (visual-fill-column-mode fill-col-p)))))
 
+;;;###autoload
 (defun my/org-open-at-point-other-frame ()
   "Open org link at point in other frame."
   (interactive)

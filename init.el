@@ -65,7 +65,7 @@
 (mapc
  (lambda (string)
    (add-to-list 'load-path (locate-user-emacs-file string)))
- '("lisp"))
+ '("lisp" "site-lisp"))
 
 (use-package server
   :defer 5
@@ -1313,7 +1313,7 @@ Append with current prefix arg."
 (use-package expreg
   :straight t
   :config
-  (dolist (m (list zig-ts-mode-map python-ts-mode-map typst-ts-mode-map rust-ts-mode-map))
+  (dolist (m (list python-ts-mode-map typst-ts-mode-map rust-ts-mode-map))
     (bind-key "C-=" #'expreg-expand m)
     (bind-key "C-+" #'expreg-contract m)))
 

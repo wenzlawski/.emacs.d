@@ -1,5 +1,30 @@
-;;; -*- lexical-binding: t; no-byte-compile: t -*-
-;;; early-init.el --- Early Init File
+;;; early-init.el ---   -*- lexical-binding: t -*-
+
+;; Copyright (C) 2022 Chen Bin
+;;
+;; Keywords: keyword1 keyword2
+;; Author: Marc Wenzlawski <marc.wenzlawski@gmail.com>
+
+;; This file is NOT part of GNU Emacs.
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation; either version 3, or (at your option)
+;; any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program; if not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;
+
+;;; Code:
 
 ;; Temporarily increase the garbage collection threshold.  These
 ;; changes help shave off about half a second of startup time.  The
@@ -140,5 +165,8 @@ New frames are instructed to call `prot-emacs-re-enable-frame-theme'."
 ;; compiled ahead-of-time when they are installed and site files are compiled
 ;; when gccemacs is installed.
 (setq comp-deferred-compilation nil)
+
+(byte-recompile-directory "~/.emacs.d/lisp" 0)
+
 
 ;;; early-init.el ends here

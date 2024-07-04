@@ -6,11 +6,11 @@
 (defun citar-open-files-on-page (CITEKEY)
   "Open the citar file on page")
 
-(with-current-buffer "refile.org"
-  (let* ((element (org-element-context))
-	 )
-    (my/citar-org-element-get-page element)
-    ))
+;; (with-current-buffer "refile.org"
+;;   (let* ((element (org-element-context))
+;; 	 )
+;;     (my/citar-org-element-get-page element)
+;;     ))
 
 (defun my/citar-org-element-get-page (element)
   (let* ((suffix (car (org-element-property :suffix element))))
@@ -30,7 +30,7 @@
 	  (my/citar-org-element-get-page reference))
     ))
 
-(advice-add #'citar-org--key-at-point :override #'my/citar-org--key-at-point-suffix)
+;; (advice-add #'citar-org--key-at-point :override #'my/citar-org--key-at-point-suffix)
 
 (defun my/citar-dwim ()
   "Run the default action on citation keys found at point."

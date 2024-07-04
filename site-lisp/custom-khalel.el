@@ -79,6 +79,8 @@
   "Delete the duplicate events."
   (cl-delete-duplicates events :test (lambda (x y) (equal x y))))
 
+
+;;;###autoload
 (defun my/khalel-import-events ()
   "Imports calendar entries by calling khal externally.
 

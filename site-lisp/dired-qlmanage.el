@@ -26,6 +26,7 @@
 (defvar dired-spawn nil)
 (make-variable-buffer-local 'dired-spawn)
 
+;;;###autoload
 (defun dired-qlmanage ()
 (interactive)
   (unless (dired-kill-last-process-named "qlmanage")
@@ -45,6 +46,7 @@
             (t
               (message "ABNORMAL: dired-qlmanage (%s) | %s | %s" (process-exit-status p) p e))))))))
 
+;;;###autoload
 (defun dired-kill-spawn ()
 "This is essentially a three level incursion, starting with `dired-qlmanage' and then
 calling `dired-kill-spawn' twice."
@@ -65,12 +67,14 @@ calling `dired-kill-spawn' twice."
           (t
             (message "ABNORMAL: dired-kill-spawn (%s) | %s | %s" (process-exit-status p) p e)))))))
 
+;;;###autoload
 (defun my-dired-next-line ()
 (interactive "^")
   (let ((dired-spawn t))
     (dired-next-line 1)
     (dired-kill-last-process-named "qlmanage")))
 
+;;;###autoload
 (defun my-dired-previous-line ()
 (interactive "^")
   (let ((dired-spawn t))

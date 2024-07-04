@@ -112,6 +112,7 @@
 				  Lorem-ipsum-list-item-end "</li>\n"
 				  Lorem-ipsum-list-end "</ul>\n")))
 
+;;;###autoload
 (defun Lorem-ipsum-insert-paragraphs (&optional num)
   (interactive "p")
   (if (not num)(setq num 1))
@@ -124,6 +125,7 @@
 		 Lorem-ipsum-paragraph-separator))
 	(Lorem-ipsum-insert-paragraphs (- num 1)))))
 
+;;;###autoload
 (defun Lorem-ipsum-insert-sentences (&optional num)
   (interactive "p")
   (if (not num)(setq num 1))
@@ -133,7 +135,8 @@
 	       (nth (if (interactive-p) 0 (random (length Lorem-ipsum-text))) Lorem-ipsum-text)))
 	  (insert (concat (nth (if (interactive-p) 0 (random (length para))) para) Lorem-ipsum-sentence-separator)))
 	(Lorem-ipsum-insert-sentences (- num 1)))))
-	  
+
+;;;###autoload
 (defun Lorem-ipsum-insert-list (&optional num)
   (interactive "p")
   (if (not num)(setq num 1))
