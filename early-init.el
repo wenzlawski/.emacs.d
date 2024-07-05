@@ -1,6 +1,6 @@
 ;;; early-init.el ---   -*- lexical-binding: t -*-
 
-;; Copyright (C) 2022 Chen Bin
+;; Copyright (C) 2022 Marc Wenzlawski
 ;;
 ;; Keywords: keyword1 keyword2
 ;; Author: Marc Wenzlawski <marc.wenzlawski@gmail.com>

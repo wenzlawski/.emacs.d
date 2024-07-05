@@ -620,7 +620,7 @@ of those blocks falls back to the respective exporters."
 (use-package ox-latex
   :straight nil
   :custom
-  (org-latex-pdf-process (list "latexmk -shell-escape -bibtex -f -pdf %f")))
+  (org-latex-pdf-process (list "latexmk -pdflatex=\"xelatex\" -%latex -shell-escape -bibtex -output-directory=%o -f -pdf %f")))
 
 ;; ** ox-icalendar
 
@@ -761,6 +761,42 @@ end #OB-JULIA-VTERM_END\n"))
   :config
   (org-babel-do-load-languages 'org-babel-load-languages '((ledger . t))))
 
+;; ** ob-asymptote
+
+(use-package ob-asymptote
+  :straight t
+  :after org
+  :config
+  (org-babel-do-load-languages 'org-babel-load-languages '((asymptote . t))))
+
+(with-eval-after-load 'ob-asymptote
+  (defun org-babel-execute:asymptote (body params)
+    "Execute a block of Asymptote code.
+This function is called by `org-babel-execute-src-block'."
+    (let* ((out-file (cdr (assq :file params)))
+           (format (or (file-name-extension out-file)
+                       "pdf"))
+           (cmdline (cdr (assq :cmdline params)))
+           (in-file (org-babel-temp-file "asymptote-"))
+	   (out-file-path (if out-file
+			      (org-babel-process-file-name out-file)
+			    nil))
+           (cmd
+	    (concat "asy "
+		    (if out-file
+			(concat
+			 "-globalwrite -f " format
+			 " -o " (file-name-sans-extension out-file-path))
+		      "-V")
+		    " " cmdline
+		    " " (org-babel-process-file-name in-file))))
+      (with-temp-file in-file
+	(insert (org-babel-expand-body:generic
+		 body params
+		 (org-babel-variable-assignments:asymptote params))))
+      (message cmd) (shell-command cmd)
+      nil)))
+
 ;; * ORG LINK
 
 (with-eval-after-load 'ol
@@ -846,6 +882,7 @@ end #OB-JULIA-VTERM_END\n"))
 
 (use-package org-contrib
   :straight t)
+
 ;; ** org-super-agenda
 
 (use-package org-super-agenda
