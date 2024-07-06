@@ -526,7 +526,8 @@ Containing LEFT, and RIGHT aligned respectively."
      ))
   :config
   (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
-  (fontaine-mode 1))
+  (fontaine-mode 1)
+  (add-to-list 'after-make-frame-functions #'fontaine-apply-current-preset))
 
 ;; * CONFIGURATION
 ;; ** user details
