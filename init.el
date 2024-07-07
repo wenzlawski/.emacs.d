@@ -199,8 +199,7 @@
   "Initialize the modus theme."
   (pcase appearance
     ('light (load-theme 'modus-operandi t))
-    ('dark  (load-theme 'modus-vivendi t)))
-  (my/modus-theme-on-toggle))
+    ('dark  (load-theme 'modus-vivendi t))))
 
 (defun my/modus-theme-change (appearance)
   "Load theme, taking current system APPEARANCE into consideration."
