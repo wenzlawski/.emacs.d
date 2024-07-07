@@ -36,3 +36,4 @@ org-clock-save.el
 *.csv
 /ielm-history.eld
 network-security.data
+*.elc

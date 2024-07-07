@@ -26,48 +26,40 @@
 abort `\\[org-capture-kill]'."))))
   (org-babel-after-execute . my/org-fix-inline-images)
   :bind
-  ("C-x c" . org-capture)
-  ("C-c l" . org-store-link)
   ("C-c a" . org-agenda)
+  ("C-c l" . org-store-link)
+  ("C-x c" . org-capture)
   (:map org-mode-map
-        ("C-c C-." . org-time-stamp-inactive)
-        ("C-c 4 o" . my/org-open-at-point-other-window)
-        ("C-c 4 C-o" . my/org-open-at-point-other-window)
-        ("C-c 5 C-o" . my/org-open-at-point-other-frame)
-        ("C-c 5 o" . my/org-open-at-point-other-frame)
-        ("C-c e" . org-emphasize)
 	("<C-i>" . org-delete-backward-char)
-	("M-i" . backward-kill-word)
 	("C-c <C-i>" . org-cycle)
-	("C-c C-x h" . org-edit-headline)
+	("C-c C-v <C-i>" . org-toggle-inline-images)
 	("C-c C-x <DEL>" . org-cut-subtree)
 	("C-c C-x C-<backspace>" . org-cut-subtree)
-	("C-c C-x t" . (lambda () (interactive) (setopt visual-fill-column-center-text (not visual-fill-column-center-text)) (visual-fill-column-mode 1)))
+	("C-c C-x h" . org-edit-headline)
 	("C-c C-x i" . org-indent-mode)
-	("C-c C-v <C-i>" . org-toggle-inline-images))
+	("C-c C-x t" . (lambda () (interactive) (setopt visual-fill-column-center-text (not visual-fill-column-center-text)) (visual-fill-column-mode 1)))
+	("M-i" . backward-kill-word)
+        ("C-c 4 C-o" . my/org-open-at-point-other-window)
+        ("C-c 4 o" . my/org-open-at-point-other-window)
+        ("C-c 5 C-o" . my/org-open-at-point-other-frame)
+        ("C-c 5 o" . my/org-open-at-point-other-frame)
+        ("C-c C-." . org-time-stamp-inactive)
+        ("C-c e" . org-emphasize))
   :custom-face
-  ;; (org-level-1 ((t (:inherit variable-pitch))))
-  ;; (org-level-2 ((t (:inherit variable-pitch))))
-  ;; (org-level-3 ((t (:inherit variable-pitch))))
-  ;; (org-level-4 ((t (:inherit variable-pitch))))
-  ;; (org-level-5 ((t (:inherit variable-pitch))))
-  ;; (org-level-6 ((t (:inherit variable-pitch))))
-  ;; (org-level-7 ((t (:inherit variable-pitch))))
-  ;; (org-level-8 ((t (:inherit variable-pitch))))
-  (org-document-title ((t (:height 1.7))))
-  (org-table ((t (:inherit fixed-pitch))))
+  (org-agenda-date ((t (:height 1.2))))
+  (org-agenda-structure ((t (:height 1.2))))
+  (org-archived ((t (:background unspecified :foreground "grey"))))
   (org-block ((t (:inherit fixed-pitch))))
   (org-block-begin-line ((t (:inherit fixed-pitch))))
-  (org-document-info-keyword ((t (:inherit fixed-pitch))))
-  (org-meta-line ((t (:inherit fixed-pitch))))
-  (org-document-info ((t (:inherit fixed-pitch))))
-  (org-property-value ((t (:inherit fixed-pitch))))
-  (org-drawer ((t (:inherit fixed-pitch))))
-  (org-special-keyword ((t (:inherit fixed-pitch))))
   (org-column-title ((t (:inherit fixed-pitch))))
-  (org-agenda-structure ((t (:height 1.2))))
-  (org-agenda-date ((t (:height 1.2))))
-  (org-archived ((t (:background unspecified :foreground "grey"))))
+  (org-document-info ((t (:inherit fixed-pitch))))
+  (org-document-info-keyword ((t (:inherit fixed-pitch))))
+  (org-document-title ((t (:height 1.7))))
+  (org-drawer ((t (:inherit fixed-pitch))))
+  (org-meta-line ((t (:inherit fixed-pitch))))
+  (org-property-value ((t (:inherit fixed-pitch))))
+  (org-special-keyword ((t (:inherit fixed-pitch))))
+  (org-table ((t (:inherit fixed-pitch))))
   ;; :custom
   ;; (display-buffer-alist
   ;;  (append display-buffer-alist
@@ -75,58 +67,58 @@ abort `\\[org-capture-kill]'."))))
   ;;          (display-buffer-below-selected display-buffer-at-bottom)
   ;;          (inhibit-same-window . t)
   ;;          (window-height . )))))
+  :custom
+  (org-directory "~/personal/Org/")
+  (org-todo-keywords '((sequence "TODO" "IN-PROGRESS" "WAITING" "|" "DONE")))
+  (org-hide-emphasis-markers t)
+  (org-latex-compiler "xelatex")
+  (org-refile-targets '((nil :level . 8)
+			(org-agenda-files :level . 8)
+			("personal.org" :maxlevel . 3)
+			("refile.org" :level . 0)
+			("resources.org" :level . 1)))
+  (org-refile-use-outline-path 'file)
+  (org-ellipsis "↴")
+  (org-src-preserve-indentation t)
+  (org-edit-src-content-indentation 0)
+  (org-pretty-entities t)
+  (org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
+  (org-fast-tag-selection-single-key t)
+  (org-special-ctrl-a/e t)
+  (org-outline-path-complete-in-steps nil)
+  (org-goto-max-level 5)
+  ;;(setq org-highlight-latex-and-related '(latex script entities))
+  (org-highlight-latex-and-related nil)
+  (org-blank-before-new-entry '((heading . auto) (plain-list-item . auto)))
+  (org-src-window-setup 'current-window)
+  (org-tags-column 0)
+  (org-agenda-tags-column 0)
+  (org-auto-align-tags nil)
+  (org-tags-exclude-from-inheritance '("ARCHIVE" "project"))
+  (org-global-properties '(("Effort_ALL" . "0:15 0:30 1:00 2:00 4:00 8:00")))
+  (org-log-into-drawer t)
+  (org-habit-graph-column 55)
+  (org-attach-use-inheritance t)
+  ;; org-clock-persist 'history
+  (org-agenda-block-separator ?─)
+  (org-agenda-time-grid '((daily today require-timed)
+			  (800 1000 1200 1400 1600 1800 2000)
+			  " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄"))
+  (org-agenda-current-time-string
+   "◀── now ─────────────────────────────────────────────────")
+  (org-file-apps '((auto-mode . emacs)
+		   (directory . emacs)
+		   ("\\.mm\\'" . default)
+		   ("\\.x?html?\\'" . default)
+		   ("\\.pdf\\'" . emacs)))
   :config
   (setf (cdr (assoc 'file org-link-frame-setup)) 'find-file)
-  (setq org-directory "~/personal/Org/"
-	org-todo-keywords '((sequence "TODO" "IN-PROGRESS" "WAITING" "|" "DONE"))
-	org-hide-emphasis-markers t
-	org-latex-compiler "xelatex"
-	org-refile-targets '((nil :level . 8)
-			     (org-agenda-files :level . 8)
-			     ("personal.org" :maxlevel . 3)
-			     ("refile.org" :level . 0)
-			     ("resources.org" :level . 1))
-	org-refile-use-outline-path 'file
-	org-ellipsis "↴"
-	org-src-preserve-indentation t
-	org-edit-src-content-indentation 0
-	org-pretty-entities t
-	org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id
-	org-fast-tag-selection-single-key t
-	org-special-ctrl-a/e t
-	org-outline-path-complete-in-steps nil
-	org-goto-max-level 5
-	;;(setq org-highlight-latex-and-related '(latex script entities))
-	org-highlight-latex-and-related nil
-	org-blank-before-new-entry '((heading . auto) (plain-list-item . auto))
-	org-src-window-setup 'current-window
 
-	org-tags-column 0
-	org-agenda-tags-column 0
-	org-auto-align-tags nil
-	org-tags-exclude-from-inheritance '("ARCHIVE" "project")
-	org-global-properties '(("Effort_ALL" . "0:15 0:30 1:00 2:00 4:00 8:00"))
-	org-log-into-drawer t
-	org-habit-graph-column 55
-	org-attach-use-inheritance t
-	;; org-clock-persist 'history
-	org-agenda-block-separator ?─
-	org-agenda-time-grid '((daily today require-timed)
-			       (800 1000 1200 1400 1600 1800 2000)
-			       " ┄┄┄┄┄ " "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄")
-	org-agenda-current-time-string
-	"◀── now ─────────────────────────────────────────────────"
-	org-file-apps '((auto-mode . emacs)
-			(directory . emacs)
-			("\\.mm\\'" . default)
-			("\\.x?html?\\'" . default)
-			("\\.pdf\\'" . emacs))
-	)
   ;; (org-clock-persistence-insinuate)
   (add-to-list 'org-babel-load-languages '(shell . t))
 
   ;; ** org-agenda
-  
+
   (setq org-agenda-files '("daily.org" "personal.org" "phone.org" "read.org" "calendar.org"))
   ;; after https://emacs.stackexchange.com/questions/75822/ignoring-non-existent-org-mode-agenda-files
   (setq org-agenda-skip-unavailable-files t)
@@ -155,7 +147,7 @@ abort `\\[org-capture-kill]'."))))
 	    (todo "NEXT" nil))
 	   nil)))
   (setq org-agenda-include-diary t)
-  
+
   ;; ** org-capture
   (defun my/read-later-template (url)
     "capture template for read later"
@@ -1139,15 +1131,15 @@ is active, that will be the link's description."
   :custom
   (org-noter-notes-search-path '("/Users/mw/personal/Org"))
   (org-noter--show-arrow-hook nil)
+  (org-noter-default-notes-file-names '("noter.org"))
+  (org-noter-always-create-frame nil)
+  (org-noter-auto-save-last-location t)
+  (org-noter-doc-split-fraction '(0.5 . 0.5))
+  (org-noter-kill-frame-at-session-end nil)
+  (org-noter-separate-notes-from-heading t)
   :config
-  ;; (add-to-list 'display-buffer-alist '("Notes of" (window-width . 0.3)))
-  (bind-key "C-c C-n" #'org-noter 'pdf-view-mode-map)
-  (setq org-noter-default-notes-file-names '("noter.org")
-	org-noter-always-create-frame nil
-	org-noter-auto-save-last-location t
-	org-noter-doc-split-fraction '(0.5 . 0.5)
-	org-noter-kill-frame-at-session-end nil
-	org-noter-separate-notes-from-heading t))
+  (add-to-list 'display-buffer-alist '("Notes of" (window-width . 0.3)))
+  (bind-key "C-c C-n" #'org-noter 'pdf-view-mode-map))
 
 ;; ** org-mind-map
 

@@ -71,7 +71,7 @@
     (defun my/mini-frame-update-color ()
       "Update the color of the posframe"
       (setopt mini-frame-internal-border-color (modus-themes-get-color-value 'bg-blue-nuanced))
-      (when mini-frame-internal-border-color
+      (when (and mini-frame-internal-border-color mini-frame-frame)
 	(set-face-background 'child-frame-border mini-frame-internal-border-color mini-frame-frame)
 	(set-face-background 'internal-border mini-frame-internal-border-color mini-frame-frame)))
     

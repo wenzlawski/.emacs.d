@@ -2745,7 +2745,7 @@ The browser to used is specified by the
 
 (use-package nov
   :disabled
-  :straight (:host github :repo "emacsmirror/nov.git")
+  :straight t
   :mode ("\\.epub\\'" . nov-mode)
   :config
   (setq nov-text-width t)

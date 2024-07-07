@@ -166,7 +166,7 @@ New frames are instructed to call `prot-emacs-re-enable-frame-theme'."
 ;; when gccemacs is installed.
 (setq comp-deferred-compilation nil)
 
-(byte-recompile-directory "~/.emacs.d/lisp" 0)
+(byte-recompile-directory "~/.emacs.d/site-lisp" 0)
 
 
 ;;; early-init.el ends here
