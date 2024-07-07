@@ -23,7 +23,7 @@
 	calibredb-db-dir (expand-file-name "metadata.db" calibredb-root-dir)
 	calibredb-id-width 5
 	calibredb-title-width 55
-	calibredb-preferred-format 'pdf
+	calibredb-preferred-format "pdf"
 	calibredb-library-alist '(("~/Calibre Library")))
 
 ;;; Fix the author display

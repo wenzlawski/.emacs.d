@@ -1,4 +1,4 @@
-;;; package --- Summary  -*- lexical-binding: t; -*-
+;;; init.el --- Init  -*- lexical-binding: t; -*-
 
 ;;; Commentary:
 ;; This is my personal Emacs configuration file.
@@ -204,20 +204,13 @@
 
 (defun my/modus-theme-change (appearance)
   "Load theme, taking current system APPEARANCE into consideration."
-  (pcase appearance
+  (pcase (do-applescript "tell application \"System Events\" to return (dark mode of appearance preferences as string)")
+    ("true" (setq ns-system-appearance 'dark))
+    ("false" (setq ns-system-appearance 'light)))
+  (pcase ns-system-appearance
     ('light (modus-themes-select 'modus-operandi))
     ('dark  (modus-themes-select 'modus-vivendi)))
   (if (eq major-mode 'pdf-view-mode) (pdf-view-themed-minor-mode 1)))
-
-(defun my/modus-theme-on-toggle ()
-  "Set some faces each toggle."
-  ;; (set-face-attribute 'yas-field-highlight-face nil
-  ;; 		      :inherit 'region :background (modus-themes-get-color-value 'bg-blue-subtle))
-  ;; (set-face-attribute 'eglot-highlight-symbol-face nil
-  ;; 		      :bold t :underline nil :background (modus-themes-get-color-value 'bg-yellow-intense))
-  )
-
-;; (add-hook 'modus-themes-after-load-theme-hook #'my/modus-theme-on-toggle)
 
 (defun my/modus-themes-invisible-dividers (&rest _)
   "Make window dividers for THEME invisible."
