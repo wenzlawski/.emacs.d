@@ -8,7 +8,7 @@
   "Refresh the calibre bib file."
   (interactive)
   (shell-command "calibredb catalog /tmp/cat.bib --fields=title,authors,formats,id,isbn,pubdate,tags,uuid,identifiers --entry-type mixed" )
-  (shell-command "awk -f ~/.emacs.d/scripts/escape_comma.awk /tmp/cat.bib > ~/Calibre\\ Library/calibre.bib"))
+  (shell-command (format "awk -f %s /tmp/cat.bib > ~/Calibre\\ Library/calibre.bib" (dir-concat user-emacs-directory "scripts/escape_comma.awk"))))
 
 (use-package calibredb
   :straight t)

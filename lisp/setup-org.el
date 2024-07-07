@@ -181,7 +181,7 @@ Triggered by a custom macOS Quick Action with a keyboard shortcut."
     nil)
 
   (setq org-capture-templates
-	'(("r" "refile" entry (file "refile.org")
+	`(("r" "refile" entry (file "refile.org")
 	   "* %^{Title}\n%U\n\n%i%?" :prepend t :empty-lines-after 1)
 	  ;; ("t" "today" entry (file+olp+datetree "daily.org")
 	  ;;  "* %^{Title}\n\n%?")
@@ -193,15 +193,15 @@ Triggered by a custom macOS Quick Action with a keyboard shortcut."
 	  ;; ("pn" "project simple" entry (id "316F33BA-71DE-41B9-B21B-928D3778A097")
 	  ;;  "* [/] %^{Title} %^{CATEGORY}p :project:\n- [ ] %?" :prepend t)
 	  ("p" "project" entry (id "316F33BA-71DE-41B9-B21B-928D3778A097")
-	   (file "~/.emacs.d/capture/project.org") :prepend t)
+	   (file ,(dir-concat user-emacs-directory "capture/project.org")) :prepend t)
 	  ("c" "clock")
-	  ("ct" "clock task" entry (clock) (file "~/.emacs.d/capture/task.org") :prepend t)
-	  ("cp" "clock project" entry (clock) (file "~/.emacs.d/capture/project.org")
+	  ("ct" "clock task" entry (clock) (file ,(dir-concat user-emacs-directory "capture/task.org")) :prepend t)
+	  ("cp" "clock project" entry (clock) (file ,(dir-concat user-emacs-directory "capture/project.org"))
 	   "* TODO %^{Title} [/] :project:\n- [ ] %?" :prepend t)
 	  ("t" "Task" entry (id "6FA6128F-4291-4508-8EB8-8951D736D81C")
-	   (file "~/.emacs.d/capture/task.org") :prepend t)
+	   (file ,(dir-concat user-emacs-directory "capture/task.org")) :prepend t)
 	  ("h" "Habit" entry (id "7F689015-46F8-4BD8-9B09-164AA168A16A")
-	   (file "~/.emacs.d/capture/habit.org") :prepend t)
+	   (file ,(dir-concat user-emacs-directory "capture/habit.org")) :prepend t)
 	  ("l" "later")
 	  ("lp" "Read later prompt" entry (id "F86FBB48-767F-436D-926E-D118F57AE534")
 	   (function my/read-later-template-from-prompt))
@@ -1175,6 +1175,7 @@ is active, that will be the link's description."
 ;; ** org-pdftools
 
 (use-package org-pdftools
+  :after org
   :straight t
   :hook (org-mode . org-pdftools-setup-link))
 

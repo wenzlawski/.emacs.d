@@ -122,16 +122,8 @@
 
 (setq custom-safe-themes t)
 
-(add-to-list 'ns-system-appearance-change-functions 'my/modus-theme-change)
-;; (add-to-list 'after-make-frame-functions '(lambda (_)
-;; (my/apply-theme-change ns-system-appearance))) ;; DOES NOT WORK
-(push '(lambda (_) (my/modus-theme-initialize ns-system-appearance)) (cdr (last after-make-frame-functions)))
-(use-package ef-themes
-  :straight t)
-(use-package color-theme-modern
-  :straight t)
 
-;; ** Modus themes
+;; * Modus themes
 
 (use-package modus-themes
   :straight t
@@ -236,28 +228,11 @@
      `(window-divider-first-pixel ((t :background ,bg :foreground ,bg)))
      `(window-divider-last-pixel ((t :background ,bg :foreground ,bg))))))
 
-(add-hook 'enable-theme-functions #'my/modus-themes-invisible-dividers)
+(with-eval-after-load 'modus-themes
+  (add-to-list 'ns-system-appearance-change-functions 'my/modus-theme-change)
+  (push '(lambda (_) (my/modus-theme-initialize ns-system-appearance)) (cdr (last after-make-frame-functions)))
 
-;; ** Timu theme
-
-(use-package timu-macos-theme
-  :straight (:host github :repo "emacsmirror/timu-macos-theme")
-  :init
-  (setq timu-macos-flavour (symbol-name ns-system-appearance)))
-
-(defun my/timu-theme-change (appearance)
-  "Load theme, taking current system APPEARANCE into consideration."
-  (interactive)
-  (customize-set-variable 'timu-macos-flavour (symbol-name appearance))
-  (load-theme 'timu-macos t))
-
-;; ** Poet theme
-
-(use-package poet-theme
-  :straight t
-  :custom
-  (poet-theme-variable-pitch-multiplier 1.6)
-  (poet-theme-variable-headers nil))
+  (add-hook 'enable-theme-functions #'my/modus-themes-invisible-dividers))
 
 ;; * USER INTERFACE
 ;; ** Writeroom
@@ -354,7 +329,7 @@
   ;; (rainbow-delimiters-depth-7-face ((t (:foreground "#F1CB02"))))
   ;; (rainbow-delimiters-depth-8-face ((t (:foreground "#F1CB02"))))
   ;; (rainbow-delimiters-depth-9-face ((t (:foreground "#F1CB02"))))
-  :hook prog-mode
+  :hook (prog-mode . rainbow-delimiters-mode)
   :custom
   (rainbow-delimiters-max-face-count 3))
 
@@ -617,7 +592,7 @@ Containing LEFT, and RIGHT aligned respectively."
 	prescient-history-length 1000
 	tab-always-indent 'complete
 	completion-cycle-threshold nil
-	abbrev-file-name "~/.emacs.d/abbrev_defs"
+	abbrev-file-name (dir-concat user-emacs-directory "abbrev_defs")
 	xref-search-program 'ripgrep
 	delete-by-moving-to-trash t
 	uniquify-buffer-name-style 'forward
@@ -779,9 +754,9 @@ Containing LEFT, and RIGHT aligned respectively."
 (use-package tab-bar
   :custom
   (tab-bar-select-tab-modifiers '(super))
-  :bind
-  (:map tab-bar-mode-map
-	("C-)" . tab-recent))
+  ;; :bind
+  ;; (:map tab-bar-mode-map
+  ;; 	("C-)" . tab-recent))
   :config
   (setq tab-bar-close-button-show nil)       ;; hide tab close / X button
   (setq tab-bar-new-tab-choice "*dashboard*");; buffer to show in new tabs
@@ -875,9 +850,17 @@ Append with current prefix arg."
 (use-package esup
   :straight t)
 
+;; ** auctex
+
+(use-package auctex
+  :disabled
+  :straight t)
+
 ;; ** texfrag
 
 (use-package texfrag
+  :disabled
+  :after auctex
   :straight t
   :custom
   (texfrag-scale 0.75))
@@ -1091,7 +1074,7 @@ Append with current prefix arg."
 (use-package bookmark+
   :straight (bookmark+)
   :custom
-  (bmkp-last-as-first-bookmark-file "~/.emacs.d/bookmarks"))
+  (bmkp-last-as-first-bookmark-file (dir-concat user-emacs-directory "bookmarks")))
 
 ;; ** scratch
 
@@ -1314,9 +1297,10 @@ Append with current prefix arg."
 (use-package expreg
   :straight t
   :config
-  (dolist (m (list python-ts-mode-map typst-ts-mode-map rust-ts-mode-map))
-    (bind-key "C-=" #'expreg-expand m)
-    (bind-key "C-+" #'expreg-contract m)))
+  ;; (dolist (m (list python-ts-mode-map typst-ts-mode-map rust-ts-mode-map))
+  ;;   (bind-key "C-=" #'expreg-expand m)
+  ;;   (bind-key "C-+" #'expreg-contract m))
+  )
 
 ;; ** completion
 
@@ -1362,7 +1346,7 @@ This function can be used as the value of the user option
 ;; ** vterm
 
 (use-package vterm
-  :straight t
+  ;; :straight t
   :bind
   ("C-c t" . vterm)
   ("C-c 4 t" . vterm-other-window)
@@ -1786,7 +1770,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
   :straight t
   :disabled
   :init
-  (setq yankpad-file "~/.emacs.d/yankpad.org"))
+  (setq yankpad-file (dir-concat user-emacs-directory "yankpad.org")))
 
 ;; ** tempel
 
@@ -1959,7 +1943,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
   :config
   ;; (with-eval-after-load 'julia-mode
   ;;   (push
-  ;;    '(julia "~/.emacs.d/scripts/julia-format.sh" inplace )
+  ;;    '(julia (dir-concat user-emacs-directory "scripts/julia-format.sh") inplace )
   ;;    apheleia-formatters)
   ;;   (add-to-list 'apheleia-mode-alist '(julia-mode . julia)))
 
@@ -2532,7 +2516,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
   :straight t
   :after elfeed
   :custom
-  (rmh-elfeed-org-files '("~/.emacs.d/feeds.org"))
+  (rmh-elfeed-org-files (list (dir-concat user-emacs-directory "feeds.org")))
   :config
   (elfeed-org))
 
@@ -3026,7 +3010,7 @@ and \"apikey\" as USER."
 ;; ("\\.rules\\'" . conf-mode)
 ;; ("\\.\\(h?ledger\\|journal\\|j\\)\\'" . ledger-mode)
 ;; :custom
-;; (ledger-binary-path "~/.emacs.d/hledger.sh")
+;; (ledger-binary-path (dir-concat user-emacs-directory "hledger.sh"))
 ;; (ledger-mode-should-check-version nil)
 ;; (ledger-init-file-name " ")
 ;; (ledger-post-amount-alignment-column 64)
