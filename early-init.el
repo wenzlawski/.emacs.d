@@ -129,7 +129,7 @@ New frames are instructed to call `prot-emacs-re-enable-frame-theme'."
 (push '(menu-bar-lines . 0) default-frame-alist)
 (push '(tool-bar-lines . 0) default-frame-alist)
 (push '(vertical-scroll-bars) default-frame-alist)
-(push '(undecorated . t) default-frame-alist)
+(push '(undecorated-round . t) default-frame-alist)
 
 ;; Disable GUI elements
 (menu-bar-mode -1)
