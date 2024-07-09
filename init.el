@@ -374,11 +374,10 @@ Containing LEFT, and RIGHT aligned respectively."
                     prot-modeline-input-method
                     prot-modeline-buffer-identification
 		    " "
-		    mode-line-position
                     prot-modeline-process
                     prot-modeline-major-mode
                     " "
-		    prot-modeline-vc-branch
+		    ;; prot-modeline-vc-branch
                     "  "
                     prot-modeline-eglot)
 		  '(" "
@@ -599,7 +598,7 @@ Containing LEFT, and RIGHT aligned respectively."
 	calendar-longitude '[12 55 east]
 	auto-save-no-message t
 	)
-  (pixel-scroll-precision-mode)
+  ;; (pixel-scroll-precision-mode)
   (delete-selection-mode)
   (fringe-mode '(0 . 0))
   ;; (blink-cursor-mode)
@@ -1337,6 +1336,10 @@ This function can be used as the value of the user option
 
 ;; ** vterm
 
+(defun my/vterm-to-buffer (&rest content)
+  (with-output-to-temp-buffer "*vterm-out*"
+    (mapc (lambda (c) (princ c) (princ "\n")) content)))
+
 (use-package vterm
   ;; :straight t
   :bind
@@ -1350,14 +1353,15 @@ This function can be used as the value of the user option
   (vterm-eval-cmds
    '(("find-file" find-file)
      ("find-file-other-window" find-file-other-window)
+     ("my/vterm-to-buffer" my/vterm-to-buffer)
      ("message" message)
      ("vterm-clear-scrollback" vterm-clear-scrollback)
      ("dired" dired)
      ("man" man)
      ("tldr" tldr)
      ("ediff-files" ediff-files)))
-  (vterm-max-scrollback 10000))
-
+  (vterm-max-scrollback 10000)
+  (vterm-min-window-width 20))
 
 ;; ** orderless
 
@@ -1577,7 +1581,7 @@ This function can be used as the value of the user option
 	("s a" . projectile-ag))
   :custom
   (projectile-project-search-path
-   '("~/personal/fun/" "~/personal/repos"))
+   '("~/personal/fun/" "~/personal/repos" "~/.config/nix" "~/.config/emacs"))
   :config
   (projectile-mode 1))
 
@@ -1835,59 +1839,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
 
 ;; ** eglot
 
-(use-package eglot
-  :straight t
-  :hook
-  (eglot-managed-mode . (lambda ()
-			  (cond ((derived-mode-p 'python-base-mode)
-				 (add-hook 'flymake-diagnostic-functions 'python-flymake nil t))
-				(t nil))))
-  :bind
-  (:map eglot-mode-map
-	("C-c e f" . eglot-format)
-	("C-c e q" . eglot-shutdown)
-	("C-c e Q" . eglot-shutdown-all)
-	("C-c e l" . eglot-list-connections)
-	("C-c e r" . eglot-rename)
-	("C-c e i" . eglot-inlay-hints-mode))
-  :init
-  (defun my/orderless-dispatch-flex-first (_pattern index _total)
-    (and (eq index 0) 'orderless-flex))
-  :config
-  (dolist (mode
-	   '(
-	     (nix-mode . ("nixd"))
-	     (nix-mode . ("nil"))
-	     ((svelte-mode svelte-ts-mode) . ("svelteserver" "--stdio"))
-	     ((zig-mode zig-ts-mode) . ("zls"))
-	     ))
-    (add-to-list 'eglot-server-programs mode))
-
-  (set-face-attribute
-   'eglot-highlight-symbol-face nil
-   :bold t :underline nil :background (modus-themes-get-color-value 'bg-yellow-intense)))
-
-(use-package emacs-lsp-booster
-  :after eglot
-  :straight (:host github :repo "blahgeek/emacs-lsp-booster"))
-
-(use-package eglot-booster
-  :straight (:host github :repo "jdtsmith/eglot-booster")
-  :after eglot emacs-lsp-booster
-  :config
-  (eglot-booster-mode))
-
-(with-eval-after-load 'eglot
-  (defun my/eglot-capf ()
-    (add-hook 'orderless-style-dispatchers #'my/orderless-dispatch-flex-first nil 'local)
-    (setq-local completion-at-point-functions
-		(list (cape-capf-super
-		       #'yasnippet-capf
-		       #'tempel-expand
-		       #'eglot-completion-at-point
-		       #'cape-file))))
-
-  (add-hook 'eglot-managed-mode-hook #'my/eglot-capf))
+(require 'setup-eglot)
 
 ;; ** tree-sitter
 
@@ -1905,6 +1857,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
 	  (html "https://github.com/tree-sitter/tree-sitter-html")
 	  (javascript "https://github.com/tree-sitter/tree-sitter-javascript"
 		      "master" "src")
+	  (nix "https://github.com/nix-community/tree-sitter-nix")
 	  (json "https://github.com/tree-sitter/tree-sitter-json")
 	  (make "https://github.com/alemuller/tree-sitter-make")
 	  (markdown "https://github.com/ikatyang/tree-sitter-markdown")
@@ -2345,6 +2298,18 @@ See URL `http://pypi.python.org/pypi/ruff'."
 (use-package nix-mode
   :straight t
   :mode "\\.nix\\'")
+
+(use-package nix-drv-mode
+  :after nix-mode
+  :mode "\\.drv\\'")
+
+(use-package nix-shell
+  :after nix-mode
+  :commands (nix-shell-unpack nix-shell-configure nix-shell-build))
+
+(use-package nix-repl
+  :after nix-mode
+  :commands (nix-repl))
 
 (use-package nix-buffer
   :straight t
