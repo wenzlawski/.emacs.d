@@ -830,25 +830,31 @@ This function is called by `org-babel-execute-src-block'."
 			   :color "gray80" :style flat-button)
 		    :background "gray96")
 
-(add-hook 'modus-themes-after-load-theme-hook
-	  (lambda ()
-	    (set-face-attribute 'org-modern-date-active nil :height 1.1 :overline "gray80"
-				:box '(:line-width
-				       (-1 . -1)
-				       :color "gray80" :style flat-button)
-				:background (modus-themes-get-color-value 'bg-mode-line-inactive)
-				:foreground (modus-themes-get-color-value 'fg-mode-line-inactive))
-	    (set-face-attribute 'org-modern-date-inactive nil :height 1.1 :overline "gray80"
-				:box '(:line-width
-				       (-1 . -1)
-				       :color "gray80" :style flat-button)
-				:background (modus-themes-get-color-value 'bg-mode-line-inactive)
-				:foreground (modus-themes-get-color-value 'fg-mode-line-inactive))))
+(defun my/org-modern-apply-faces ()
+  "Apply org modern faces"
+  (set-face-attribute
+   'org-modern-date-active nil :height 1.1 :overline "gray80"
+   :box '(:line-width
+	  (-1 . -1)
+	  :color "gray80" :style flat-button)
+   :background (modus-themes-get-color-value 'bg-mode-line-inactive)
+   :foreground (modus-themes-get-color-value 'fg-mode-line-inactive))
+  (set-face-attribute
+   'org-modern-date-inactive nil :height 1.1 :overline "gray80"
+   :box '(:line-width
+	  (-1 . -1)
+	  :color "gray80" :style flat-button)
+   :background (modus-themes-get-color-value 'bg-mode-line-inactive)
+   :foreground (modus-themes-get-color-value 'fg-mode-line-inactive)))
+
+(add-hook 'modus-themes-after-load-theme-hook #'my/org-modern-apply-faces)
+(my/org-modern-apply-faces)
 
 (setopt org-modern-keyword nil
 	org-modern-checkbox nil
 	org-modern-star 'replace
 	org-modern-table nil)
+
 (global-org-modern-mode)
 
 ;; ** org-protocol
