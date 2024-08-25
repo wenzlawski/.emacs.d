@@ -37,3 +37,4 @@ org-clock-save.el
 /ielm-history.eld
 network-security.data
 *.elc
+fontaine-latest-state.eld
