@@ -14,6 +14,9 @@
 (require 's)
 (require 'cl-macs)
 
+(eval-when-compile
+  (require 'cl-lib))
+
 (defcustom khalel-import-variables
   '(title cancelled calendar description organizer location uid start-date-long end-date-long start-time end-time url)
   "Values imported from khalel")
@@ -37,7 +40,7 @@
 
 (defun khalel-import-json-arguments ()
   "Build the import format string."
-  (loop for key in khalel-import-variables
+  (cl-loop for key in khalel-import-variables
 	append (list "--json" (symbol-name key))))
 
 (defun my/khalel-import-timestamp-complex (event)
