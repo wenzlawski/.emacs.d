@@ -1523,6 +1523,8 @@ This function can be used as the value of the user option
 	("M-o" . dired-do-open)
 	("M-RET" . my/open-current-dir-in-finder))
   :hook (dired-mode . (lambda () (setq truncate-lines t)))
+  :custom
+  (dired-use-ls-dired nil)
   :config
   (defun my/open-current-dir-in-finder ()
     "Open current directory in Finder."
@@ -2446,7 +2448,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
   ;; https://lists.gnu.org/archive/html/help-gnu-emacs/2018-11/msg00102.html
   ;; https://github.com/NixOS/nixpkgs/issues/195532
   ;; had to comment out all logging as it made emacs think it failed.
-  (sendmail-program "~/.local/bin/msmtpq"))
+  (sendmail-program "~/.nix-profile/bin/msmtpq"))
 
 (setq user-mail-address "marc.wenzlawski@icloud.com")
 
