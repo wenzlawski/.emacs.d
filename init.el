@@ -118,113 +118,11 @@
 
 (require 'utils)
 
-;; * THEMES
-
-(setq custom-safe-themes t)
-
-
-;; * Modus themes
-
-(use-package modus-themes
-  :straight t
-  :custom
-  (modus-themes-to-toggle '(modus-operandi modus-vivendi))
-  (modus-themes-mixed-fonts t)
-  (modus-themes-variable-pitch-ui nil)
-  (modus-themes-italic-constructs nil)
-  (modus-themes-bold-constructs nil)
-  (modus-themes-org-blocks nil)
-  (modus-themes-completions '((t . (extrabold))))
-  (modus-themes-prompts nil)
-  (modus-themes-headings
-   '((agenda-structure . (variable-pitch light 2.2))
-     (agenda-date . (variable-pitch regular 1.3))
-     (t . (variable-pitch medium))))
-  (modus-themes-custom-auto-reload t)
-  :config
-  (setopt modus-vivendi-palette-overrides
-	  '((bg-main "#070707") ; 1A1A1A
-	    (bg-dim "#1A1A1A") ; 0E0E0E
-	    (fg-main "#E2E2E2")
-	    (fg-dim "#999999")))
-  (setopt modus-operandi-palette-overrides
-	  '((bg-main "#F8F8F8")
-	    (bg-dim "#EBEBEB")
-	    (fg-main "#2C2C2C")
-	    (fg-dim "#8B8B8B")))
-  (setopt modus-operandi-tinted-palette-overrides modus-operandi-palette-overrides)
-  (setopt modus-vivendi-tinted-palette-overrides modus-vivendi-palette-overrides)
-  (setopt modus-themes-common-palette-overrides
-	  '((cursor magenta-cooler)
-	    (prose-done cyan-cooler)
-	    (prose-tag fg-dim)
-	    (modus-themes-completion-selected bg-dim)
-	    (prose-table fg-main)
-	    (bg-region bg-sage)
-	    (fg-region unspecified)
-	    (name blue-warmer)
-	    (fg-line-number-inactive "gray50")
-            (fg-line-number-active fg-main)
-            (bg-line-number-inactive unspecified)
-            (bg-line-number-active unspecified)
-	    ;; (fg-heading-1 black)
-	    ;; (fg-heading-2 olive)
-	    ;; (fg-heading-3 slate)
-	    ;; (fg-heading-4 maroon)
-	    ;; (fg-heading-5 olive)
-	    ;; (fg-heading-6 slate)
-	    ;; (fg-heading-7 maroon)
-	    ;; (fg-heading-8 olive)
-	    (identifier magenta-faint)
-	    (keybind magenta-cooler)
-	    (accent-0 magenta-cooler)
-	    (accent-1 cyan-cooler)
-	    (accent-2 blue-warmer)
-	    (accent-3 red-cooler)
-	    (bg-completion bg-blue-nuanced)
-	    (bg-mode-line-active bg-dim)
-	    (fg-mode-line-active fg-dim)
-	    (bg-paren-match bg-magenta-intense)
-	    (bg-mode-line-inactive bg-main)
-	    (border-mode-line-active bg-mode-line-active)
-	    (border-mode-line-inactive bg-mode-line-inactive)
-	    (bg-tab-bar bg-dim)
-	    (bg-tab-current bg-main)
-	    (bg-tab-other bg-dim)
-	    (prose-done green-faint)
-            (prose-todo red-faint)
-	    )))
-
-(defun my/modus-theme-initialize (appearance)
-  "Initialize the modus theme."
-  (pcase appearance
-    ('light (load-theme 'modus-operandi t))
-    ('dark  (load-theme 'modus-vivendi t))))
-
-(defun my/modus-theme-change (appearance)
-  "Load theme, taking current system APPEARANCE into consideration."
-  (pcase (do-applescript "tell application \"System Events\" to return (dark mode of appearance preferences as string)")
-    ("true" (setq ns-system-appearance 'dark))
-    ("false" (setq ns-system-appearance 'light)))
-  (pcase ns-system-appearance
-    ('light (modus-themes-select 'modus-operandi))
-    ('dark  (modus-themes-select 'modus-vivendi)))
-  (if (eq major-mode 'pdf-view-mode) (pdf-view-themed-minor-mode 1)))
-
-(defun my/modus-themes-invisible-dividers (&rest _)
-  "Make window dividers for THEME invisible."
-  (let ((bg (face-background 'default)))
-    (custom-set-faces
-     `(fringe ((t :background ,bg :foreground ,bg)))
-     `(window-divider ((t :background ,bg :foreground ,bg)))
-     `(window-divider-first-pixel ((t :background ,bg :foreground ,bg)))
-     `(window-divider-last-pixel ((t :background ,bg :foreground ,bg))))))
-
-(with-eval-after-load 'modus-themes
-  (add-to-list 'ns-system-appearance-change-functions 'my/modus-theme-change)
-  (push '(lambda (_) (my/modus-theme-initialize ns-system-appearance)) (cdr (last after-make-frame-functions)))
-
-  (add-hook 'enable-theme-functions #'my/modus-themes-invisible-dividers))
+(defun my/update-packages ()
+  (interactive)
+  (straight-fetch-all)
+  (straight-pull-all)
+  (straight-rebuild-all))
 
 ;; * USER INTERFACE
 ;; ** Writeroom
@@ -417,13 +315,11 @@ Containing LEFT, and RIGHT aligned respectively."
   (nerd-icons-scale-factor 1.0)
   )
 
+
 ;; ** fontaine
 
 (use-package fontaine
   :straight t
-  :demand t
-  :hook
-  (enable-theme-functions . fontaine-apply-current-preset)
   :custom
   (fontaine-presets
    '(
@@ -493,7 +389,105 @@ Containing LEFT, and RIGHT aligned respectively."
   :config
   (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
   (fontaine-mode 1)
-  (add-to-list 'after-make-frame-functions #'fontaine-apply-current-preset))
+  (add-to-list 'after-make-frame-functions #'fontaine-apply-current-preset)
+  )
+
+;; ** Modus themes
+
+(use-package modus-themes
+  :straight t
+  :custom
+  (modus-themes-to-toggle '(modus-operandi modus-vivendi))
+  (modus-themes-mixed-fonts t)
+  (modus-themes-variable-pitch-ui nil)
+  (modus-themes-italic-constructs nil)
+  (modus-themes-bold-constructs nil)
+  (modus-themes-org-blocks nil)
+  (modus-themes-completions '((t . (extrabold))))
+  (modus-themes-prompts nil)
+  (modus-themes-headings
+   '((agenda-structure . (variable-pitch light 2.2))
+     (agenda-date . (variable-pitch regular 1.3))
+     (t . (variable-pitch medium))))
+  (modus-themes-custom-auto-reload t)
+  :config
+  (setopt modus-vivendi-palette-overrides
+	  '((bg-main "#070707") ; 1A1A1A
+	    (bg-dim "#1A1A1A") ; 0E0E0E
+	    (fg-main "#E2E2E2")
+	    (fg-dim "#999999")))
+  (setopt modus-operandi-palette-overrides
+	  '((bg-main "#F8F8F8")
+	    (bg-dim "#EBEBEB")
+	    (fg-main "#2C2C2C")
+	    (fg-dim "#8B8B8B")))
+  (setopt modus-operandi-tinted-palette-overrides modus-operandi-palette-overrides)
+  (setopt modus-vivendi-tinted-palette-overrides modus-vivendi-palette-overrides)
+  (setopt modus-themes-common-palette-overrides
+	  '((cursor magenta-cooler)
+	    (prose-done cyan-cooler)
+	    (prose-tag fg-dim)
+	    (modus-themes-completion-selected bg-dim)
+	    (prose-table fg-main)
+	    (bg-region bg-sage)
+	    (fg-region unspecified)
+	    (name blue-warmer)
+	    (fg-line-number-inactive "gray50")
+            (fg-line-number-active fg-main)
+            (bg-line-number-inactive unspecified)
+            (bg-line-number-active unspecified)
+	    ;; (fg-heading-1 black)
+	    ;; (fg-heading-2 olive)
+	    ;; (fg-heading-3 slate)
+	    ;; (fg-heading-4 maroon)
+	    ;; (fg-heading-5 olive)
+	    ;; (fg-heading-6 slate)
+	    ;; (fg-heading-7 maroon)
+	    ;; (fg-heading-8 olive)
+	    (identifier magenta-faint)
+	    (keybind magenta-cooler)
+	    (accent-0 magenta-cooler)
+	    (accent-1 cyan-cooler)
+	    (accent-2 blue-warmer)
+	    (accent-3 red-cooler)
+	    (bg-completion bg-blue-nuanced)
+	    (bg-mode-line-active bg-dim)
+	    (fg-mode-line-active fg-dim)
+	    (bg-paren-match bg-magenta-intense)
+	    (bg-mode-line-inactive bg-main)
+	    (border-mode-line-active bg-mode-line-active)
+	    (border-mode-line-inactive bg-mode-line-inactive)
+	    (bg-tab-bar bg-dim)
+	    (bg-tab-current bg-main)
+	    (bg-tab-other bg-dim)
+	    (prose-done green-faint)
+            (prose-todo red-faint)
+	    )))
+
+(defun my/modus-theme-change (&rest _)
+  "Load theme, taking current system APPEARANCE into consideration."
+  (pcase (do-applescript "tell application \"System Events\" to return (dark mode of appearance preferences as string)")
+    ("true" (setq ns-system-appearance 'dark))
+    ("false" (setq ns-system-appearance 'light)))
+  (pcase ns-system-appearance
+    ('light (modus-themes-select 'modus-operandi))
+    ('dark  (modus-themes-select 'modus-vivendi)))
+  (if (eq major-mode 'pdf-view-mode) (pdf-view-themed-minor-mode 1)))
+
+(defun my/modus-themes-invisible-dividers (&rest _)
+  "Make window dividers for THEME invisible."
+  (let ((bg (face-background 'default)))
+    (custom-set-faces
+     `(fringe ((t :background ,bg :foreground ,bg)))
+     `(window-divider ((t :background ,bg :foreground ,bg)))
+     `(window-divider-first-pixel ((t :background ,bg :foreground ,bg)))
+     `(window-divider-last-pixel ((t :background ,bg :foreground ,bg))))))
+
+(with-eval-after-load 'modus-themes
+  ;; (push '(lambda (_) (my/modus-theme-initialize ns-system-appearance)) (cdr (last after-make-frame-functions)))
+  (add-to-list 'ns-system-appearance-change-functions 'my/modus-theme-change)
+  (add-hook 'enable-theme-functions #'my/modus-themes-invisible-dividers)
+  (add-hook 'after-init-hook #'my/modus-theme-change))
 
 ;; * CONFIGURATION
 ;; ** user details
@@ -511,8 +505,12 @@ Containing LEFT, and RIGHT aligned respectively."
 
 ;; ** Emacs
 
-(setq exec-path (append '("/Users/mw/.nix-profile/bin/" "/etc/profiles/per-user/mw/bin/" "/run/current-system/sw/bin/" "/nix/var/nix/profiles/default/bin/")
-                        exec-path))
+(setq exec-path
+      (append '("/Users/mw/.nix-profile/bin/"
+		"/etc/profiles/per-user/mw/bin/"
+		"/run/current-system/sw/bin/"
+		"/nix/var/nix/profiles/default/bin/")
+              exec-path))
 
 
 (use-package emacs
@@ -561,6 +559,7 @@ Containing LEFT, and RIGHT aligned respectively."
 		)
 
   (setq undo-limit 80000000
+	custom-safe-themes t
 	auto-save-default t
 	inhibit-compacting-font-caches t
 	truncate-string-ellipsis "…"
@@ -605,7 +604,8 @@ Containing LEFT, and RIGHT aligned respectively."
   (recentf-mode)
   (global-auto-revert-mode)
   (push '(lambda (_) (menu-bar-mode -1)) (cdr (last after-make-frame-functions)))
-  (add-to-list 'default-frame-alist '(font . "Iosevka-18")))
+  ;; (add-to-list 'default-frame-alist '(font . "Iosevka-18"))
+  )
 
 ;; ** window
 
@@ -1341,7 +1341,7 @@ This function can be used as the value of the user option
     (mapc (lambda (c) (princ c) (princ "\n")) content)))
 
 (use-package vterm
-  ;; :straight t
+  :straight t
   :bind
   ("C-c t" . vterm)
   ("C-c 4 t" . vterm-other-window)
@@ -1651,6 +1651,17 @@ See URL `http://pypi.python.org/pypi/ruff'."
 ;; main.zig:8:8: error: expected ';' after statement
 
 
+
+;; ** jinx
+
+(use-package jinx
+  :straight t
+  :hook (text-mode . global-jinx-mode)
+  :custom
+  (jinx-languages "en_US de_DE")
+  :bind (("M-$" . jinx-correct)
+         ("C-M-$" . jinx-languages)))
+
 ;; ** flyspell
 
 (use-package flyspell-correct
@@ -1759,8 +1770,9 @@ See URL `http://pypi.python.org/pypi/ruff'."
     :straight t)
   
   (yas-reload-all)
-  (set-face-attribute 'yas-field-highlight-face nil
-		      :inherit 'region :background (modus-themes-get-color-value 'bg-blue-subtle)))
+  (with-eval-after-load 'modus-themes
+    (set-face-attribute 'yas-field-highlight-face nil
+			:inherit 'region :background (modus-themes-get-color-value 'bg-blue-subtle))))
 
 (use-package yankpad
   :straight t
@@ -3122,6 +3134,8 @@ If FRAME is omitted or nil, use currently selected frame."
 ;; DO NOT USE THIS WITH SYMMETRICALLY ENCRYPTED FILES.
 ;; MAY CAUSE FILE CORRUPTION.
 (fset 'epg-wait-for-status 'ignore)
+
+(x-focus-frame nil)
 
 ;; Local Variables:
 ;; outline-regexp: " *;; \\*+"
