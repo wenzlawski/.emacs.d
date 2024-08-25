@@ -60,6 +60,31 @@
                                  old-file-name-handler-alist))))
     (add-hook 'emacs-startup-hook #'my/reset-file-handler-alist 101))
 
+  ;; Without this, Emacs will try to resize itself to a specific column size
+  (setq frame-inhibit-implied-resize t)
+
+  ;; A second, case-insensitive pass over `auto-mode-alist' is time wasted.
+  ;; No second pass of case-insensitive search over auto-mode-alist.
+  (setq auto-mode-case-fold nil)
+
+  ;; Reduce *Message* noise at startup. An empty scratch buffer (or the
+  ;; dashboard) is more than enough, and faster to display.
+  (setq inhibit-startup-screen t
+        inhibit-startup-echo-area-message user-login-name)
+  (setq initial-buffer-choice nil
+        inhibit-startup-buffer-menu t
+        inhibit-x-resources t)
+
+  ;; Disable bidirectional text scanning for a modest performance boost.
+  (setq-default bidi-display-reordering 'left-to-right
+                bidi-paragraph-direction 'left-to-right)
+
+  ;; Shave seconds off startup time by starting the scratch buffer in
+  ;; `fundamental-mode'
+  (setq initial-major-mode 'fundamental-mode
+        initial-scratch-message nil)
+
+
   (setq-default inhibit-redisplay t
                 inhibit-message t)
   (add-hook 'window-setup-hook
@@ -112,6 +137,28 @@ New frames are instructed to call `prot-emacs-re-enable-frame-theme'."
 (add-to-list 'default-frame-alist '(title . " \n"))
 (add-to-list 'default-frame-alist '(name . " \n"))
 
+(set-language-environment "UTF-8")
+
+;; Some features that are not represented as packages can be found in
+;; `features', but this can be inconsistent. The following enforce consistency:
+(if (fboundp #'json-parse-string)
+    (push 'jansson features))
+(if (string-match-p "HARFBUZZ" system-configuration-features) ; no alternative
+    (push 'harfbuzz features))
+(if (bound-and-true-p module-file-suffix)
+    (push 'dynamic-modules features))
+
+;; Increase how much is read from processes in a single chunk (default is 4kb).
+(setq read-process-output-max (* 512 1024)) ; 512kb
+
+;; Disable warnings from the legacy advice API. They aren't useful.
+(setq ad-redefinition-action 'accept)
+
+(setq warning-suppress-types '((lexical-binding)))
+
+;; By default, Emacs "updates" its ui more often than it needs to
+(setq which-func-update-delay 1.0)
+
 (setq frame-resize-pixelwise t
       frame-inhibit-implied-resize t
       ring-bell-function 'ignore
@@ -122,8 +169,18 @@ New frames are instructed to call `prot-emacs-re-enable-frame-theme'."
       inhibit-startup-screen t
       inhibit-x-resources t
       inhibit-startup-echo-area-message user-login-name ; read the docstring
-      inhibit-startup-buffer-menu t
-      bidi-paragraph-direction 'left-to-right)
+      inhibit-startup-buffer-menu t)
+
+;; Suppress compiler warnings and don't inundate users with their popups.
+(setq native-comp-async-report-warnings-errors 'silent)
+
+(setq native-comp-warning-on-missing-source nil)
+
+(setq debug-on-error nil
+      jka-compr-verbose nil)
+
+(setq byte-compile-warnings nil)
+(setq byte-compile-verbose nil)
 
 ;; Prevent the glimpse of un-styled Emacs by disabling these UI elements early.
 (push '(menu-bar-lines . 0) default-frame-alist)
@@ -149,8 +206,8 @@ New frames are instructed to call `prot-emacs-re-enable-frame-theme'."
 ;; `vc-handled-backends' with regard to startup speed optimisation.
 ;; Here I am storing the default value with the intent of restoring it
 ;; via the `emacs-startup-hook'.
-(defvar prot-emacs--file-name-handler-alist file-name-handler-alist)
-(defvar prot-emacs--vc-handled-backends vc-handled-backends)
+(defvar my/file-name-handler-alist file-name-handler-alist)
+(defvar my/vc-handled-backends vc-handled-backends)
 
 (setq file-name-handler-alist nil
       vc-handled-backends nil)
@@ -159,8 +216,8 @@ New frames are instructed to call `prot-emacs-re-enable-frame-theme'."
           (lambda ()
             (setq gc-cons-threshold (* 1024 1024 20)
                   gc-cons-percentage 0.2
-                  file-name-handler-alist prot-emacs--file-name-handler-alist
-                  vc-handled-backends prot-emacs--vc-handled-backends)))
+                  file-name-handler-alist my/file-name-handler-alist
+                  vc-handled-backends my/vc-handled-backends)))
 
 ;; Prevent unwanted runtime builds in gccemacs (native-comp); packages are
 ;; compiled ahead-of-time when they are installed and site files are compiled
