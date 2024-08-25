@@ -37,9 +37,10 @@
 	     ))
     (add-to-list 'eglot-server-programs mode))
 
-  (set-face-attribute
-   'eglot-highlight-symbol-face nil
-   :bold t :underline nil :background (modus-themes-get-color-value 'bg-yellow-intense)))
+  (with-eval-after-load 'modus-themes
+    (set-face-attribute
+     'eglot-highlight-symbol-face nil
+     :bold t :underline nil :background (modus-themes-get-color-value 'bg-yellow-intense))))
 
 (use-package emacs-lsp-booster
   :after eglot
@@ -68,7 +69,7 @@
     "Apply eglot faces"
     (set-face-attribute
      'eglot-highlight-symbol-face nil
-     :bold t :underline nil :background (modus-themes-get-color-value 'bg-yellow-intense)))
+     :bold t :underline nil :background (modus-themes-get-color-value 'bg-hover-secondary)))
 
   (with-eval-after-load 'modus-themes
     (add-hook 'modus-themes-after-load-theme-hook #'my/eglot-apply-faces)

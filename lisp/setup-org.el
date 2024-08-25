@@ -847,8 +847,9 @@ This function is called by `org-babel-execute-src-block'."
    :background (modus-themes-get-color-value 'bg-mode-line-inactive)
    :foreground (modus-themes-get-color-value 'fg-mode-line-inactive)))
 
-(add-hook 'modus-themes-after-load-theme-hook #'my/org-modern-apply-faces)
-(my/org-modern-apply-faces)
+(with-eval-after-load 'modus-themes
+  (add-hook 'modus-themes-after-load-theme-hook #'my/org-modern-apply-faces)
+  (my/org-modern-apply-faces))
 
 (setopt org-modern-keyword nil
 	org-modern-checkbox nil

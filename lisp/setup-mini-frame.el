@@ -14,8 +14,11 @@
      ctrlf-backward-symbol-at-point
      debugger-eval-expression))
   (mini-frame-color-shift-step 0)
-  (mini-frame-background-color-function (lambda () (modus-themes-get-color-value 'bg-blue-nuanced)))
-  (mini-frame-show-parameters #'my/mini-frame-show-parameters))
+  
+  (mini-frame-show-parameters #'my/mini-frame-show-parameters)
+  :config
+  (with-eval-after-load 'modus-themes
+    (setopt mini-frame-background-color-function (lambda () (modus-themes-get-color-value 'bg-blue-nuanced)))))
 
 (with-eval-after-load 'mini-frame
 
