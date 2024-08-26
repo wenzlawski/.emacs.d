@@ -62,6 +62,13 @@
 					  consult--source-project-buffer-hidden
 					  consult--source-project-recent-file-hidden)))
 
+(defun my/consult-outline-minor-mode-goto ()
+  "Goto an outline minor mode heading."
+  (interactive)
+  (consult-outline)
+  (recenter-top-bottom 0)
+  (outline-show-entry))
+
 (use-package consult-org
   :commands (consult-org-heading)
   :after consult

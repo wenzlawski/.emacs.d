@@ -485,7 +485,7 @@ Containing LEFT, and RIGHT aligned respectively."
 
 (with-eval-after-load 'modus-themes
   ;; (push '(lambda (_) (my/modus-theme-initialize ns-system-appearance)) (cdr (last after-make-frame-functions)))
-  (add-to-list 'ns-system-appearance-change-functions 'my/modus-theme-change)
+  (add-to-list 'ns-system-appearance-change-functions #'my/modus-theme-change)
   (add-hook 'enable-theme-functions #'my/modus-themes-invisible-dividers)
   (add-hook 'after-init-hook #'my/modus-theme-change))
 
@@ -731,9 +731,9 @@ Containing LEFT, and RIGHT aligned respectively."
   :straight t
   :bind
   (:map outline-minor-mode-map
-	("C-c C-c C-c" . outline-cycle))
+	("C-c C-c" . outline-cycle))
   :custom
-  (outline-minor-mode-prefix ""))
+  (outline-minor-mode-prefix ""))
 
 ;; ** openwith
 
@@ -1658,7 +1658,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
 
 (use-package jinx
   :straight t
-  :hook (text-mode . global-jinx-mode)
+  :hook (text-mode . jinx-mode)
   :custom
   (jinx-languages "en_US de_DE")
   :bind (("M-$" . jinx-correct)
@@ -2048,8 +2048,6 @@ See URL `http://pypi.python.org/pypi/ruff'."
 
 (use-package lisp-mode
   :hook (lisp-data-mode . electric-pair-mode))
-
-
 
 ;; ** elisp
 
@@ -3145,5 +3143,6 @@ If FRAME is omitted or nil, use currently selected frame."
 ;; eval:(outline-minor-mode 1)
 ;; eval:(outline-hide-body)
 ;; eval:(flycheck-mode -1)
+;; eval: (buffer-local-set-key (kbd "M-o") 'my/consult-outline-minor-mode-goto)
 ;; coding: utf-8-unix
 ;; End:
