@@ -43,6 +43,7 @@
      :bold t :underline nil :background (modus-themes-get-color-value 'bg-yellow-intense))))
 
 (use-package emacs-lsp-booster
+  :disabled
   :after eglot
   :straight (:host github :repo "blahgeek/emacs-lsp-booster"))
 

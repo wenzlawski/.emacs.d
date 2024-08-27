@@ -114,6 +114,42 @@ If given a SOURCE, execute the CMD on it."
   (interactive)
   (zig--run-cmd "run" (file-local-name (buffer-file-name)) "-O" zig-run-optimization-mode))
 
+;;;###autoload
+(defun zig-docs-serve ()
+  "Serve the zig std docs."
+  (interactive)
+  (start-process "zig-docs" "*zig-docs*" "zig" "std"))
+
+;;;###autoload
+(defun zig-docs-kill ()
+  "Stop the zig std server."
+  (interactive)
+  (kill-buffer "*zig-docs*"))
+
+(defun zig-docs--get-url (buffer)
+  "Get the url from the buffer."
+  (with-current-buffer
+      buffer
+    (goto-char (point-min))
+    (buffer-substring-no-properties (point-min) (line-end-position))))
+
+;;;###autoload
+(defun zig-docs-open ()
+  "Stop the zig std server."
+  (interactive)
+  (if-let ((buffer (get-buffer "*zig-docs*")))
+      (browse-url-default-browser (zig-docs--get-url buffer))
+    (zig-docs-serve)))
+
+;;;###autoload
+(defun zig-docs-lang-ref (&optional extern)
+  "Open the language reference."
+  (interactive "P")
+  (let ((url "https://ziglang.org/documentation/master/"))
+    (if extern
+	(eww url)
+      (browse-url-default-browser url))))
+
 ;;; Syntax table
 
 (defvar zig-ts-mode--syntax-table
@@ -371,7 +407,11 @@ Return nil if there is no name or if NODE is not a defun node."
   "C-c C-b" #'zig-compile
   "C-c C-r" #'zig-run
   "C-c C-t" #'zig-test-buffer
-  "C-c C-k" #'comment-region)
+  "C-c C-k" #'comment-region
+  "C-c C-d d" #'zig-docs-open
+  "C-c C-d s" #'zig-docs-serve
+  "C-c C-d k" #'zig-docs-kill
+  "C-c C-d r" #'zig-docs-lang-ref)
 
 ;;;###autoload
 (define-derived-mode zig-ts-mode prog-mode "Zig"

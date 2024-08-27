@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: struct_val
-# key: struct
+# key: str
 # --
 struct {
     `yas-selected-text`$0

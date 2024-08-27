@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: struct_decl
-# key: structd
+# key: strd
 # --
 const ${1:StructName} = struct {
     `yas-selected-text`$0

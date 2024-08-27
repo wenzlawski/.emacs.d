@@ -2,6 +2,6 @@
 # name: fn
 # key: fn
 # --
-fn ${1:fn_name}(${2:args}) {
+fn ${1:fn_name}($2) $3 {
   `yas-selected-text`$0
 }

@@ -114,7 +114,7 @@
 
 (straight-use-package 'use-package)
 ;; (straight-use-package '(org :type built-in))
-(straight-use-package '(org))
+(straight-use-package 'org)
 
 (require 'utils)
 
@@ -1291,7 +1291,9 @@ Append with current prefix arg."
   ;; (dolist (m (list python-ts-mode-map typst-ts-mode-map rust-ts-mode-map))
   ;;   (bind-key "C-=" #'expreg-expand m)
   ;;   (bind-key "C-+" #'expreg-contract m))
-  )
+  (with-eval-after-load 'zig-ts-mode
+    (bind-key "C-=" #'expreg-expand zig-ts-mode-map)
+    (bind-key "C-+" #'expreg-contract zig-ts-mode-map)))
 
 ;; ** completion
 
@@ -1314,6 +1316,13 @@ This function can be used as the value of the user option
 ;;(bind-key "e" #'switch-to-minibuffer 'completion-list-mode-map)
 ;;(bind-key "<return>" #'minibuffer-force-complete-and-exit 'minibuffer-mode-map)
 ;;(bind-key "C-<return>" #'minibuffer-tcomplete-and-exit 'minibuffer-mode-map)
+
+;; ** compile
+
+(use-package compile
+  :custom
+  (compilation-scroll-output t))
+
 ;; ** mct
 
 (use-package mct
@@ -2572,10 +2581,10 @@ The browser to used is specified by the
 
 (use-package browse-url
   :custom
-  (browse-url-browser-function '(("youtube\\.com" . browse-url-default-browser)
-				 ("github\\.com" . browse-url-default-browser)
-				 ("wikipedia\\.org" . browse-url-default-browser)
-				 ("."             . eww-browse-url))))
+  (browse-url-handlers '(("youtube\\.com" . browse-url-default-browser)
+			 ("github\\.com" . browse-url-default-browser)
+			 ("wikipedia\\.org" . browse-url-default-browser)
+			 ("."             . eww-browse-url))))
 
 ;; ** denote
 

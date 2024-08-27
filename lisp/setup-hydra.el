@@ -278,7 +278,10 @@
       ("ha" hs-hide-all "Hide All")
       ("hA" hs-show-all "Show All"))
      "Tools"
-     (("e" eglot "eglot"))))
+     (("e" eglot "eglot")
+      ("dd" zig-docs-open "Open docs")
+      ("dk" zig-docs-kill "End docs")
+      ("dr" zig-docs-lang-ref "Lang ref"))))
 
   (bind-key "C-c C-c" #'my/zig-mode-hydra/body 'zig-ts-mode-map))
 

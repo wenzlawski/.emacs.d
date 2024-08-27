@@ -30,7 +30,7 @@
 (use-package vertico-multiform
   :after vertico
   :init
-  (vertico-multiform-mode)
+  (vertico-multiform-mode 1)
   :custom
   (vertico-multiform-commands
    `((consult-ripgrep buffer)
@@ -40,7 +40,8 @@
      ))
   (vertico-multiform-categories
    '((file (vertico-sort-function . sort-directories-first)
-           (+vertico-transform-functions . +vertico-highlight-directory)))))
+           (+vertico-transform-functions . +vertico-highlight-directory))
+     (jinx grid (vertico-grid-annotate . 20)))))
 
 (use-package vertico-quick
   :after vertico

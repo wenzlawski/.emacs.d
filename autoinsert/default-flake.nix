@@ -1,22 +1,17 @@
 {
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+  inputs.flake-utils.url = "github:numtide/flake-utils";
 
-  outputs = {
-    self,
-    nixpkgs,
-  }: let
-    supportedSystems = ["x86_64-linux" "x86_64-darwin" "aarch64-linux" "aarch64-darwin"];
-    forEachSupportedSystem = f:
-      nixpkgs.lib.genAttrs supportedSystems
-      (system: f {pkgs = import nixpkgs {inherit system;};});
+  outputs = inputs@{
+    self, ...
+  }: inputs.flake-utils.lib.eachDefaultSystem (system:
+    let
+      pkgs = inputs.nixpkgs.legacyPackages.\${system};
   in {
-    devShells =
-      forEachSupportedSystem
-      ({pkgs}: {
-        default = pkgs.mkShell {
-          packages = with pkgs; [
-          ];
-        };
-      });
-  };
+    devShells.default = pkgs.mkShell {
+       nativeBuildInputs = with pkgs; [
+          $0
+       ];
+    };
+  });
 }
