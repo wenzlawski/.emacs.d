@@ -1565,7 +1565,18 @@ This function can be used as the value of the user option
 ;; ** magit / git
 
 (use-package magit
-  :straight t)
+  :straight t
+  :custom
+  (magit-refresh-status-buffer nil)
+  (magit-disabled-section-inserters
+   '(
+     ;;   magit-insert-tags-header
+     magit-insert-status-headers
+     magit-insert-unpushed-to-pushremote
+     magit-insert-unpulled-from-pushremote
+     magit-insert-unpulled-from-upstream
+     magit-insert-unpushed-to-upstream-or-recent
+     )))
 
 (use-package diff-hl
   :straight t)
