@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: gp_allocator
+# key: gpa
+# --
+var gpa = std.heap.GeneralPurposeAllocator(.{$1}){};
+defer _ = gpa.deinit();$0
