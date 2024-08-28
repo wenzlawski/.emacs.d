@@ -1568,6 +1568,12 @@ This function can be used as the value of the user option
   :straight t
   :custom
   (magit-refresh-status-buffer nil)
+  (magit-diff-highlight-keywords nil)
+  (magit-diff-highlight-trailing nil)
+  (magit-diff-paint-whitespace nil)
+  (magit-diff-hightlight-hunk-body nil)
+  (magit-diff-refine-hunk nil)
+  (magit-commit-show-diff nil)
   (magit-disabled-section-inserters
    '(
      ;;   magit-insert-tags-header
