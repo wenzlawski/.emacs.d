@@ -443,7 +443,8 @@ Return nil if there is no name or if NODE is not a defun node."
     ;; Imenu.
     (setq-local treesit-simple-imenu-settings
                 `(("Test" "\\`TestDecl\\'" nil nil)
-                  ("Fn" "\\`FnProto\\'" nil nil)))
+                  ("Fn" "\\`FnProto\\'" nil nil)
+		  ("Struct" "\\`ContainerDeclType\\'" nil nil)))
 
     ;; Indent.
     (setq-local indent-tabs-mode nil
