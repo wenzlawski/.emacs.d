@@ -1594,6 +1594,13 @@ This function can be used as the value of the user option
   :config
   (autoload 'vc-git-root "vc-git"))
 
+(use-package libgit
+  :disabled
+  :after magit
+  :straight (libgit :host "github" :repo "emacsorphanage/libegit2")
+  :custom
+  (libgit--module-file-name "libegit2.so"))
+
 ;; ** projectile
 
 (use-package project)
