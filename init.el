@@ -863,6 +863,14 @@ Append with current prefix arg."
   (tramp-default-method "ssh")
   )
 
+;; ** iedit
+
+(use-package iedit
+  :straight t
+  :config
+  (with-eval-after-load 'embark
+    (bind-key "e" #'iedit-mode 'embark-identifier-map)))
+
 ;; * HELP
 ;; ** help
 
@@ -1594,12 +1602,15 @@ This function can be used as the value of the user option
   :config
   (autoload 'vc-git-root "vc-git"))
 
-(use-package libgit
-  :disabled
-  :after magit
-  :straight (libgit :host "github" :repo "emacsorphanage/libegit2")
-  :custom
-  (libgit--module-file-name "libegit2.so"))
+;; not a lot of discussion on this since about 3 years ago.
+;; it works and compiles (obv nix problems), but the work in magit
+;; has not been done. It is a huge task.
+
+;; (use-package libgit
+;;   :after magit
+;;   :straight (libgit :host "github" :repo "emacsorphanage/libegit2")
+;;   :init
+;;   (setq libgit--module-file-name "libegit2.so"))
 
 ;; ** projectile
 
@@ -1616,7 +1627,7 @@ This function can be used as the value of the user option
 	("s a" . projectile-ag))
   :custom
   (projectile-project-search-path
-   '("~/personal/fun/" "~/personal/repos" "~/.config/nix" "~/.config/emacs"))
+   '("~/dev" "~/dev/repos" "~/dev/fun" "~/.config/nix" "~/.config/emacs"))
   :config
   (projectile-mode 1))
 
@@ -1768,11 +1779,41 @@ See URL `http://pypi.python.org/pypi/ruff'."
     ;; Please note ispell-extra-args contains ACTUAL parameters passed to aspell
     (setq ispell-extra-args '("--sug-mode=ultra" "--lang=en_US")))))
 
-;; ** TODO dape
+;; ** TODO debugging
 
 (use-package dape
   :disabled
   :straight t)
+
+;; ** edebug
+
+(defun my/edebug-compute-previous-result (_ &rest r)
+  "Adviced `edebug-compute-previous-result'."
+  (let ((previous-value (nth 0 r)))
+    (if edebug-unwrap-results
+        (setq previous-value
+              (edebug-unwrap* previous-value)))
+    (setq edebug-previous-result
+          (edebug-safe-prin1-to-string previous-value))))
+
+(advice-add #'edebug-compute-previous-result
+            :around
+            #'my/edebug-compute-previous-result)
+
+;; ** eros
+
+(use-package eros
+  :straight t)
+
+(defun my/edebug-previous-result (_ &rest r)
+  "Adviced `edebug-previous-result'."
+  (eros--make-result-overlay edebug-previous-result
+    :where (point)
+    :duration eros-eval-result-duration))
+
+(advice-add #'edebug-previous-result
+            :around
+            #'my/edebug-previous-result)
 
 ;; ** dictionary
 
@@ -1947,6 +1988,8 @@ See URL `http://pypi.python.org/pypi/ruff'."
    '(zig-fmt zig-zig-bin "fmt" inplace) apheleia-formatters)
   (push
    '(nixfmt "alejandra") apheleia-formatters)
+  (push
+   '(prettier-html "prettier" "--stdin-filepath" filepath) apheleia-formatters)
   (add-to-list 'apheleia-mode-alist '(zig-ts-mode . zig-fmt))
 
   (apheleia-global-mode))
@@ -2607,6 +2650,7 @@ The browser to used is specified by the
   :custom
   (browse-url-handlers '(("youtube\\.com" . browse-url-default-browser)
 			 ("github\\.com" . browse-url-default-browser)
+			 ("reddit\\.com" . browse-url-default-browser)
 			 ("wikipedia\\.org" . browse-url-default-browser)
 			 ("."             . eww-browse-url))))
 
