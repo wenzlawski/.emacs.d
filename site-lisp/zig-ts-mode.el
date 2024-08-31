@@ -141,14 +141,62 @@ If given a SOURCE, execute the CMD on it."
       (browse-url-default-browser (zig-docs--get-url buffer))
     (zig-docs-serve)))
 
+(defvar zig-docs--toc nil)
+
+(defcustom zig-docs--toc-url "https://ziglang.org/documentation/" "Default url for the Zig Documentation.")
+
+(defcustom zig-docs--toc-version
+  "master"
+  "Version of zig docs."
+  :options '("0.1.1" "0.2.0" "0.3.0" "0.4.0" "0.5.0" "0.6.0" "0.7.1" "0.8.1" "0.9.1" "0.10.1" "0.11.0" "0.12.0" "0.13.0" "master" ))
+
+(defun zig-docs--toc-make-url (&optional path)
+  "Make the url."
+  (concat zig-docs--toc-url zig-docs--toc-version "/" path))
+
+(defun zig-docs--toc-construct-element (el)
+  "Construct the element."
+  (list (intern (dom-text el)) (alist-get 'href (dom-attributes el))))
+
+(defun zig-docs--toc-retrieve ()
+  "Retrieve the zig docs toc."
+  (require 'dom)
+  (let ((buffer (url-retrieve-synchronously (zig-docs--toc-make-url))))
+    (with-current-buffer buffer
+      (let* ((tree (libxml-parse-html-region (point-min) (point-max)))
+	     (as (dom-by-tag (nth 2 (dom-children (car (dom-by-id tree "^navigation$")))) 'a))
+	     (strings (mapcar #'zig-docs--toc-construct-element as)))
+	(setq zig-docs--toc strings)
+	(with-temp-buffer
+	  (insert (format "%S" strings))
+	  (write-file (dir-concat user-emacs-directory (format "zig-docs-toc-%s.eld" zig-docs--toc-version))))))))
+
+(defun zig-docs--toc-init ()
+  "Init zig docs toc."
+  (let ((file (zig-docs--toc-make-url)))
+    (if (file-exists-p file)
+	(let (buffer (find-file-noselect file))
+	  (setq zig-docs--toc (read buffer))
+	  (kill-buffer buffer))
+      (zig-docs--toc-retrieve))))
+
 ;;;###autoload
-(defun zig-docs-lang-ref (&optional extern)
+(defun zig-docs-open-section (&optional intern)
+  "Interactively open a section of the Zig Docs."
+  (interactive "P")
+  (unless zig-docs--toc (zig-docs--toc-init))
+  (let* ((section (completing-read "Section:" zig-docs--toc))
+	 (path (cadr (assoc (intern section) zig-docs--toc)))
+	 (browse (if intern #'eww #'browse-url-default-browser)))
+    (apply browse (zig-docs--toc-make-url path) nil)))
+
+;;;###autoload
+(defun zig-docs-lang-ref (&optional intern)
   "Open the language reference."
   (interactive "P")
-  (let ((url "https://ziglang.org/documentation/master/"))
-    (if extern
-	(eww url)
-      (browse-url-default-browser url))))
+  (let ((url (zig-docs--toc-make-url))
+	(browse (if intern #'eww #'browse-url-default-browser)))
+    (apply browse url nil)))
 
 ;;; Syntax table
 

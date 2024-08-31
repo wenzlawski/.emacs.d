@@ -2,6 +2,6 @@
 # name: fn
 # key: fn
 # --
-fn ${1:fn_name}($2) $3 {
+fn ${1:fn_name}($2) ${3:!void} {
   `yas-selected-text`$0
 }
