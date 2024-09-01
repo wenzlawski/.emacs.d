@@ -339,7 +339,7 @@ Containing LEFT, and RIGHT aligned respectively."
      (t :default-family "Iosevka"
 	:default-weight regular
 	:default-slant normal
-	:default-height 170
+	:default-height 150
 	:fixed-pitch-family nil
 	:fixed-pitch-weight nil
 	:fixed-pitch-slant nil
@@ -389,8 +389,7 @@ Containing LEFT, and RIGHT aligned respectively."
   :config
   (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
   (fontaine-mode 1)
-  (add-to-list 'after-make-frame-functions #'fontaine-apply-current-preset)
-  )
+  (add-to-list 'after-make-frame-functions #'fontaine-apply-current-preset))
 
 ;; ** Modus themes
 
