@@ -130,14 +130,20 @@ New frames are instructed to call `prot-emacs-re-enable-frame-theme'."
 (setq mode-line-format nil)
 (my/avoid-initial-flash-of-light)
 
-(add-to-list 'initial-frame-alist '(height . 80))
-(add-to-list 'default-frame-alist '(height . 80))
-(add-to-list 'initial-frame-alist '(width . 140))
-(add-to-list 'default-frame-alist '(width . 140))
-(add-to-list 'default-frame-alist '(title . " \n"))
-(add-to-list 'default-frame-alist '(name . " \n"))
-
-(set-language-environment "UTF-8")
+(setq default-frame-alist
+      (append
+       default-frame-alist
+       '((height . 80)
+	 (width . 140)
+	 (title . " \n")
+	 (name . " \n")
+	 (right-divider-width . 2)
+	 (bottom-divider-width . 0)
+	 (internal-border-width . 8)
+	 (menu-bar-lines . 0)
+	 (tool-bar-lines . 0)
+	 (vertical-scroll-bars) 
+	 (undecorated-round . t))))
 
 ;; Some features that are not represented as packages can be found in
 ;; `features', but this can be inconsistent. The following enforce consistency:
@@ -182,11 +188,6 @@ New frames are instructed to call `prot-emacs-re-enable-frame-theme'."
 (setq byte-compile-warnings nil)
 (setq byte-compile-verbose nil)
 
-;; Prevent the glimpse of un-styled Emacs by disabling these UI elements early.
-(push '(menu-bar-lines . 0) default-frame-alist)
-(push '(tool-bar-lines . 0) default-frame-alist)
-(push '(vertical-scroll-bars) default-frame-alist)
-(push '(undecorated-round . t) default-frame-alist)
 
 ;; Disable GUI elements
 (menu-bar-mode -1)
@@ -194,13 +195,7 @@ New frames are instructed to call `prot-emacs-re-enable-frame-theme'."
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
 (tooltip-mode -1)
-
-;; Set the frame padding and fringe
-(modify-all-frames-parameters
- '((right-divider-width . 20)
-   (internal-border-width . 8)))
-
-(set-face-background 'fringe (face-attribute 'default :background))
+(set-language-environment "UTF-8")
 
 ;; Same idea as above for the `file-name-handler-alist' and the
 ;; `vc-handled-backends' with regard to startup speed optimisation.
