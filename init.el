@@ -283,14 +283,6 @@ Containing LEFT, and RIGHT aligned respectively."
 		    " ")))))
 ;;(prot-modeline-subtle-mode)
 
-;; ** highlight visual line
-
-(defun my/highlight-visual-line ()
-  "Only highlight the visual line."
-  (save-excursion
-    (cons (progn (beginning-of-visual-line) (point))
-	  (progn (end-of-visual-line) (point)))))
-(setopt hl-line-range-function 'my/highlight-visual-line)
 
 ;; ** hl-todo
 
@@ -316,6 +308,24 @@ Containing LEFT, and RIGHT aligned respectively."
   )
 
 
+;; ** display-line-numbers
+
+(use-package display-line-numbers
+  :hook prog-mode)
+
+;; ** hl-line
+
+(use-package hl-line
+  :hook prog-mode
+  :custom
+  (hl-line-range-function nil))
+
+(defun my/highlight-visual-line ()
+  "Only highlight the visual line."
+  (save-excursion
+    (cons (progn (beginning-of-visual-line) (point))
+	  (progn (end-of-visual-line) (point)))))
+
 ;; ** fontaine
 
 (use-package fontaine
@@ -339,7 +349,7 @@ Containing LEFT, and RIGHT aligned respectively."
      (t :default-family "Iosevka"
 	:default-weight regular
 	:default-slant normal
-	:default-height 150
+	:default-height 160
 	:fixed-pitch-family nil
 	:fixed-pitch-weight nil
 	:fixed-pitch-slant nil
@@ -365,9 +375,9 @@ Containing LEFT, and RIGHT aligned respectively."
 	:header-line-slant nil
 	:header-line-height 1.0
 	:line-number-family nil
-	:line-number-weight nil
+	:line-number-weight normal
 	:line-number-slant nil
-	:line-number-height 1.0
+	:line-number-height 0.9
 	:tab-bar-family nil
 	:tab-bar-weight nil
 	:tab-bar-slant nil
@@ -384,7 +394,7 @@ Containing LEFT, and RIGHT aligned respectively."
 	:italic-weight nil
 	:italic-slant italic
 	:italic-height 1.0
-	:line-spacing 0.05)
+	:line-spacing 1)
      ))
   :config
   (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
@@ -434,7 +444,8 @@ Containing LEFT, and RIGHT aligned respectively."
 	    (fg-line-number-inactive "gray50")
             (fg-line-number-active fg-main)
             (bg-line-number-inactive unspecified)
-            (bg-line-number-active unspecified)
+            (bg-line-number-active bg-dim)
+	    (bg-hl-line bg-dim)
 	    ;; (fg-heading-1 black)
 	    ;; (fg-heading-2 olive)
 	    ;; (fg-heading-3 slate)
@@ -450,12 +461,13 @@ Containing LEFT, and RIGHT aligned respectively."
 	    (accent-2 blue-warmer)
 	    (accent-3 red-cooler)
 	    (bg-completion bg-blue-nuanced)
-	    (bg-mode-line-active bg-dim)
-	    (fg-mode-line-active fg-dim)
 	    (bg-paren-match bg-magenta-intense)
-	    (bg-mode-line-inactive bg-main)
-	    (border-mode-line-active bg-mode-line-active)
-	    (border-mode-line-inactive bg-mode-line-inactive)
+	    (bg-mode-line-active bg-inactive)
+	    ;; (fg-mode-line-active fg-dim)
+	    (bg-mode-line-inactive bg-dim)
+	    ;; (fg-mode-line-inactive fg-main)
+	    ;; (border-mode-line-active bg-mode-line-active)
+	    ;; (border-mode-line-inactive bg-mode-line-inactive)
 	    (bg-tab-bar bg-dim)
 	    (bg-tab-current bg-main)
 	    (bg-tab-other bg-dim)
@@ -485,7 +497,7 @@ Containing LEFT, and RIGHT aligned respectively."
 (with-eval-after-load 'modus-themes
   ;; (push '(lambda (_) (my/modus-theme-initialize ns-system-appearance)) (cdr (last after-make-frame-functions)))
   (add-to-list 'ns-system-appearance-change-functions #'my/modus-theme-change)
-  (add-hook 'enable-theme-functions #'my/modus-themes-invisible-dividers)
+  ;; (add-hook 'enable-theme-functions #'my/modus-themes-invisible-dividers)
   (add-hook 'after-init-hook #'my/modus-theme-change))
 
 ;; * CONFIGURATION
@@ -514,7 +526,6 @@ Containing LEFT, and RIGHT aligned respectively."
 
 (use-package emacs
   :hook (prog-mode . show-paren-mode)
-  (prog-mode . hl-line-mode)
   :custom-face
   (show-paren-match ((t (:underline nil :inverse-video nil))))
   (deault ((t (:family "Fira Code"))))
@@ -571,10 +582,10 @@ Containing LEFT, and RIGHT aligned respectively."
 	scroll-conservatively 0
 	;; frame-title-format '("" "what the %b")
 	ns-use-proxy-icon t
-	cursor-type t
+	cursor-type '(bar . 2)
 	;; cursor-type ‘(hbar . 8))
-	blink-cursor-delay 1
-	blink-cursor-interval 0.3
+	blink-cursor-delay 0.5
+	blink-cursor-interval 0.5
 	register-preview-delay 0.25
 	history-length 100
 	initial-scratch-message ";; scratchy scratch"
@@ -595,6 +606,7 @@ Containing LEFT, and RIGHT aligned respectively."
 	calendar-latitude '[50 50 north]
 	calendar-longitude '[12 55 east]
 	auto-save-no-message t
+	jit-lock-defer-time 0
 	)
   ;; (pixel-scroll-precision-mode)
   (delete-selection-mode)
@@ -1878,7 +1890,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
     ;; `tempel-expand' *before* the main programming mode Capf, such
     ;; that it will be tried first.
     (setq-local completion-at-point-functions
-		(cons #'tempel-expand
+		(cons #'tempel-complete
 		      completion-at-point-functions)))
   ;; Optionally make the Tempel templates available to Abbrev,
   ;; either locally or globally. `expand-abbrev' is bound to C-x '.
@@ -2649,6 +2661,7 @@ The browser to used is specified by the
   :custom
   (browse-url-handlers '(("youtube\\.com" . browse-url-default-browser)
 			 ("github\\.com" . browse-url-default-browser)
+			 ("gitlab\\.com" . browse-url-default-browser)
 			 ("reddit\\.com" . browse-url-default-browser)
 			 ("wikipedia\\.org" . browse-url-default-browser)
 			 ("."             . eww-browse-url))))
@@ -3080,6 +3093,11 @@ and \"apikey\" as USER."
   (w3m-search-default-engine "duckduckgo")
   :config
   (add-to-list 'w3m-search-engine-alist '("duckduckgo" "https://html.duckduckgo.com/html/?q=%s")))
+
+;; ** sicp
+
+(use-package sicp
+  :straight t)
 
 ;; * enable all commands
 

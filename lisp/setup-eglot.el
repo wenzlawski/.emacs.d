@@ -35,12 +35,7 @@
 	     ((svelte-mode svelte-ts-mode) . ("svelteserver" "--stdio"))
 	     ((zig-mode zig-ts-mode) . ("zls"))
 	     ))
-    (add-to-list 'eglot-server-programs mode))
-
-  (with-eval-after-load 'modus-themes
-    (set-face-attribute
-     'eglot-highlight-symbol-face nil
-     :bold t :underline nil :background (modus-themes-get-color-value 'bg-yellow-intense))))
+    (add-to-list 'eglot-server-programs mode)))
 
 (use-package emacs-lsp-booster
   :disabled
