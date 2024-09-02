@@ -1,7 +1,0 @@
-# -*- mode: snippet -*-
-# name: union_enum
-# key: unen
-# --
-pub const $1 = union(enum) {
-    $0
-}

@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
 # name: import-std
-# key: imps
+# key: std
 # --
 const std = @import("std");
