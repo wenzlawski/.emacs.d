@@ -1,0 +1,4 @@
+# key: zig
+# name: zig-overlay
+# --
+inputs.zig.url = "github:mitchellh/zig-overlay";`(kill-new "inputs.zig.packages.\${system}.master")`

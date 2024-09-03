@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: union_tagged
+# key: union_tagged
+# --
+const $1 = union(enum) {
+    $0
+}
