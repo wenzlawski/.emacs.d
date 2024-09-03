@@ -142,7 +142,7 @@ New frames are instructed to call `prot-emacs-re-enable-frame-theme'."
 	 (internal-border-width . 8)
 	 (menu-bar-lines . 0)
 	 (tool-bar-lines . 0)
-	 (vertical-scroll-bars) 
+	 (vertical-scroll-bars)
 	 (undecorated-round . t))))
 
 ;; Some features that are not represented as packages can be found in

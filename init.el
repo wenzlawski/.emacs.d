@@ -349,7 +349,7 @@ Containing LEFT, and RIGHT aligned respectively."
      (t :default-family "Iosevka"
 	:default-weight regular
 	:default-slant normal
-	:default-height 160
+	:default-height 150
 	:fixed-pitch-family nil
 	:fixed-pitch-weight nil
 	:fixed-pitch-slant nil
@@ -1069,6 +1069,11 @@ Append with current prefix arg."
   ("C-x 4 i" . flip-frame)
   ("C-x 4 o" . flop-frame)
   ("C-x 4 n" . rotate-frame))
+
+;; ** outshine
+
+(use-package outshine
+  :straight t)
 
 ;; ** hide-mode-line
 
@@ -3234,7 +3239,7 @@ If FRAME is omitted or nil, use currently selected frame."
 ;; Local Variables:
 ;; outline-regexp: " *;; \\*+"
 ;; page-delimiter: " *;; \\**"
-;; eval:(outline-minor-mode 1)
+;; eval:(outshine-mode 1)
 ;; eval:(outline-hide-body)
 ;; eval:(flycheck-mode -1)
 ;; eval: (buffer-local-set-key (kbd "M-o") 'my/consult-outline-minor-mode-goto)
