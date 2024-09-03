@@ -444,7 +444,11 @@ Return nil if there is no name or if NODE is not a defun node."
       (treesit-node-child node 1) t))
     ("FnProto"
      (treesit-node-text
-      (treesit-node-child-by-field-name node "function") t))))
+      (treesit-node-child-by-field-name node "function") t))
+    ("ContainerDeclType"
+     (treesit-node-text
+      (treesit-node-child-by-field-name
+       (treesit-node-get node '((parent 4))) "variable_type_function")))))
 
 ;;; Mode definition
 
@@ -487,12 +491,17 @@ Return nil if there is no name or if NODE is not a defun node."
 		  ( assignment number builtin constant ) ; constants, literals
 		  ( bracket operator function delimiter punctuation variable))) ; delimiters, punctuation, functions properties variables
 
-
     ;; Imenu.
-    (setq-local treesit-simple-imenu-settings
-                `(("Test" "\\`TestDecl\\'" nil nil)
-                  ("Fn" "\\`FnProto\\'" nil nil)
-		  ("Struct" "\\`ContainerDeclType\\'" nil nil)))
+    (setq-local
+     treesit-simple-imenu-settings
+     `(("Struct" "\\`ContainerDeclType\\'"
+	(lambda (n) (string= "struct" (treesit-node-text n t)))
+	nil)
+       ("Enum" "\\`ContainerDeclType"
+	(lambda (n) (string-match-p "enum" (treesit-node-text n t)))
+	nil)
+       ("Fn" "\\`FnProto\\'" nil nil)
+       ("Test" "\\`TestDecl\\'" nil nil)))
 
     ;; Indent.
     (setq-local indent-tabs-mode nil

@@ -51,7 +51,9 @@
 	("M-s L" . consult-line-multi))
   (:map minibuffer-local-map
 	("M-s" . consult-history)
-	("M-r" . consult-history)))
+	("M-r" . consult-history))
+  (:map prog-mode-map
+	("M-o" . consult-imenu)))
 
 (with-eval-after-load 'consult
   (setopt consult-buffer-sources

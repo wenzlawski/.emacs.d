@@ -1964,6 +1964,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
 	  (nix "https://github.com/nix-community/tree-sitter-nix")
 	  (json "https://github.com/tree-sitter/tree-sitter-json")
 	  (make "https://github.com/alemuller/tree-sitter-make")
+	  (haskell "https://github.com/tree-sitter/tree-sitter-haskell")
 	  (markdown "https://github.com/ikatyang/tree-sitter-markdown")
 	  (python "https://github.com/tree-sitter/tree-sitter-python")
 	  (toml "https://github.com/tree-sitter/tree-sitter-toml")
@@ -1987,6 +1988,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
 
 (use-package apheleia
   :straight t
+  :demand
   :bind
   (:map prog-mode-map ("C-c f" . apheleia-format-buffer))
   :config
@@ -1999,14 +2001,15 @@ See URL `http://pypi.python.org/pypi/ruff'."
   (add-to-list 'apheleia-mode-alist '(python-mode . ruff-isort))
   (add-to-list 'apheleia-mode-alist '(python-ts-mode . ruff-isort))
   (add-to-list 'apheleia-mode-alist '(sh-mode . shfmt))
+  (add-to-list 'apheleia-mode-alist '(nix-ts-mode . alejandra))
+  (add-to-list 'apheleia-mode-alist '(zig-ts-mode . zig-fmt))
 
   (push
    '(zig-fmt zig-zig-bin "fmt" inplace) apheleia-formatters)
   (push
-   '(nixfmt "alejandra") apheleia-formatters)
+   `(alejandra ,(executable-find "alejandra")) apheleia-formatters)
   (push
-   '(prettier-html "prettier" "--stdin-filepath" filepath) apheleia-formatters)
-  (add-to-list 'apheleia-mode-alist '(zig-ts-mode . zig-fmt))
+   `(prettier-html ,(executable-find "prettier") "--stdin-filepath" filepath) apheleia-formatters)
 
   (apheleia-global-mode))
 
@@ -2403,6 +2406,10 @@ See URL `http://pypi.python.org/pypi/ruff'."
   :straight t
   :mode "\\.nix\\'")
 
+(use-package nix-ts-mode
+  :straight t
+  :mode "\\.nix\\'")
+
 (use-package nix-drv-mode
   :after nix-mode
   :mode "\\.drv\\'")
@@ -2515,6 +2522,15 @@ See URL `http://pypi.python.org/pypi/ruff'."
 
 (use-package graphviz-dot-mode
   :straight t)
+
+;; ** haskell
+
+(use-package haskell-mode
+  :disabled
+  :straight t)
+
+(use-package haskell-ts-mode
+  :straight (:host codeberg :repo "pranshu/haskell-ts-mode"))
 
 ;; * ORG
 
