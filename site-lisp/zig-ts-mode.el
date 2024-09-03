@@ -314,8 +314,7 @@ If given a SOURCE, execute the CMD on it."
 
        :language 'zig
        :feature 'operator
-       `([
-	  (CompareOp)
+       `([(CompareOp)
 	  (BitwiseOp)
 	  (BitShiftOp)
 	  (AdditionOp)
@@ -326,7 +325,8 @@ If given a SOURCE, execute the CMD on it."
 
        :language 'zig
        :feature 'string
-       '([(STRINGLITERALSINGLE)] @font-lock-string-face)
+       '([(STRINGLITERALSINGLE)
+	  (LINESTRING)] @font-lock-string-face)
 
        :language 'zig
        :feature 'type
