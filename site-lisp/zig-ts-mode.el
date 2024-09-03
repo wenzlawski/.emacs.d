@@ -20,6 +20,8 @@
 
 ;;; Commentary:
 
+;; TODO: format strings a la "{d:0>8}" and such
+
 ;; This package provides tree-sitter support for Zig.
 
 ;;; Code:
@@ -223,23 +225,16 @@ If given a SOURCE, execute the CMD on it."
 
 ;;; Indent
 
-;; TODO: Adapt this to zig
-;; most work ootb, but some are not needed.
 (defvar zig-ts-mode--indent-rules
   `((zig
      ((parent-is "source_file") column-0 0)
      ((node-is ")") parent-bol 0)
      ((node-is "]") parent-bol 0)
      ((node-is "}") (and parent parent-bol) 0)
-     ((and (parent-is "comment") c-ts-common-looking-at-star)
-      c-ts-common-comment-start-after-first-star -1)
-     ((parent-is "comment") prev-adaptive-prefix 0)
      ((parent-is "ParamDeclList") parent-bol zig-ts-mode-indent-offset)
      ((parent-is "InitList") parent-bol zig-ts-mode-indent-offset)
      ((parent-is "ContainerDecl") parent-bol zig-ts-mode-indent-offset)
-     ((parent-is "SwitchExpr") parent-bol zig-ts-mode-indent-offset)
-     ((parent-is "arguments") parent-bol zig-ts-mode-indent-offset)
-     ((parent-is "block") parent-bol zig-ts-mode-indent-offset)))
+     ((parent-is "SwitchExpr") parent-bol zig-ts-mode-indent-offset)))
   "Tree-sitter indent rules for `zig-ts-mode'.")
 
 (defvar zig-ts-mode--keywords
@@ -257,7 +252,6 @@ If given a SOURCE, execute the CMD on it."
 (defvar zig-ts-mode--operators '("=" "+" "*" "**" "=>" ".?" ".*" "?" "/" "%" "&" "|" "!" "<" ">")
   "Zig operators for tree-sitter font-locking.")
 
-;; TODO: Adapt this to zig
 (setq zig-ts-mode--font-lock-settings
       (treesit-font-lock-rules
        :language 'zig
@@ -401,6 +395,7 @@ If given a SOURCE, execute the CMD on it."
        ))
 
 
+;; TODO: Is this necessary?
 (defun zig-ts-mode--syntax-propertize (beg end)
   "Apply syntax properties to special characters between BEG and END.
 
@@ -417,7 +412,7 @@ appropriate text property to alter the syntax of template
 delimiters < and >'s."
   (goto-char beg)
   (while (search-forward "'" end t)
-    (when (string-equal "char_literal"
+    (when (string-equal "CHAR_LITERAL"
                         (treesit-node-type
                          (treesit-node-at (match-beginning 0))))
       (put-text-property (match-beginning 0) (match-end 0)
