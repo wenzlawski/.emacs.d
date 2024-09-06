@@ -506,7 +506,21 @@ Containing LEFT, and RIGHT aligned respectively."
 ;; ** other themes
 
 (use-package shades-of-purple-theme
-  :straight t)
+  :straight t
+  :config
+  (custom-theme-set-faces
+   'shades-of-purple
+   '(region ((t (:background "#4915a3"))))
+   '(tab-bar ((t (:background "#2D2B55"))))
+   '(tab-bar-tab-inactive ((t (:background "#2D2B55"))))
+   '(tab-bar-tab
+     ((t (:background "#1E1E3F"
+		      :underline (:color foreground-color :style line :position nil)))))
+   '(outline-1 ((t (:foreground "#FAD000"))))
+   '(outline-2 ((t (:foreground "#ed8eb5"))))
+   '(outline-3 ((t (:foreground "#5be56e"))))
+   '(outline-4 ((t (:foreground "#5be5e3"))))
+   '(outline-5 ((t (:foreground "#f28d71"))))))
 
 ;; * CONFIGURATION
 ;; ** user details
