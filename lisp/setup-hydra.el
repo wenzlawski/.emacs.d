@@ -63,9 +63,9 @@
    (
     ("d" #'toggle-frame-fullscreen "fullscreen" :toggle (frame-parameter nil 'fullscreen))
     ("e" (lambda () (interactive) (setq visual-fill-column-center-text (not (bound-and-true-p visual-fill-column-center-text)))) "center text" :toggle (default-value (bound-and-true-p visual-fill-column-center-text)))
-    ("m" #'modus-themes-toggle "dark" :exit t)
+    ("f" #'fontaine-set-preset "font" :exit t)
     ("t" #'consult-theme "theme")
-    ("T" #'fontaine-set-preset "font" :exit t)
+    ("T" #'modus-themes-toggle "dark" :exit t)
     ("u" mini-frame-mode "mini-frame" :toggle t :exit t)
     ("w" #'my/distraction-free "writing" :toggle (default-value (bound-and-true-p olivetti-mode)))
     )
@@ -75,7 +75,7 @@
     ("f" flycheck-mode "flycheck" :toggle t)
     ("i" #'indent-guide-mode "indent guide")
     ("s" display-line-numbers-mode "line numbers" :toggle t)
-    ("x" (lambda () (interactive) (setopt corfu-auto (not corfu-auto)) (corfu-mode -1) (corfu-mode)) "corfu auto" :toggle (default-value corfu-auto))
+    ("x" (lambda () (interactive) (setopt corfu-auto (not corfu-auto)) (corfu-mode -1) (corfu-mode)) "corfu auto")
     ("y" yas-minor-mode "yasnippet" :toggle t)
     )))
 
@@ -181,9 +181,6 @@
 (bind-key "<f7>" #'my/hydra-citar/body)
 
 ;;; Smudge hydra
-(defvar my/smudge-playlists
-  '(("ot" minimal-techno "spotify:playlist:59KuQSm27IfRylpXxz9KrM")
-    ("oy" yoga-electronica "spotify:playlist:37i9dQZF1DWYUYYlhkTuEn")))
 
 (defvar my/hydra-smudge)
 (eval
@@ -216,6 +213,7 @@
      )))
 
 (bind-key "<f6>" #'my/hydra-smudge/body)
+(bind-key "C-c c" #'my/hydra-smudge/body)
 
 (with-eval-after-load 'cc-mode
   (defvar my/c-mode-hydra)
