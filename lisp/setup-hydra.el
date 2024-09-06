@@ -183,38 +183,39 @@
 
 ;;; Smudge hydra
 
-(defvar my/hydra-smudge)
-(eval
- `(pretty-hydra-define my/hydra-smudge (:title "Smudge" :color blue :quit-key "q")
-    ("Track"
-     (("b"  smudge-controller-previous-track "Previous" :exit nil)
-      ("f"  smudge-controller-next-track "Next" :exit nil)
-      ("t" smudge-track-search "Search Tracks"))
-     "Playback"
-     (("c"  smudge-controller-toggle-play "Play/Pause")
-      ("r"  smudge-controller-toggle-repeat "Repeat")
-      ("s"  smudge-controller-toggle-shuffle "Shuffle")
-      ("a"  smudge-select-device "Select Device"))
-     "Volume"
-     (("u"  smudge-controller-volume-up "Volume Up" :exit nil)
-      ("d"  smudge-controller-volume-down "Volume Down" :exit nil)
-      ("m"  smudge-controller-mute-unmute "Mute"))
-     "Playlists"
-     (("pc" smudge-create-playlist "Create")
-      ("pf" smudge-featured-playlists "Featured")
-      ("ps" smudge-playlist-search "Search")
-      ("pm" smudge-my-playlists "List My")
-      ("pu" smudge-user-playlists "List User"))
-     "Shortcuts"
-     ,@(list (mapcar
-	      (lambda (x)
-		(list (car x)
-		      (list 'my/smudge-play-playlist (caddr x))
-		      (symbol-name (cadr x)))) my/smudge-playlists))
-     )))
+(with-eval-after-load 'smudge
+  (defvar my/hydra-smudge)
+  (eval
+   `(pretty-hydra-define my/hydra-smudge (:title "Smudge" :color blue :quit-key "q")
+      ("Track"
+       (("b"  smudge-controller-previous-track "Previous" :exit nil)
+	("f"  smudge-controller-next-track "Next" :exit nil)
+	("t" smudge-track-search "Search Tracks"))
+       "Playback"
+       (("c"  smudge-controller-toggle-play "Play/Pause")
+	("r"  smudge-controller-toggle-repeat "Repeat")
+	("s"  smudge-controller-toggle-shuffle "Shuffle")
+	("a"  smudge-select-device "Select Device"))
+       "Volume"
+       (("u"  smudge-controller-volume-up "Volume Up" :exit nil)
+	("d"  smudge-controller-volume-down "Volume Down" :exit nil)
+	("m"  smudge-controller-mute-unmute "Mute"))
+       "Playlists"
+       (("pc" smudge-create-playlist "Create")
+	("pf" smudge-featured-playlists "Featured")
+	("ps" smudge-playlist-search "Search")
+	("pm" smudge-my-playlists "List My")
+	("pu" smudge-user-playlists "List User"))
+       "Shortcuts"
+       ,@(list (mapcar
+		(lambda (x)
+		  (list (car x)
+			(list 'my/smudge-play-playlist (caddr x))
+			(symbol-name (cadr x)))) my/smudge-playlists))
+       )))
 
-(bind-key "<f6>" #'my/hydra-smudge/body)
-(bind-key "C-c c" #'my/hydra-smudge/body)
+  (bind-key "<f6>" #'my/hydra-smudge/body)
+  (bind-key "C-c c" #'my/hydra-smudge/body))
 
 (with-eval-after-load 'cc-mode
   (defvar my/c-mode-hydra)
