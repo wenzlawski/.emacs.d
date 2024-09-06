@@ -1,6 +1,7 @@
 ;;; init.el --- Init  -*- lexical-binding: t; -*-
 
 ;;; Commentary:
+
 ;; This is my personal Emacs configuration file.
 
 ;;; Code:
@@ -499,6 +500,11 @@ Containing LEFT, and RIGHT aligned respectively."
   (add-to-list 'ns-system-appearance-change-functions #'my/modus-theme-change)
   ;; (add-hook 'enable-theme-functions #'my/modus-themes-invisible-dividers)
   (add-hook 'after-init-hook #'my/modus-theme-change))
+
+;; ** other themes
+
+(use-package shades-of-purple-theme
+  :straight t)
 
 ;; * CONFIGURATION
 ;; ** user details
@@ -1717,6 +1723,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
 ;; ** jinx
 
 (use-package jinx
+  :disabled
   :straight t
   :hook (text-mode . jinx-mode)
   :custom
@@ -2988,6 +2995,9 @@ and \"apikey\" as USER."
   (add-to-list 'display-buffer-alist '("\\`\\*Outline.*\\*" nil (window-width . 0.3))))
 
 (with-eval-after-load 'pdf-view
+
+  (advice-add #'pdf-util-tooltip-arrow :override (lambda (&rest _) nil))
+  
   (defun my/background-pdf-view-refresh (_)
     "Refresh the themed minor mode in pdf-view."
     (cl-loop for buf in (buffer-list)
