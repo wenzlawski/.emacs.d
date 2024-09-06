@@ -558,8 +558,6 @@ Containing LEFT, and RIGHT aligned respectively."
   ("C-c r r" . query-replace-regexp)
   ("C-c r s" . replace-string)
   ("C-x C-b" . ibuffer)
-  (:map tab-prefix-map
-	("s" . tab-switcher))
   (:map help-map
 	("W" . man))
   ;;  (:map dired-mode-map
@@ -758,17 +756,39 @@ Containing LEFT, and RIGHT aligned respectively."
 
 ;; ** tab-bar
 
+(defun my/toggle-frame-tab-bar (&optional frame option)
+  "Toggle tab bar. Option 'enable, 'disable, else toggle."
+  (interactive)
+  (let ((lines (cl-case option
+		 (enable 1)
+		 (disable 0)
+		 (t (if (> (frame-parameter frame 'tab-bar-lines) 0) 0 1))))
+	(state (cl-case option
+		 (enable nil)
+		 (disable t)
+		 (t (not (frame-parameter frame 'tab-bar-lines-keep-state))))))
+    (set-frame-parameter frame 'tab-bar-lines lines)
+    (set-frame-parameter frame 'tab-bar-lines-keep-state state)))
+
+(defun my/tab-bar-last-tab (&optional tab lastp)
+  "Hide tab bar if we only have one tab left."
+  (when (eq (length (tab-bar-tabs)) 2)
+    (my/toggle-frame-tab-bar nil 'disable)))
+
 (use-package tab-bar
+  :bind
+  (:map tab-prefix-map
+	("h" . my/toggle-frame-tab-bar)
+	("s" . tab-switcher))
   :custom
   (tab-bar-select-tab-modifiers '(super))
-  ;; :bind
-  ;; (:map tab-bar-mode-map
-  ;; 	("C-)" . tab-recent))
-  :config
-  (setq tab-bar-close-button-show nil)       ;; hide tab close / X button
-  (setq tab-bar-new-tab-choice "*scratch*");; buffer to show in new tabs
-  (setq tab-bar-tab-hints t)                 ;; show tab numbers
-  (setq tab-bar-format '(tab-bar-format-tabs tab-bar-separator)))
+  (tab-bar-close-button-show nil)       ;; hide tab close / X button
+  (tab-bar-new-tab-choice "*scratch*");; buffer to show in new tabs
+  (tab-bar-tab-hints t)                 ;; show tab numbers
+  (tab-bar-format '(tab-bar-format-tabs tab-bar-separator))
+  (tab-bar-close-last-tab-choice (lambda (_) (my/toggle-frame-tab-bar nil 'disable)))
+  (tab-bar-tab-pre-close-functions '(my/tab-bar-last-tab))
+  (tab-bar-tab-post-open-functions '((lambda (_) (my/toggle-frame-tab-bar nil 'enable)))))
 
 ;; ** exec-path-from-shell
 
