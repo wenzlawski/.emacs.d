@@ -550,9 +550,9 @@ Containing LEFT, and RIGHT aligned respectively."
   :hook (prog-mode . show-paren-mode)
   :custom-face
   (show-paren-match ((t (:underline nil :inverse-video nil))))
-  (deault ((t (:family "Fira Code"))))
-  (variable-pitch ((t (:family "iA Writer Quattro V"))))
-  (fixed-pitch ((t (:family "Fira Code"))))
+  ;; (deault ((t (:family "Fira Code"))))
+  ;; (variable-pitch ((t (:family "iA Writer Quattro V"))))
+  ;; (fixed-pitch ((t (:family "Fira Code"))))
   :bind
   ("C-z" . nil)
   ("C-x C-l" . nil)
@@ -582,10 +582,9 @@ Containing LEFT, and RIGHT aligned respectively."
 	("e" . switch-to-minibuffer))
   :config
   (setq-default fill-column 79
-		line-spacing 0.05
 		electric-indent-inhibit t
 		require-final-newline t
-		)
+		cursor-type '(bar . 2))
 
   (setq undo-limit 80000000
 	custom-safe-themes t
@@ -601,13 +600,12 @@ Containing LEFT, and RIGHT aligned respectively."
 	scroll-conservatively 0
 	;; frame-title-format '("" "what the %b")
 	ns-use-proxy-icon t
-	cursor-type '(bar . 2)
 	;; cursor-type ‘(hbar . 8))
 	blink-cursor-delay 0.5
 	blink-cursor-interval 0.5
 	register-preview-delay 0.25
 	history-length 100
-	initial-scratch-message ";; scratchy scratch"
+	initial-scratch-message ";; scratchy scratch -*- lexical-binding: t -*-"
 	prescient-history-length 1000
 	tab-always-indent 'complete
 	completion-cycle-threshold nil
@@ -3297,12 +3295,13 @@ If FRAME is omitted or nil, use currently selected frame."
 
 (x-focus-frame nil)
 
+
 ;; Local Variables:
 ;; outline-regexp: " *;; \\*+"
 ;; page-delimiter: " *;; \\**"
 ;; eval:(outshine-mode 1)
 ;; eval:(outline-hide-body)
-;; eval:(flycheck-mode -1)
 ;; eval: (buffer-local-set-key (kbd "M-o") 'my/consult-outline-minor-mode-goto)
+;; eval:(flycheck-mode -1)
 ;; coding: utf-8-unix
 ;; End:
