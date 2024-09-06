@@ -3,9 +3,12 @@
 
 ;;; Code:
 
+(defvar my/smudge-playlists
+  '(("ot" minimal-techno "spotify:playlist:59KuQSm27IfRylpXxz9KrM")
+    ("oy" yoga-electronica "spotify:playlist:37i9dQZF1DWYUYYlhkTuEn")))
+
 (use-package smudge
   :straight t
-  :bind-keymap ("C-c c" . smudge-command-map)
   :commands (smudge-controller-apply
 	     smudge-controller-previous-track
 	     smudge-controller-next-track
@@ -171,7 +174,7 @@
 
 ;;; Play local
 
-  ;; this uses with the spotify:album:xxx format
+  ;; this uses the spotify:album:xxx format
   (defun my/smudge-play-local ()
     "Play the current track."
     (interactive)
@@ -180,9 +183,8 @@
       (ns-do-applescript (format "tell application \"Spotify\" to play track \"%s\"" uri))))
 
   (bind-key "s" #'my/smudge-play-local smudge-playlist-search-mode-map)
-  (bind-key "s" #'my/smudge-play-local smudge-track-search-mode-map)
-  
-  )
+  (bind-key "s" #'my/smudge-play-local smudge-track-search-mode-map))
+
 
 (provide 'setup-smudge)
 ;;; setup-smudge.el ends here
