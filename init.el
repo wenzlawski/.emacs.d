@@ -211,15 +211,9 @@
 (use-package rainbow-delimiters
   :straight t
   :custom-face
-  (rainbow-delimiters-depth-1-face ((t (:foreground "#D19A66"))))
-  (rainbow-delimiters-depth-2-face ((t (:foreground "#C678DD"))))
-  (rainbow-delimiters-depth-3-face ((t (:foreground "#56B6C2"))))
-  ;; (rainbow-delimiters-depth-4-face ((t (:foreground "#F1CB02"))))
-  ;; (rainbow-delimiters-depth-5-face ((t (:foreground "#F1CB02"))))
-  ;; (rainbow-delimiters-depth-6-face ((t (:foreground "#F1CB02"))))
-  ;; (rainbow-delimiters-depth-7-face ((t (:foreground "#F1CB02"))))
-  ;; (rainbow-delimiters-depth-8-face ((t (:foreground "#F1CB02"))))
-  ;; (rainbow-delimiters-depth-9-face ((t (:foreground "#F1CB02"))))
+  ;; (rainbow-delimiters-depth-1-face ((t (:foreground "#D19A66"))))
+  ;; (rainbow-delimiters-depth-2-face ((t (:foreground "#C678DD"))))
+  ;; (rainbow-delimiters-depth-3-face ((t (:foreground "#56B6C2"))))
   :hook (prog-mode . rainbow-delimiters-mode)
   :custom
   (rainbow-delimiters-max-face-count 3))
@@ -605,7 +599,7 @@ Containing LEFT, and RIGHT aligned respectively."
 	blink-cursor-interval 0.5
 	register-preview-delay 0.25
 	history-length 100
-	initial-scratch-message ";; scratchy scratch -*- lexical-binding: t -*-"
+	initial-scratch-message ";; scratchy scratch  -*- lexical-binding: t; -*-"
 	prescient-history-length 1000
 	tab-always-indent 'complete
 	completion-cycle-threshold nil
@@ -992,6 +986,8 @@ Append with current prefix arg."
 
 (use-package ace-window
   :straight t
+  :custom-face
+  (aw-leading-char-face ((t (:height 2.0))))
   :init
   (setopt aw-keys '(?a ?r ?s ?t ?g ?m ?n ?e ?i)
 	  aw-scope 'frame
