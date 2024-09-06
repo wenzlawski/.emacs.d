@@ -36,8 +36,7 @@
    `((consult-ripgrep buffer)
      (consult-buffer flat (vertico-cycle . t))
      (execute-extended-command 
-      (+vertico-transform-functions . +vertico-highlight-enabled-mode))
-     ))
+      (+vertico-transform-functions . +vertico-highlight-enabled-mode))))
   (vertico-multiform-categories
    '((file (vertico-sort-function . sort-directories-first)
            (+vertico-transform-functions . +vertico-highlight-directory))
