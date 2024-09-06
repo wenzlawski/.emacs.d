@@ -918,7 +918,7 @@ This function is called by `org-babel-execute-src-block'."
   :straight t
   :hook org-mode
   :custom
-  (org-appear-autolinks t)
+  (org-appear-autolinks nil)
   (org-appear-autoentities t)
   (org-appear-autokeywords t))
 
