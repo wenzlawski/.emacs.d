@@ -781,8 +781,10 @@ Containing LEFT, and RIGHT aligned respectively."
 		 (enable nil)
 		 (disable t)
 		 (t (not (frame-parameter frame 'tab-bar-lines-keep-state))))))
-    (set-frame-parameter frame 'tab-bar-lines lines)
-    (set-frame-parameter frame 'tab-bar-lines-keep-state state)))
+    (if (and (eq lines 1) (eq (length (tab-bar-tabs)) 1))
+	(message "Only one tab.")
+      (set-frame-parameter frame 'tab-bar-lines lines)
+      (set-frame-parameter frame 'tab-bar-lines-keep-state state))))
 
 (defun my/tab-bar-last-tab (&optional tab lastp)
   "Hide tab bar if we only have one tab left."
