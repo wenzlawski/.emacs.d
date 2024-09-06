@@ -317,9 +317,11 @@ Containing LEFT, and RIGHT aligned respectively."
 ;; ** hl-line
 
 (use-package hl-line
-  :hook prog-mode
+  ;; :hook prog-mode
   :custom
-  (hl-line-range-function nil))
+  (hl-line-range-function nil)
+  :config
+  (global-hl-line-mode 1))
 
 (defun my/highlight-visual-line ()
   "Only highlight the visual line."
