@@ -81,7 +81,7 @@
 
   ;; Shave seconds off startup time by starting the scratch buffer in
   ;; `fundamental-mode'
-  (setq initial-major-mode 'fundamental-mode
+  (setq initial-major-mode 'lisp-interaction-mode
         initial-scratch-message nil)
 
 
@@ -175,7 +175,8 @@ New frames are instructed to call `prot-emacs-re-enable-frame-theme'."
       inhibit-startup-screen t
       inhibit-x-resources t
       inhibit-startup-echo-area-message user-login-name ; read the docstring
-      inhibit-startup-buffer-menu t)
+      inhibit-startup-buffer-menu t
+      use-package-enable-imenu-support t)
 
 ;; Suppress compiler warnings and don't inundate users with their popups.
 (setq native-comp-async-report-warnings-errors 'silent)
