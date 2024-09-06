@@ -559,7 +559,6 @@ Containing LEFT, and RIGHT aligned respectively."
   ("C-c r s" . replace-string)
   ("C-x C-b" . ibuffer)
   (:map tab-prefix-map
-	("h" . tab-bar-mode)
 	("s" . tab-switcher))
   (:map help-map
 	("W" . man))
