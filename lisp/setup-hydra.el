@@ -38,6 +38,7 @@
     ("h" #'helpful-at-point "Help")
     ("r" #'ielm "REPL")
     ("s" (lambda () (interactive) (switch-to-buffer "*scratch*")) "Scratch")
+    ("S" #'scratch "Mode Scratch")
     ("D" toggle-debug-on-error "debug on error" :toggle (default-value 'debug-on-error))
     ("X" toggle-debug-on-quit "debug on quit" :toggle (default-value 'debug-on-quit))
     )
