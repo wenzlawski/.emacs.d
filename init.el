@@ -917,6 +917,11 @@ Append with current prefix arg."
   (with-eval-after-load 'embark
     (bind-key "e" #'iedit-mode 'embark-identifier-map)))
 
+;; ** ov
+
+(use-package ov
+  :straight t)
+
 ;; * HELP
 ;; ** help
 

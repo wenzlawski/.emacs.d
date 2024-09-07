@@ -26,7 +26,7 @@
    (
     ("i" (lambda () (interactive) (find-file user-init-file)) "init")
     ("j" (lambda () (interactive) (let ((projectile-project-root user-emacs-directory)) (projectile-find-file))) ".emacs.d")
-    ("p" (lambda () (interactive) (find-file "~/personal/Org/personal.org")) "personal")
+    ("p" (lambda () (interactive) (find-file (dir-concat org-directory "personal.org"))) "personal")
     )
    "Programs"
    (("C-z" (lambda () (interactive) (shell-command "open /Applications/Zotero.app")) "Zotero")

@@ -13,7 +13,7 @@ fundamental-mode ;; Available everywhere
 
 emacs-lisp-mode lisp-interaction-mode
 
-;; (bat "(bound-and-true-p " r ")")
+(bat "(bound-and-true-p " r ")")
 ;; (todo ";; TODO: " q)
 ;; (note ";; NOTE: " q)
 ;; (fail ";; FAIL: " q)

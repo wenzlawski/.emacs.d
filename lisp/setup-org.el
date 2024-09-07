@@ -68,7 +68,7 @@ abort `\\[org-capture-kill]'."))))
   ;;          (inhibit-same-window . t)
   ;;          (window-height . )))))
   :custom
-  (org-directory "~/personal/Org/")
+  (org-directory "~/personal/org/")
   (org-todo-keywords '((sequence "TODO" "IN-PROGRESS" "WAITING" "|" "DONE")))
   (org-hide-emphasis-markers t)
   (org-latex-compiler "xelatex")
