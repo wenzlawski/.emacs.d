@@ -1909,6 +1909,8 @@ See URL `http://pypi.python.org/pypi/ruff'."
     (set-face-attribute 'yas-field-highlight-face nil
 			:inherit 'region :background (modus-themes-get-color-value 'bg-blue-subtle))))
 
+(require 'yas-abbrev-mode)
+
 (use-package yankpad
   :straight t
   :disabled
