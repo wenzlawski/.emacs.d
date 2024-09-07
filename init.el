@@ -544,9 +544,9 @@ Containing LEFT, and RIGHT aligned respectively."
   :hook (prog-mode . show-paren-mode)
   :custom-face
   (show-paren-match ((t (:underline nil :inverse-video nil))))
-  ;; (deault ((t (:family "Fira Code"))))
+  (deault ((t (:family "Fira Code"))))
   ;; (variable-pitch ((t (:family "iA Writer Quattro V"))))
-  ;; (fixed-pitch ((t (:family "Fira Code"))))
+  (fixed-pitch ((t (:family "Fira Code"))))
   :bind
   ("C-z" . nil)
   ("C-x C-l" . nil)
@@ -565,7 +565,7 @@ Containing LEFT, and RIGHT aligned respectively."
   ("C-c C" . calendar)
   ("C-c <SPC>" . mode-line-other-buffer)
   ("<C-i>" . completion-at-point)
-  ("C-c r r" . query-replace-regexp)
+
   ("C-c r s" . replace-string)
   ("C-x C-b" . ibuffer)
   (:map help-map
@@ -678,11 +678,6 @@ Containing LEFT, and RIGHT aligned respectively."
 	("C-w" . my/man-plain))
   (:map Man-mode-map
 	("g" . consult-imenu)))
-
-;; ** abbrev
-
-(use-package abbrev
-  :hook text-mode)
 
 ;; ** autoinsert
 
@@ -922,6 +917,20 @@ Append with current prefix arg."
 (use-package ov
   :straight t)
 
+;; ** TODO isearch
+
+(use-package isearch+
+  :after isearch
+  :straight t
+  :bind
+  (:map isearch-mode-map
+	("\C-o" . (lambda () (interactive) (isearch-process-search-char ?\n)))))
+
+;; ** replace
+
+(use-package replace+
+  :straight t)
+
 ;; * HELP
 ;; ** help
 
@@ -1027,7 +1036,8 @@ Append with current prefix arg."
   :straight t
   :commands (link-hint-open-link link-hint-copy-link)
   :config
-  (with-eval-after-load 'org (define-key org-mode-map (kbd "M-o") 'link-hint-open-link)))
+  (with-eval-after-load 'org (define-key org-mode-map (kbd "M-o") 'link-hint-open-link))
+  (with-eval-after-load 'eww (define-key eww-mode-map (kbd "o") 'link-hint-open-link)))
 
 ;; ** avy
 
@@ -1082,6 +1092,7 @@ Append with current prefix arg."
 
 (use-package dash
   :straight t)
+
 (use-package embark-vc
   :straight t)
 
@@ -1267,10 +1278,7 @@ Append with current prefix arg."
 
 ;; ** abbrev
 
-(use-package abbrev
-  :config
-  (setq save-abbrevs 'silently)
-  (quietly-read-abbrev-file))
+(require 'setup-abbrev)
 
 ;; ** dabbrev
 
@@ -1545,7 +1553,11 @@ This function can be used as the value of the user option
     :menu ("Search" "n" "Denote"))
   :bind
   ("M-s r" . rg-menu)
-  ("C-c n f R" . search-denote)
+  ("C-c n f R" . search-denote))
+
+(use-package rg-isearch
+  :after rg
+  :bind
   (:map isearch-mode-map
 	("M-s g" . rg-isearch-menu)))
 
@@ -1573,8 +1585,15 @@ This function can be used as the value of the user option
   :bind
   ([remap query-replace] . anzu-query-replace)
   ([remap query-replace-regexp] . anzu-query-replace-regexp)
+  (:map
+   isearch-mode-map
+   ([remap isearch-query-replace] . anzu-isearch-query-replace)
+   ([remap isearch-query-replace-regexp] . anzu-isearch-query-replace-regexp)
+   ("C-h"  . anzu-isearch-query-replace))
   :config
-  (global-anzu-mode 1))
+  (global-anzu-mode 1)
+  (set-face-attribute 'anzu-mode-line nil
+                      :foreground "yellow" :weight 'bold))
 
 ;; ** occur-x
 
@@ -1588,7 +1607,7 @@ This function can be used as the value of the user option
   :straight (:host codeberg :repo "fourier/loccur")
   :bind
   (:map isearch-mode-map
-	("M-s l" . loccus-isearch)))
+	("M-s b" . loccur-isearch)))
 
 ;; ** dired
 
@@ -1892,6 +1911,20 @@ See URL `http://pypi.python.org/pypi/ruff'."
 (use-package a :straight t)
 (use-package map :straight t)
 
+;; ** TODO pcre2el
+
+(use-package pcre2el
+  :straight t)
+
+;; ** TODO visual-regexp
+
+(use-package visual-regexp
+  :straight t)
+
+(use-package visual-regexp-steroids
+  :straight t
+  :after visual-regexp)
+
 ;; * LANGUAGE TOOLS
 ;; ** yasnippet
 
@@ -2122,13 +2155,6 @@ See URL `http://pypi.python.org/pypi/ruff'."
 (use-package epdh
   :disabled
   :straight (:host github :repo "alphapapa/emacs-package-dev-handbook"))
-;; ** ctrlf
-
-(use-package ctrlf
-  :straight t
-  :config
-  (ctrlf-mode))
-
 ;; ** sly
 
 (use-package sly
