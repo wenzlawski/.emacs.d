@@ -177,6 +177,7 @@
 ;; ** Pulsar
 
 (use-package pulsar
+  :disabled
   :straight t
   :hook
   (xref-after-return . pulsar-pulse-line)
@@ -465,9 +466,9 @@ Containing LEFT, and RIGHT aligned respectively."
 	    ;; (fg-mode-line-inactive fg-main)
 	    ;; (border-mode-line-active bg-mode-line-active)
 	    ;; (border-mode-line-inactive bg-mode-line-inactive)
-	    (bg-tab-bar bg-dim)
-	    (bg-tab-current bg-main)
-	    (bg-tab-other bg-dim)
+	    (bg-tab-bar bg-main)
+	    (bg-tab-current bg-dim)
+	    (bg-tab-other bg-main)
 	    (prose-done green-faint)
             (prose-todo red-faint)
 	    )))
@@ -491,13 +492,22 @@ Containing LEFT, and RIGHT aligned respectively."
      `(window-divider-first-pixel ((t :background ,bg :foreground ,bg)))
      `(window-divider-last-pixel ((t :background ,bg :foreground ,bg))))))
 
+(defun my/modus-themes-custom-faces (&rest _)
+  (modus-themes-with-colors
+    (set-face-attribute
+     'tab-bar-tab nil
+     :box `(:line-width (-1 . 4) :color ,bg-tab-bar)
+     :overline fg-main
+     :underline `(:color ,bg-tab-current))))
+
 (with-eval-after-load 'modus-themes
   ;; (push '(lambda (_) (my/modus-theme-initialize ns-system-appearance)) (cdr (last after-make-frame-functions)))
   (add-to-list 'ns-system-appearance-change-functions #'my/modus-theme-change)
   ;; (add-hook 'enable-theme-functions #'my/modus-themes-invisible-dividers)
-  (add-hook 'after-init-hook #'my/modus-theme-change))
+  (add-hook 'after-init-hook #'my/modus-theme-change)
+  (add-hook 'modus-themes-after-load-theme-hook #'my/modus-themes-custom-faces))
 
-;; ** other themes
+;; ** shades-of-purple
 
 (use-package shades-of-purple-theme
   :straight t
@@ -509,7 +519,9 @@ Containing LEFT, and RIGHT aligned respectively."
    '(tab-bar-tab-inactive ((t (:background "#2D2B55"))))
    '(tab-bar-tab
      ((t (:background "#1E1E3F"
-		      :underline (:color foreground-color :style line :position nil)))))
+		      :box (:line-width (-1 . 4) :color "#2D2B55")
+		      :overline "white"
+		      :underline (:color "#2D2B55")))))
    '(outline-1 ((t (:foreground "#FAD000"))))
    '(outline-2 ((t (:foreground "#ed8eb5"))))
    '(outline-3 ((t (:foreground "#5be56e"))))
@@ -537,7 +549,7 @@ Containing LEFT, and RIGHT aligned respectively."
 		"/etc/profiles/per-user/mw/bin/"
 		"/run/current-system/sw/bin/"
 		"/nix/var/nix/profiles/default/bin/")
-              exec-path))
+	      exec-path))
 
 
 (use-package emacs
@@ -565,8 +577,10 @@ Containing LEFT, and RIGHT aligned respectively."
   ("C-c C" . calendar)
   ("C-c <SPC>" . mode-line-other-buffer)
   ("<C-i>" . completion-at-point)
-
-  ("C-c r s" . replace-string)
+  ("C-c r r" . query-replace-regexp)
+  ("C-c r R" . replace-regexp)
+  ("C-c r S" . replace-string)
+  ("C-c r s" . query-replace)
   ("C-x C-b" . ibuffer)
   (:map help-map
 	("W" . man))
@@ -1582,6 +1596,7 @@ This function can be used as the value of the user option
 
 (use-package anzu
   :straight t
+  :demand
   :bind
   ([remap query-replace] . anzu-query-replace)
   ([remap query-replace-regexp] . anzu-query-replace-regexp)
@@ -1593,7 +1608,7 @@ This function can be used as the value of the user option
   :config
   (global-anzu-mode 1)
   (set-face-attribute 'anzu-mode-line nil
-                      :foreground "yellow" :weight 'bold))
+		      :foreground "yellow" :weight 'bold))
 
 ;; ** occur-x
 
@@ -1609,7 +1624,7 @@ This function can be used as the value of the user option
   (:map isearch-mode-map
 	("M-s b" . loccur-isearch)))
 
-;; ** dired
+;; ** TODO dired
 
 (use-package dired
   :bind
@@ -1646,6 +1661,10 @@ This function can be used as the value of the user option
   :straight t)
 
 (when (memq window-system '(mac ns x)) (require 'dired-qlmanage))
+
+(use-package dired+
+  :straight t
+  :after dired)
 
 ;; ** magit / git
 
@@ -1870,13 +1889,13 @@ See URL `http://pypi.python.org/pypi/ruff'."
   (let ((previous-value (nth 0 r)))
     (if edebug-unwrap-results
         (setq previous-value
-              (edebug-unwrap* previous-value)))
+	      (edebug-unwrap* previous-value)))
     (setq edebug-previous-result
           (edebug-safe-prin1-to-string previous-value))))
 
 (advice-add #'edebug-compute-previous-result
-            :around
-            #'my/edebug-compute-previous-result)
+	    :around
+	    #'my/edebug-compute-previous-result)
 
 ;; ** eros
 
@@ -1890,8 +1909,8 @@ See URL `http://pypi.python.org/pypi/ruff'."
     :duration eros-eval-result-duration))
 
 (advice-add #'edebug-previous-result
-            :around
-            #'my/edebug-previous-result)
+	    :around
+	    #'my/edebug-previous-result)
 
 ;; ** dictionary
 
@@ -1914,7 +1933,30 @@ See URL `http://pypi.python.org/pypi/ruff'."
 ;; ** TODO pcre2el
 
 (use-package pcre2el
-  :straight t)
+  :straight t
+  :pretty-hydra
+  ((:color teal :quit-key "q")
+   ("Default"
+    (("/" rxt-explain "explain")
+     ("c" rxt-convert-syntax "convert-syntax")
+     ("x" rxt-convert-to-rx "convert-to-rx")
+     ("'" rxt-convert-to-strings "convert-to-strings"))
+    "From PCRE"
+    (("p /" rxt-explain-pcre "explain-pcre")
+     ("p e" rxt-pcre-to-elisp "pcre-to-elisp")
+     ("p x" rxt-pcre-to-rx "pcre-to-rx")
+     ("p '" rxt-pcre-to-strings "pcre-to-strings"))
+    "From Elisp"
+    (("e /" rxt-explain-elisp "explain-elisp")
+     ("e p" rxt-elisp-to-pcre "elisp-to-pcre")
+     ("e x" rxt-elisp-to-rx "elisp-to-rx")
+     ("e '" rxt-elisp-to-strings "elisp-to-strings")
+     ("e t" rxt-toggle-elisp-rx "toggle-elisp-rx")
+     ("t" rxt-toggle-elisp-rx "toggle-elisp-rx"))
+    "Search"
+    ;; Search
+    (("%" pcre-query-replace-regexp "pcre-query-replace-regexp"))))
+  :bind ("C-c k" . pcre2el-hydra/body))
 
 ;; ** TODO visual-regexp
 
@@ -2468,6 +2510,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
 
 (use-package css-mode
   :hook ((css-mode css-ts-mode) . (lambda nil (setq tab-width 2)))
+  :mode ("\\.css\\'" . css-ts-mode)
   :config
   (setq css-indent-offset 2))
 
@@ -2475,7 +2518,8 @@ See URL `http://pypi.python.org/pypi/ruff'."
 
 (use-package nix-mode
   :straight t
-  :mode "\\.nix\\'")
+  ;; :mode "\\.nix\\'"
+  )
 
 (use-package nix-ts-mode
   :straight t
@@ -2572,15 +2616,19 @@ See URL `http://pypi.python.org/pypi/ruff'."
 (use-package sgml-mode
   :hook (html-mode . (lambda () (setq tab-width 2))))
 
+(use-package html-ts-mode
+  :load-path "site-lisp"
+  :mode "\\.html\\'")
+
 ;; ** yaml
 
-(use-package yaml-mode
-  :straight t)
+(use-package yaml-ts-mode
+  :mode "\\.yaml\\'")
 
 ;; ** toml
 
-(use-package toml-mode
-  :straight t)
+(use-package toml-ts-mode
+  :mode "\\.toml\\'")
 
 ;; ** js json
 
@@ -2791,20 +2839,19 @@ The browser to used is specified by the
   ("C-c n z" . denote-signature)
   :custom
   (denote-directory (expand-file-name "~/personal/denote"))
-  (denote-dired-directories '("~/personal/denote"))
   (denote-infer-keywords t)
   (denote-sort-keywords t)
   (denote-file-type nil) ; Org is the default, set others here
   (denote-prompts '(title keywords))
   (denote-rename-confirmations nil)
-  (denote-excluded-directories-regexp nil)
+  (denote-excluded-directories-regexp "data")
   (denote-excluded-keywords-regexp nil)
   (denote-date-prompt-use-org-read-date t)
   (denote-date-format nil)
   (denote-backlinks-show-context t)
-  (denote-excluded-directories-regexp "data")
   :config
-  (denote-rename-buffer-mode))
+  ;; (denote-rename-buffer-mode)
+  )
 
 (use-package denote-org-extras
   :after denote)
@@ -2836,6 +2883,36 @@ The browser to used is specified by the
    ("C-c n e n" . denote-explore-network)
    ("C-c n e v" . denote-explore-network-regenerate)
    ("C-c n e D" . denote-explore-degree-barchart)))
+
+(with-eval-after-load 'denote
+  (defun my/denote-link-ol-export (link description format)
+    "Export a `denote:' link from Org files.
+The LINK, DESCRIPTION, and FORMAT are handled by the export
+backend."
+    (let* ((path-id (denote-link--ol-resolve-link-to-target link :full-data))
+           (path (file-relative-name (nth 0 path-id)))
+           (id (nth 1 path-id))
+           (query (nth 2 path-id))
+           (anchor (file-name-sans-extension path))
+           (desc (cond
+                  (description)
+                  (query (format "denote:%s::%s" id query))
+                  (t (concat "denote:" id)))))
+      (cond
+       ((eq format 'html)
+	(if query
+	    (format "<a href=\"%s.html%s\">%s</a>" anchor query desc)
+          (format "<a href=\"%s.html\">%s</a>" anchor desc)))
+       ((eq format 'latex) (format "\\href{%s}{%s}" (replace-regexp-in-string "[\\{}$%&_#~^]" "\\\\\\&" path) desc))
+       ((eq format 'texinfo) (format "@uref{%s,%s}" path desc))
+       ((eq format 'ascii) (format "[%s] <denote:%s>" desc path))
+       ((eq format 'md)
+	(if query
+	    (format "[%s](%s%s)" desc path query)
+          (format "[%s](%s)" desc path)))
+       (t path))))
+
+  (advice-add #'denote-link-ol-export :override #'my/denote-link-ol-export))
 
 ;; ** nov-mode
 
