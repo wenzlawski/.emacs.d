@@ -47,8 +47,13 @@ org-mode
 (lorems (Lorem-ipsum-insert-sentences (read-number "Sentences: ")))
 (loremp (Lorem-ipsum-insert-paragraphs (read-number "Paragraphs: ")))
 (title (cadar (org-collect-keywords '("TITLE"))))
-(ttl "#+TITLE: " p n "#+date: Created on " (format-time-string "[%Y-%m-%d %a]") n n q)
+(header "#+TITLE: " p n "#+date: Created on " (format-time-string "[%Y-%m-%d %a]") n n q)
 (hargs "#+property: header-args" p " :" q)
+
+;; HUGO
+(shc "@@hugo:{{< " (p "shc" shc) " >}} " q " {{< /" (p "shc" shc) " >}}@@")
+(mshc "@@hugo:{{% " (p "shc" shc) " %}} " q " {{% /" (p "shc" shc) " %}}@@")
+(hugo "#+begin_export hugo" n r n "#+end_export")
 
 lisp-mode sly-mrepl-mode
 

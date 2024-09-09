@@ -5,8 +5,3 @@
     ("othw" "otherwise" nil :count 2)
    ))
 
-(define-abbrev-table 'text-mode-abbrev-table
-  '(
-    ("define" "Definitione" nil :count 6)
-   ))
-

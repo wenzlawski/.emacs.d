@@ -225,37 +225,36 @@ Return nil if there is no name or if NODE is not a defun node."
   (unless (treesit-ready-p 'typescript)
     (error "Tree-sitter grammar for Typescript/TYPESCRIPT isn't available"))
 
-  (when (treesit-ready-p 'typescript)
-    (treesit-parser-create 'svelte)
+  (treesit-parser-create 'svelte)
 
-    ;; Comments and text content
-    (setq-local treesit-text-type-regexp
-		(regexp-opt '("comment" "text")))
+  ;; Comments and text content
+  (setq-local treesit-text-type-regexp
+	      (regexp-opt '("comment" "text")))
 
-    ;; Indentation rules
-    (setq-local treesit-simple-indent-rules svelte-ts-mode--indent-rules
-		css-indent-offset svelte-ts-mode-indent-offset)
+  ;; Indentation rules
+  (setq-local treesit-simple-indent-rules svelte-ts-mode--indent-rules
+	      css-indent-offset svelte-ts-mode-indent-offset)
 
-    ;; Font locking
-    (setq-local treesit-font-lock-settings svelte-ts-mode--font-lock-settings
-		treesit-font-lock-feature-list
-		'((svelte-comment svelte-definition css-selector svelte-tag svelte-raw
-				  css-comment css-query css-keyword typescript-comment
-				  typescript-declaration)
-                  (svelte-string css-property css-constant css-string typescript-keyword
-				 typescript-string typescript-escape-sequence)
-                  (css-error css-variable css-function css-operator typescript-constant
-                             typescript-expression typescript-identifier typescript-pattern
-                             typescript-property)
-                  (svelte-bracket css-bracket typescript-function typescript-bracket
-				  typescript-delimiter)))
+  ;; Font locking
+  (setq-local treesit-font-lock-settings svelte-ts-mode--font-lock-settings
+	      treesit-font-lock-feature-list
+	      '((svelte-comment svelte-definition css-selector svelte-tag svelte-raw
+				css-comment css-query css-keyword typescript-comment
+				typescript-declaration)
+                (svelte-string css-property css-constant css-string typescript-keyword
+			       typescript-string typescript-escape-sequence)
+                (css-error css-variable css-function css-operator typescript-constant
+                           typescript-expression typescript-identifier typescript-pattern
+                           typescript-property)
+                (svelte-bracket css-bracket typescript-function typescript-bracket
+				typescript-delimiter)))
 
-    ;; Embedded languages
-    (setq-local treesit-range-settings svelte-ts-mode--range-settings
-		treesit-language-at-point-function
-		#'svelte-ts-mode--treesit-language-at-point)
+  ;; Embedded languages
+  (setq-local treesit-range-settings svelte-ts-mode--range-settings
+	      treesit-language-at-point-function
+	      #'svelte-ts-mode--treesit-language-at-point)
 
-    (treesit-major-mode-setup)))
+  (treesit-major-mode-setup))
 
 (if (treesit-ready-p 'svelte)
     (add-to-list 'auto-mode-alist '("\\.svelte\\'" . svelte-ts-mode)))
