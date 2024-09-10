@@ -375,7 +375,7 @@ Containing LEFT, and RIGHT aligned respectively."
 	:line-number-family nil
 	:line-number-weight normal
 	:line-number-slant nil
-	:line-number-height 0.9
+	:line-number-height 1.0
 	:tab-bar-family nil
 	:tab-bar-weight nil
 	:tab-bar-slant nil
@@ -398,6 +398,76 @@ Containing LEFT, and RIGHT aligned respectively."
   (fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
   (fontaine-mode 1)
   (add-to-list 'after-make-frame-functions #'fontaine-apply-current-preset))
+
+;; ** theme convenience
+
+(defvar my/theme-dark-themes
+  '(
+    gruvbox
+    gruvbox-dark-hard
+    gruvbox-dark-medium
+    gruvbox-dark-soft
+    kaolin-blossom
+    kaolin-bubblegum
+    kaolin-dark
+    kaolin-eclipse
+    kaolin-mono-dark
+    kaolin-ocean
+    kaolin-shiva
+    kaolin-temple
+    kaolin-valley-dark
+    modus-vivendi
+    modus-vivendi-deuteranopia
+    modus-vivendi-tinted
+    modus-vivendi-tritanopia
+    monokai
+    sanityinc-tomorrow-blue
+    sanityinc-tomorrow-eighties
+    sanityinc-tomorrow-night
+    shades-of-purple
+    solarized-dark
+    solarized-dark-high-contrast
+    solarized-gruvbox-dark
+    solarized-selenized-black
+    solarized-selenized-dark
+    solarized-wombat-dark
+    solarized-zenburn
+    ))
+
+
+(defvar my/theme-light-themes
+  '(
+    gruvbox-light-hard
+    gruvbox-light-medium
+    gruvbox-light-soft
+    kaolin-aurora
+    kaolin-breeze
+    kaolin-galaxy
+    kaolin-light
+    kaolin-mono-light
+    kaolin-valley-light 
+    modus-operandi
+    modus-operandi-deuteranopia
+    modus-operandi-tinted
+    modus-operandi-tritanopia
+    sanityinc-tomorrow-bright
+    sanityinc-tomorrow-day
+    solarized-gruvbox-light
+    solarized-light
+    solarized-light-high-contrast
+    solarized-selenized-light
+    solarized-selenized-white
+    ))
+
+(defun my/theme-pick-dark ()
+  (interactive)
+  (let ((consult-themes my/theme-dark-themes))
+    (call-interactively 'consult-theme)))
+
+(defun my/theme-pick-light ()
+  (interactive)
+  (let ((consult-themes my/theme-light-themes))
+    (call-interactively 'consult-theme)))
 
 ;; ** Modus themes
 
@@ -423,6 +493,7 @@ Containing LEFT, and RIGHT aligned respectively."
 	    (bg-dim "#1A1A1A") ; 0E0E0E
 	    (fg-main "#E2E2E2")
 	    (fg-dim "#999999")))
+
   (setopt modus-operandi-palette-overrides
 	  '((bg-main "#F8F8F8")
 	    (bg-dim "#EBEBEB")
@@ -522,11 +593,61 @@ Containing LEFT, and RIGHT aligned respectively."
 		      :box (:line-width (-1 . 4) :color "#2D2B55")
 		      :overline "white"
 		      :underline (:color "#2D2B55")))))
+   '(mode-line-inactive ((t (:box nil :background "#2c2b55"))))
    '(outline-1 ((t (:foreground "#FAD000"))))
    '(outline-2 ((t (:foreground "#ed8eb5"))))
    '(outline-3 ((t (:foreground "#5be56e"))))
    '(outline-4 ((t (:foreground "#5be5e3"))))
    '(outline-5 ((t (:foreground "#f28d71"))))))
+
+;; ** monokai
+
+(use-package monokai-theme
+  :straight t
+  :custom
+  (monokai-comments "#8e8869")
+  :config
+  (custom-theme-set-faces
+   'monokai
+   '(mode-line-inactive ((t (:box nil))))
+   `(region ((t (:background "#556333"))))
+   `(tab-bar ((t (:background ,monokai-background))))
+   `(tab-bar-tab-inactive ((t (:background ,monokai-background))))
+   `(tab-bar-tab
+     ((t (:background ,monokai-highlight-line
+		      :box (:line-width (-1 . 4) :color ,monokai-background)
+		      :overline "white"
+		      :underline (:color ,monokai-background)))))
+   '(show-paren-match ((t (:background "#697c4a"))))))
+
+;; ** gruvbox
+
+(use-package gruvbox-theme
+  :straight t
+  :config
+  (custom-theme-set-faces
+   'gruvbox
+   '(mode-line-inactive ((t (:box nil :background "#282829"))))
+   `(tab-bar-tab
+     ((t (:background ,monokai-highlight-line
+		      :box (:line-width (-1 . 4) :color "#282829")
+		      :overline "white"
+		      :underline (:color "#282829")))))))
+
+;; ** tomorrow
+
+(use-package color-theme-sanityinc-tomorrow
+  :straight t)
+
+;; ** solarized
+
+(use-package solarized-theme
+  :straight t)
+
+;; ** kaolin
+
+(use-package kaolin-themes
+  :straight t)
 
 ;; * CONFIGURATION
 ;; ** user details
