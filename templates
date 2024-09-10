@@ -49,6 +49,8 @@ org-mode
 (title (cadar (org-collect-keywords '("TITLE"))))
 (header "#+TITLE: " p n "#+date: Created on " (format-time-string "[%Y-%m-%d %a]") n n q)
 (hargs "#+property: header-args" p " :" q)
+(toc "#+OPTIONS: toc:2")
+(htoc "#+hugo_custom_front_matter: :showToc " q)
 
 ;; HUGO
 (shc "@@hugo:{{< " (p "shc" shc) " >}} " q " {{< /" (p "shc" shc) " >}}@@")

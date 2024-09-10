@@ -48,6 +48,8 @@
      ((node-is "/>") parent-bol 0)
      ((node-is ">") parent-bol 0)
      ((node-is "end_tag") parent-bol 0)
+     ((node-is "text") parent-bol 0)
+     ((node-is "comment") parent-bol 0)
      ((parent-is "comment") prev-adaptive-prefix 0)
      ((parent-is "element") parent-bol html-ts-mode-indent-offset)
      ((parent-is "script_element") parent-bol html-ts-mode-indent-offset)
@@ -57,15 +59,6 @@
     (css . ,(alist-get 'css css--treesit-indent-rules))
     (javascript . ,(alist-get 'javascript js--treesit-indent-rules)))
   "Tree-sitter indent rules.")
-
-(defun html-ts-mode--prefix-font-lock-features (prefix settings)
-  "Prefix with PREFIX the font lock features in SETTINGS."
-  (mapcar (lambda (setting)
-            (list (nth 0 setting)
-                  (nth 1 setting)
-                  (intern (format "%s-%s" prefix (nth 2 setting)))
-                  (nth 3 setting)))
-          settings))
 
 (defvar html-ts-mode--font-lock-settings
   (append
@@ -96,7 +89,7 @@
 
 (defvar html-ts-mode--range-settings
   (treesit-range-rules
-   :embed 'js
+   :embed 'javascript
    :host 'html
    '((script_element (raw_text) @cap))
 
@@ -170,7 +163,7 @@ Return nil if there is no name or if NODE is not a defun node."
   ;; Font-lock.
   (setq-local treesit-font-lock-settings html-ts-mode--font-lock-settings)
   (setq-local treesit-font-lock-feature-list
-              '((comment keyword definition selector query)
+              '((comment keyword definition selector query document)
                 (property string)
                 () ()))
 
@@ -182,7 +175,6 @@ Return nil if there is no name or if NODE is not a defun node."
   (setq-local treesit-range-settings html-ts-mode--range-settings
 	      treesit-language-at-point-function
 	      #'html-ts-mode--treesit-language-at-point)
-
 
   ;; Outline minor mode.
   (setq-local treesit-outline-predicate "\\`element\\'")
