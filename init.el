@@ -407,10 +407,12 @@ Containing LEFT, and RIGHT aligned respectively."
     gruvbox-dark-hard
     gruvbox-dark-medium
     gruvbox-dark-soft
+    kaolin-aurora
     kaolin-blossom
     kaolin-bubblegum
     kaolin-dark
     kaolin-eclipse
+    kaolin-galaxy
     kaolin-mono-dark
     kaolin-ocean
     kaolin-shiva
@@ -422,6 +424,7 @@ Containing LEFT, and RIGHT aligned respectively."
     modus-vivendi-tritanopia
     monokai
     sanityinc-tomorrow-blue
+    sanityinc-tomorrow-bright
     sanityinc-tomorrow-eighties
     sanityinc-tomorrow-night
     shades-of-purple
@@ -434,15 +437,12 @@ Containing LEFT, and RIGHT aligned respectively."
     solarized-zenburn
     ))
 
-
 (defvar my/theme-light-themes
   '(
     gruvbox-light-hard
     gruvbox-light-medium
     gruvbox-light-soft
-    kaolin-aurora
     kaolin-breeze
-    kaolin-galaxy
     kaolin-light
     kaolin-mono-light
     kaolin-valley-light 
@@ -450,7 +450,6 @@ Containing LEFT, and RIGHT aligned respectively."
     modus-operandi-deuteranopia
     modus-operandi-tinted
     modus-operandi-tritanopia
-    sanityinc-tomorrow-bright
     sanityinc-tomorrow-day
     solarized-gruvbox-light
     solarized-light
@@ -459,15 +458,42 @@ Containing LEFT, and RIGHT aligned respectively."
     solarized-selenized-white
     ))
 
-(defun my/theme-pick-dark ()
+(defun my/theme-dark ()
   (interactive)
   (let ((consult-themes my/theme-dark-themes))
     (call-interactively 'consult-theme)))
 
-(defun my/theme-pick-light ()
+(defun my/theme-light ()
   (interactive)
   (let ((consult-themes my/theme-light-themes))
     (call-interactively 'consult-theme)))
+
+(defvar after-load-theme-hook nil
+  "Hook run after a color theme is loaded using `load-theme'.")
+
+(defadvice load-theme (after run-after-load-theme-hook activate)
+  "Run `after-load-theme-hook'."
+  (run-hooks 'after-load-theme-hook))
+
+(defun my/consistent-tab-bar (&rest _)
+  (let ((bg-default (face-attribute 'default :background))
+	(fg-default (face-attribute 'default :foreground))
+	(bg-mode-line-a (face-attribute 'mode-line :background))
+	(fg-mode-line-a (face-attribute 'mode-line :foreground))
+	(bg-mode-line-i (face-attribute 'mode-line-inactive :background)))
+    (custom-set-faces
+     '(show-paren-match ((t (:inverse-video t))))
+     '(mode-line-inactive ((t (:box nil))))
+     `(tab-bar ((t (:background ,bg-default))))
+     `(tab-bar-tab-inactive ((t (:background ,bg-default :foreground ,fg-default :inverse-video nil :overline nil))))
+     `(tab-bar-tab
+       ((t (:background ,bg-mode-line-a
+			:foreground ,fg-mode-line-a
+			:box (:line-width (-1 . 4) :color ,bg-default)
+			:overline ,fg-mode-line-a
+			:underline (:color ,bg-default))))))))
+
+(add-hook 'after-load-theme-hook #'my/consistent-tab-bar)
 
 ;; ** Modus themes
 
@@ -586,13 +612,6 @@ Containing LEFT, and RIGHT aligned respectively."
   (custom-theme-set-faces
    'shades-of-purple
    '(region ((t (:background "#4915a3"))))
-   '(tab-bar ((t (:background "#2D2B55"))))
-   '(tab-bar-tab-inactive ((t (:background "#2D2B55"))))
-   '(tab-bar-tab
-     ((t (:background "#1E1E3F"
-		      :box (:line-width (-1 . 4) :color "#2D2B55")
-		      :overline "white"
-		      :underline (:color "#2D2B55")))))
    '(mode-line-inactive ((t (:box nil :background "#2c2b55"))))
    '(outline-1 ((t (:foreground "#FAD000"))))
    '(outline-2 ((t (:foreground "#ed8eb5"))))
@@ -611,13 +630,6 @@ Containing LEFT, and RIGHT aligned respectively."
    'monokai
    '(mode-line-inactive ((t (:box nil))))
    `(region ((t (:background "#556333"))))
-   `(tab-bar ((t (:background ,monokai-background))))
-   `(tab-bar-tab-inactive ((t (:background ,monokai-background))))
-   `(tab-bar-tab
-     ((t (:background ,monokai-highlight-line
-		      :box (:line-width (-1 . 4) :color ,monokai-background)
-		      :overline "white"
-		      :underline (:color ,monokai-background)))))
    '(show-paren-match ((t (:background "#697c4a"))))))
 
 ;; ** gruvbox
@@ -627,12 +639,7 @@ Containing LEFT, and RIGHT aligned respectively."
   :config
   (custom-theme-set-faces
    'gruvbox
-   '(mode-line-inactive ((t (:box nil :background "#282829"))))
-   `(tab-bar-tab
-     ((t (:background ,monokai-highlight-line
-		      :box (:line-width (-1 . 4) :color "#282829")
-		      :overline "white"
-		      :underline (:color "#282829")))))))
+   '(mode-line-inactive ((t (:box nil :background "#282829"))))))
 
 ;; ** tomorrow
 
@@ -2230,6 +2237,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
 (use-package apheleia
   :straight t
   :demand
+  :hook prog-mode
   :bind
   (:map prog-mode-map ("C-c f" . apheleia-format-buffer))
   :config
@@ -2250,9 +2258,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
   (push
    `(alejandra ,(executable-find "alejandra")) apheleia-formatters)
   (push
-   `(prettier-html ,(executable-find "prettier") "--stdin-filepath" filepath) apheleia-formatters)
-
-  (apheleia-global-mode))
+   `(prettier-html ,(executable-find "prettier") "--stdin-filepath" filepath) apheleia-formatters))
 
 ;; ** emmet
 
@@ -2631,7 +2637,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
 
 (use-package css-mode
   :hook ((css-mode css-ts-mode) . (lambda nil (setq tab-width 2)))
-  :mode ("\\.css\\'" . css-ts-mode)
+  :mode ("\\.css\\'" . css-mode)
   :config
   (setq css-indent-offset 2))
 
@@ -3528,9 +3534,9 @@ If FRAME is omitted or nil, use currently selected frame."
 ;; Local Variables:
 ;; outline-regexp: " *;; \\*+"
 ;; page-delimiter: " *;; \\**"
-;; eval:(outshine-mode 1)
-;; eval:(outline-hide-body)
+;; eval: (outshine-mode 1)
+;; eval: (outline-hide-body)
 ;; eval: (buffer-local-set-key (kbd "M-o") 'my/consult-outline-minor-mode-goto)
-;; eval:(flycheck-mode -1)
+;; eval: (flycheck-mode -1)
 ;; coding: utf-8-unix
 ;; End:
