@@ -3,6 +3,8 @@
 ;;; Code:
 
 (require 'ov)
+(require 'org)
+(require 'org-agenda)
 
 (defun my/org-get-subtree-contents ()
   "Get the contents of the subtree at point."
@@ -11,7 +13,7 @@
     (save-excursion
       ;; If inside heading contents, move the point back to the heading
       ;; otherwise `org-agenda-get-some-entry-text' won't work.
-      (unless (org-on-heading-p) (org-previous-visible-heading 1))
+      (unless (org-at-heading-p) (org-previous-visible-heading 1))
       (let ((contents (substring-no-properties
                        (org-agenda-get-some-entry-text
                         (point-marker)
@@ -28,14 +30,16 @@ Excludes the heading and any child subtrees."
     (kill-new contents)))
 
 ;;;###autoload
-(defun my/compose-letter nil
-  "compose the job application letter
+(defun my/compose-letter (&optional arg)
+  "Compose the job application letter.
 Get the properties of the current entry, encode them as JSON, and
 pass them to the justfile to generate the letter. The letter is
 then opened in a new buffer."
-  (interactive)
-  (let ((props (org-entry-properties))
-	(tmp ".tmp.json"))
+  (interactive "P")
+  (let* ((props (org-entry-properties))
+	 (tmp ".tmp.json")
+	 (template (cond ((cdr (assoc "JOB_TEMPLATE" props)))
+			 ("letter_tml.typ"))) file)
 
     ;; check for an id property, if no create one
     ;; this is important for the file name
@@ -52,11 +56,12 @@ then opened in a new buffer."
     (shell-command (format "just c-letter-t \"%s\" \"%s\"" tmp file) "*test*" "*test*")
 
     ;; open the pdf file
-    (let ((buffer (find-buffer-visiting
-		   (expand-file-name file "letters"))))
-      (if buffer
-	  (switch-to-buffer-other-window buffer) ; if already open, switch to it
-	(find-file-other-window (expand-file-name file "letters")))) ; otherwise open it
+    (if arg
+	(let ((buffer (find-buffer-visiting
+		       (expand-file-name file "letters"))))
+	  (if buffer
+	      (switch-to-buffer-other-window buffer) ; if already open, switch to it
+	    (find-file-other-window (expand-file-name file "letters"))))) ; otherwise open it
     ))
 
 ;; ** org open other window

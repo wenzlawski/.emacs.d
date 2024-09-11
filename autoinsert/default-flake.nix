@@ -4,7 +4,7 @@
 
   outputs = inputs @ {self, ...}:
     inputs.flake-utils.lib.eachDefaultSystem (system: let
-      pkgs = inputs.nixpkgs.legacyPackages.${system};
+      pkgs = inputs.nixpkgs.legacyPackages.\${system};
 
       nativeBuildInputs = with pkgs; [
 	$0

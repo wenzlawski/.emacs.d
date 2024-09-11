@@ -1925,7 +1925,6 @@ See URL `http://pypi.python.org/pypi/ruff'."
 ;; ** jinx
 
 (use-package jinx
-  :disabled
   :straight t
   :hook (text-mode . jinx-mode)
   :custom
@@ -2398,6 +2397,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
 ;; ** python
 
 (use-package python
+  :mode ("\\.py\\'" . python-ts-mode)
   :bind
   (:map python-ts-mode-map
 	("C-c M-e" . eglot)
@@ -2405,12 +2405,13 @@ See URL `http://pypi.python.org/pypi/ruff'."
 	("M-o" . consult-imenu)))
 
 (use-package pyenv-mode
+  :disabled
   :straight t
   :init
   (setq pyenv-mode-map
 	(let ((map (make-sparse-keymap)))
 	  map))
-  :hook (python-ts-mode . pyenv-mode)
+  ;; :hook (python-ts-mode . pyenv-mode)
   :bind
   (:map python-ts-mode-map
 	("C-c C-s" . pyenv-mode-set)

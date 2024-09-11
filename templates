@@ -32,7 +32,9 @@ org-mode
 (tc "[/]" :post (org-ctrl-c-ctrl-c))
 (tp "[%]" :post (org-ctrl-c-ctrl-c))
 (todoh "#+TODO: " r)
-(prop "#+PROPERTY: " q)
+
+;; BLOCKS
+
 (src "#+begin_src " p n r n "#+end_src" :post (org-edit-src-code))
 (jl "#+begin_src julia" n r n "#+end_src")
 (sh "#+begin_src sh" n r n "#+end_src" :post (org-edit-src-code))
@@ -44,10 +46,14 @@ org-mode
 (slatex "#+begin_src latex :results raw :exports results" n r n "#+end_src" :post (org-edit-src-code))
 (startup "#+startup: " q )
 (el "#+begin_src emacs-lisp" n r n "#+end_src" :post (org-edit-src-code))
+
 (lorems (Lorem-ipsum-insert-sentences (read-number "Sentences: ")))
 (loremp (Lorem-ipsum-insert-paragraphs (read-number "Paragraphs: ")))
 (title (cadar (org-collect-keywords '("TITLE"))))
-(header "#+TITLE: " p n "#+date: Created on " (format-time-string "[%Y-%m-%d %a]") n n q)
+
+(prop "#+PROPERTY: " q)
+(created "#+date: Created on or before [" (format-time-string "%Y-%m-%d %a %R") "]")
+(header "#+TITLE: " p n (i created) n n q)
 (hargs "#+property: header-args" p " :" q)
 (toc "#+OPTIONS: toc:2")
 (htoc "#+hugo_custom_front_matter: :showToc " q)
