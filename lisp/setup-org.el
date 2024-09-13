@@ -215,6 +215,8 @@ Triggered by a custom macOS Quick Action with a keyboard shortcut."
 	  ("lb" "Bookmark" entry (id "23CDFA52-0EE4-4DAA-8B8B-E2D105E6293E") "*** [[%:link][%:description]] %^g\nSCHEDULED: %T%?")
 	  ("w" "Web template" entry (file "refile.org")
            "* %?%:description\nSource: %:link\n\nTitle: %:description\n\n#+begin_quote\n%i\n#+end_quote" :empty-lines 1 :prepend t)
+	  ("a" "Application" entry (id "E451AA6D-2C58-4DD1-8BD0-ABAB7F0878EE")
+	   (file ,(dir-concat user-emacs-directory "capture/application.org")) :prepend t)
 	  ))
 
   ;; ** org-capture frame

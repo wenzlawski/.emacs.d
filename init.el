@@ -74,28 +74,7 @@
   (unless (server-running-p)
     (server-start)))
 
-;; * PACKAGES
-
-(require 'package)
-
-(use-package package
-  :hook (package-menu-mode-hook . hl-line-mode)
-  :custom
-  (package-archives
-   '(("gnu-elpa" . "https://elpa.gnu.org/packages/")
-     ("gnu-elpa-devel" . "https://elpa.gnu.org/devel/")
-     ("nongnu" . "https://elpa.nongnu.org/nongnu/")
-     ("melpa" . "https://melpa.org/packages/")))
-  ;; (setopt package-vc-register-as-project nil) ; Emacs 30
-  ;; Highest number gets priority (what is not mentioned has priority 0)
-  (package-archive-priorities
-   '(("gnu-elpa" . 3)
-     ("melpa" . 2)
-     ("nongnu" . 1)))
-  (package-install-upgrade-built-in nil))
-
-;;(require 'use-package-ensure)
-;; (setq use-package-always-ensure nil)
+;; * STRAIGHT
 
 (defvar bootstrap-version)
 (let ((bootstrap-file
@@ -114,16 +93,15 @@
   (load bootstrap-file nil 'nomessage))
 
 (straight-use-package 'use-package)
-;; (straight-use-package '(org :type built-in))
 (straight-use-package 'org)
 
-(require 'utils)
-
-(defun my/update-packages ()
+(defun my/straight-update-packages ()
   (interactive)
   (straight-fetch-all)
   (straight-pull-all)
   (straight-rebuild-all))
+
+(require 'utils)
 
 ;; * USER INTERFACE
 ;; ** Writeroom
@@ -557,12 +535,12 @@ Containing LEFT, and RIGHT aligned respectively."
 	    (accent-3 red-cooler)
 	    (bg-completion bg-blue-nuanced)
 	    (bg-paren-match bg-magenta-intense)
-	    (bg-mode-line-active bg-inactive)
+	    (bg-mode-line-active bg-dim)
 	    ;; (fg-mode-line-active fg-dim)
-	    (bg-mode-line-inactive bg-dim)
+	    (bg-mode-line-inactive bg-main)
 	    ;; (fg-mode-line-inactive fg-main)
-	    ;; (border-mode-line-active bg-mode-line-active)
-	    ;; (border-mode-line-inactive bg-mode-line-inactive)
+	    (border-mode-line-active bg-dim)
+	    (border-mode-line-inactive bg-main)
 	    (bg-tab-bar bg-main)
 	    (bg-tab-current bg-dim)
 	    (bg-tab-other bg-main)
@@ -839,7 +817,6 @@ Containing LEFT, and RIGHT aligned respectively."
 ;; ** editorconfig
 
 (use-package editorconfig
-  :straight t
   :config
   (editorconfig-mode))
 
@@ -2178,6 +2155,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
 ;; ** copilot
 
 (use-package copilot
+  :disabled
   :straight (:host github :repo "copilot-emacs/copilot.el" :files ("dist" "*.el"))
   :commands copilot-login
   :bind (:map copilot-completion-map ("<C-i>" . copilot-accept-completion))
