@@ -134,7 +134,8 @@ New frames are instructed to call `prot-emacs-re-enable-frame-theme'."
       (append
        default-frame-alist
        '((height . 80)
-	 (width . 140)
+	 (width . 250)
+	 ;; (fullscreen . maximized)
 	 (title . " \n")
 	 (name . " \n")
 	 (right-divider-width . 2)
@@ -168,7 +169,7 @@ New frames are instructed to call `prot-emacs-re-enable-frame-theme'."
 (setq frame-resize-pixelwise t
       frame-inhibit-implied-resize t
       ring-bell-function 'ignore
-      use-dialog-box t ; only for mouse events, which I seldom use
+      use-dialog-box nil ; only for mouse events, which I seldom use
       use-file-dialog nil
       use-short-answers t
       inhibit-splash-screen t

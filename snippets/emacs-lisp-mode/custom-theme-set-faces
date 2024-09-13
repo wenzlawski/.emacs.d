@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: custom-theme-set-faces
+# key: ctsf
+# --
+(custom-theme-set-faces
+  '${1:theme}
+  '($2 ((t ($0)))))

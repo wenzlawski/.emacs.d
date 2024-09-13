@@ -362,7 +362,7 @@ See `prot-modeline-string-truncate'."
   "Return buffer name, with read-only indicator if relevant."
   (let ((name (prot-modeline--buffer-name)))
     (if buffer-read-only
-        (format "%s %s" (char-to-string #xE0A2) name)
+        (format " %s %s" (char-to-string #xE0A2) name)
       name)))
 
 (defun prot-modeline-buffer-name-help-echo ()
