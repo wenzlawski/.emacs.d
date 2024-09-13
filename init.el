@@ -436,12 +436,12 @@ Containing LEFT, and RIGHT aligned respectively."
     solarized-selenized-white
     ))
 
-(defun my/theme-dark ()
+(defun my/consult-theme-dark ()
   (interactive)
   (let ((consult-themes my/theme-dark-themes))
     (call-interactively 'consult-theme)))
 
-(defun my/theme-light ()
+(defun my/consult-theme-light ()
   (interactive)
   (let ((consult-themes my/theme-light-themes))
     (call-interactively 'consult-theme)))
@@ -472,6 +472,21 @@ Containing LEFT, and RIGHT aligned respectively."
 			:underline (:color ,bg-default))))))))
 
 (add-hook 'after-load-theme-hook #'my/consistent-tab-bar)
+
+(defcustom my/dark-theme 'solarized-gruvbox-dark)
+(defcustom my/light-theme 'modus-operandi)
+
+(defun my/theme-change (&rest _)
+  "Load theme, taking current system APPEARANCE into consideration."
+  (pcase (do-applescript "tell application \"System Events\" to return (dark mode of appearance preferences as string)")
+    ("true" (setq ns-system-appearance 'dark))
+    ("false" (setq ns-system-appearance 'light)))
+  (pcase ns-system-appearance
+    ('light (load-theme my/light-theme t))
+    ('dark  (load-theme my/dark-theme t)))
+  (if (eq major-mode 'pdf-view-mode) (pdf-view-themed-minor-mode 1)))
+
+(add-hook 'after-init-hook #'my/theme-change)
 
 ;; ** Modus themes
 
@@ -576,10 +591,7 @@ Containing LEFT, and RIGHT aligned respectively."
      :underline `(:color ,bg-tab-current))))
 
 (with-eval-after-load 'modus-themes
-  ;; (push '(lambda (_) (my/modus-theme-initialize ns-system-appearance)) (cdr (last after-make-frame-functions)))
   (add-to-list 'ns-system-appearance-change-functions #'my/modus-theme-change)
-  ;; (add-hook 'enable-theme-functions #'my/modus-themes-invisible-dividers)
-  (add-hook 'after-init-hook #'my/modus-theme-change)
   (add-hook 'modus-themes-after-load-theme-hook #'my/modus-themes-custom-faces))
 
 ;; ** shades-of-purple
