@@ -1062,6 +1062,22 @@ Append with current prefix arg."
 (use-package replace+
   :straight t)
 
+;; ** holidays
+
+(require 'german-holidays)
+
+(use-package holidays
+  :custom
+  (holiday-general-holidays holiday-german-SN-holidays)
+  (holiday-local-holidays nil)
+  (holiday-solar-holidays nil)
+  (holiday-bahai-holidays nil)
+  (holiday-christian-holidays nil)
+  (holiday-hebrew-holidays nil)
+  (holiday-islamic-holidays nil)
+  (holiday-oriental-holidays nil)
+  (holiday-other-holidays nil))
+
 ;; * HELP
 ;; ** help
 
