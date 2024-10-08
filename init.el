@@ -473,8 +473,8 @@ Containing LEFT, and RIGHT aligned respectively."
 
 (add-hook 'after-load-theme-hook #'my/consistent-tab-bar)
 
-(defcustom my/dark-theme 'solarized-gruvbox-dark)
-(defcustom my/light-theme 'modus-operandi)
+(defcustom my/dark-theme 'solarized-gruvbox-dark "Standard dark theme.")
+(defcustom my/light-theme 'modus-operandi "Standard light theme.")
 
 (defun my/theme-change (&rest _)
   "Load theme, taking current system APPEARANCE into consideration."
@@ -639,7 +639,15 @@ Containing LEFT, and RIGHT aligned respectively."
 ;; ** solarized
 
 (use-package solarized-theme
-  :straight t)
+  :straight t
+  :config
+  ;; (let ((bg-default (face-attribute 'default :background))
+  ;; 	(fg-default (face-attribute 'default :foreground)))
+
+  ;;   (custom-theme-set-faces
+  ;;    'solarized-light-high-contrast
+  ;;    `(completions-highlight ((t (:foreground ,fg-default))))))
+  )
 
 ;; ** kaolin
 
@@ -707,7 +715,7 @@ Containing LEFT, and RIGHT aligned respectively."
   (:map completion-list-mode-map
 	("e" . switch-to-minibuffer))
   :config
-  (setq-default fill-column 79
+  (setq-default fill-column 85
 		electric-indent-inhibit t
 		require-final-newline t
 		cursor-type '(bar . 2))
@@ -731,6 +739,7 @@ Containing LEFT, and RIGHT aligned respectively."
 	blink-cursor-interval 0.5
 	register-preview-delay 0.25
 	history-length 100
+	save-interprogram-paste-before-kill t
 	initial-scratch-message ";; scratchy scratch  -*- lexical-binding: t; -*-"
 	prescient-history-length 1000
 	tab-always-indent 'complete
@@ -879,9 +888,14 @@ Containing LEFT, and RIGHT aligned respectively."
   :straight t
   :bind
   (:map outline-minor-mode-map
-	("C-c C-c" . outline-cycle))
-  :custom
-  (outline-minor-mode-prefix ""))
+	("C-c C-c" . outline-cycle)))
+
+;; ** outshine
+
+;; FIXME: This gives problems with binding to outline-mode-map, conflicting bindings with org-mode
+(use-package outshine
+  :disabled
+  :straight t)
 
 ;; ** openwith
 
@@ -1270,11 +1284,6 @@ Append with current prefix arg."
   ("C-x 4 o" . flop-frame)
   ("C-x 4 n" . rotate-frame))
 
-;; ** outshine
-
-(use-package outshine
-  :straight t)
-
 ;; ** hide-mode-line
 
 (use-package hide-mode-line
@@ -1372,7 +1381,7 @@ Append with current prefix arg."
 	(corfu-insert)
 	;; `corfu-send-shell' was defined above
 	(corfu-send-shell))))
-  
+
   ;; Enable Corfu more generally for every minibuffer, as long as no other
   ;; completion UI is active. If you use Mct or Vertico as your main minibuffer
   ;; completion UI. From
@@ -1399,7 +1408,7 @@ Append with current prefix arg."
 	candidates)))
 
   (setq corfu-sort-override-function #'my-corfu-combined-sort)
-  
+
   (defun corfu-move-to-minibuffer ()
     (interactive)
     (pcase completion-in-region--data
@@ -2110,7 +2119,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
   (setq yas-verbosity 0)
   (use-package yasnippet-snippets
     :straight t)
-  
+
   (yas-reload-all)
   (with-eval-after-load 'modus-themes
     (set-face-attribute 'yas-field-highlight-face nil
@@ -2789,7 +2798,6 @@ See URL `http://pypi.python.org/pypi/ruff'."
 
 (require 'setup-org)
 
-
 ;; * Mail
 
 (use-package message
@@ -3272,7 +3280,7 @@ and \"apikey\" as USER."
 (with-eval-after-load 'pdf-view
 
   (advice-add #'pdf-util-tooltip-arrow :override (lambda (&rest _) nil))
-  
+
   (defun my/background-pdf-view-refresh (_)
     "Refresh the themed minor mode in pdf-view."
     (cl-loop for buf in (buffer-list)
@@ -3450,6 +3458,18 @@ If FRAME is omitted or nil, use currently selected frame."
      `(define-key ,map ,key ',func))
     (funcall name t)))
 
+(defun buffer-local-minor-mode-set-key (mode key def)
+  "Overrides a minor mode keybinding for the local
+   buffer, by creating or altering keymaps stored in buffer-local
+   `minor-mode-overriding-map-alist'."
+  (let* ((oldmap (cdr (assoc mode minor-mode-map-alist)))
+         (newmap (or (cdr (assoc mode minor-mode-overriding-map-alist))
+                     (let ((map (make-sparse-keymap)))
+                       (set-keymap-parent map oldmap)
+                       (push `(,mode . ,map) minor-mode-overriding-map-alist) 
+                       map))))
+    (define-key newmap key def)))
+
 ;; * CUSTOM LISP
 ;; ** ox-11ty
 
@@ -3541,7 +3561,7 @@ If FRAME is omitted or nil, use currently selected frame."
 ;; Local Variables:
 ;; outline-regexp: " *;; \\*+"
 ;; page-delimiter: " *;; \\**"
-;; eval: (outshine-mode 1)
+;; eval: (outline-minor-mode 1)
 ;; eval: (outline-hide-body)
 ;; eval: (buffer-local-set-key (kbd "M-o") 'my/consult-outline-minor-mode-goto)
 ;; eval: (flycheck-mode -1)
