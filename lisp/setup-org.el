@@ -233,11 +233,11 @@ Triggered by a custom macOS Quick Action with a keyboard shortcut."
     (my/frame-recenter)
     (delete-other-windows)
     (noflet ((switch-to-buffer-other-window (buf) (switch-to-buffer buf)))
-      (condition-case ex
-	  (org-capture)
-	('error
-	 ;;(message "org-capture: %s" (error-message-string ex))
-	 (delete-frame)))))
+	    (condition-case ex
+		(org-capture)
+	      ('error
+	       ;;(message "org-capture: %s" (error-message-string ex))
+	       (delete-frame)))))
 
   (defun my/close-if-capture (&optional a)
     (if (equal "capture" (frame-parameter nil 'name))
@@ -1389,7 +1389,7 @@ This function is called by `org-babel-execute-src-block'."
   (defun my/org-ref-cite-insert-consult ()
     "Insert a citation using `consult-bibtex'."
     (interactive)
-    
+
     (let ((key (consult-bibtex--read-entry)))
       (if key
 	  (org-ref-insert-cite-key key))))
@@ -1631,7 +1631,6 @@ is active, that will be the link's description."
   :hook
   ;; If you want it in all text modes:
   (text-mode . mixed-pitch-mode))
-
 
 ;; * LOCAL-VARIABLES
 
