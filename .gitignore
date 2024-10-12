@@ -38,3 +38,5 @@ org-clock-save.el
 network-security.data
 *.elc
 fontaine-latest-state.eld
+/birthdays
+/eshell/
