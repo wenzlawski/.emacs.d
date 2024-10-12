@@ -37,25 +37,27 @@
 	  (push (cadr parts) names)
 	  (forward-line 1))))
     (with-temp-buffer
-	(cl-loop for date in dates
-		 for name in names
-		 for bday = (strptime date "%Y.%m.%d")
-		 for age = (- year (decoded-time-year bday))
-		 do
+      (cl-loop for date in dates
+	       for name in names
+	       for bday = (strptime date "%Y.%m.%d")
+	       for age = (- year (decoded-time-year bday))
+	       do
+	       (progn
 		 (insert
 		  (format "%d/%d "
 			  (decoded-time-month bday)
 			  (decoded-time-day bday))
-		  name "'s "
-		  (int-to-string age)
-		  (pcase (cl-rem age 10)
-		    (1 "st")
-		    (2 "nd")
-		    (3 "rd")
-		    (_ "th"))
-		  " Birthday\n"))
-	(write-file my/diary-birthday-file nil))))
-
+		  name "'s ")
+		 (when (not (eq 1604 (decoded-time-year bday)))
+		   (insert (format "%s" (int-to-string age))
+			   (pcase (cl-rem age 10)
+			     (1 "st")
+			     (2 "nd")
+			     (3 "rd")
+			     (_ "th"))
+			   " "))
+		 (insert "Birthday\n")))
+      (write-file my/diary-birthday-file nil))))
 
 (provide 'khard-diary)
 ;;; khard-diary.el ends here
