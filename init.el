@@ -413,6 +413,7 @@ Containing LEFT, and RIGHT aligned respectively."
     solarized-selenized-dark
     solarized-wombat-dark
     solarized-zenburn
+    standard-dark
     ))
 
 (defvar my/theme-light-themes
@@ -434,6 +435,7 @@ Containing LEFT, and RIGHT aligned respectively."
     solarized-light-high-contrast
     solarized-selenized-light
     solarized-selenized-white
+    standard-light
     ))
 
 (defun my/consult-theme-dark ()
@@ -654,11 +656,15 @@ Containing LEFT, and RIGHT aligned respectively."
 (use-package kaolin-themes
   :straight t)
 
+;; ** standard-themes
+
+(use-package standard-themes
+  :straight t)
+
 ;; * CONFIGURATION
 ;; ** user details
 
-(setq user-full-name "Marc Wenzlawski"
-      user-mail-address "marcwenzlawski@gmail.com")
+(setq user-full-name "Marc Wenzlawski")
 
 ;; (require 'secret)
 
@@ -774,8 +780,52 @@ Containing LEFT, and RIGHT aligned respectively."
 
 (use-package window
   :custom
-  (split-width-threshold 90)
-  (split-height-threshold 80))
+  (split-height-threshold 12)
+  (split-width-threshold 80)
+  (split-window-preferred-function 'split-window-really-sensibly))
+
+(defun split-window-sensibly-prefer-horizontal (&optional window)
+  "Based on split-window-sensibly, but designed to prefer a horizontal split,
+i.e. windows tiled side-by-side."
+  (interactive)
+  (let ((window (or window (selected-window))))
+    (or (and (window-splittable-p window t)
+             ;; Split window horizontally
+             (with-selected-window window
+               (split-window-right)))
+	(and (window-splittable-p window)
+             ;; Split window vertically
+             (with-selected-window window
+               (split-window-below)))
+	(and
+         ;; If WINDOW is the only usable window on its frame (it is
+         ;; the only one or, not being the only one, all the other
+         ;; ones are dedicated) and is not the minibuffer window, try
+         ;; to split it horizontally disregarding the value of
+         ;; `split-height-threshold'.
+         (let ((frame (window-frame window)))
+           (or
+            (eq window (frame-root-window frame))
+            (catch 'done
+              (walk-window-tree (lambda (w)
+                                  (unless (or (eq w window)
+                                              (window-dedicated-p w))
+                                    (throw 'done nil)))
+                                frame)
+              t)))
+	 (not (window-minibuffer-p window))
+	 (let ((split-width-threshold 0))
+	   (when (window-splittable-p window t)
+             (with-selected-window window
+               (split-window-right))))))))
+
+(defun split-window-really-sensibly (&optional window)
+  (let ((window (or window (selected-window))))
+    (if (> (window-total-width window) (* 2 (window-total-height window)))
+        (with-selected-window window (split-window-sensibly-prefer-horizontal window))
+      (with-selected-window window (split-window-sensibly window)))))
+
+
 
 ;; ** simple
 
@@ -840,6 +890,11 @@ Containing LEFT, and RIGHT aligned respectively."
 (use-package editorconfig
   :config
   (editorconfig-mode))
+
+;; ** diary
+
+(add-hook 'diary-list-entries-hook 'diary-include-other-diary-files)
+(add-hook 'diary-mark-entries-hook 'diary-mark-included-diary-files)
 
 ;; ** visual-fill-column
 
@@ -1572,6 +1627,12 @@ This function can be used as the value of the user option
   :straight t
   :init
   (marginalia-mode))
+
+;; ** eshell
+
+(use-package eshell
+  :bind
+  ("C-c z" . eshell))
 
 ;; ** vterm
 
@@ -2800,12 +2861,34 @@ See URL `http://pypi.python.org/pypi/ruff'."
 
 ;; * Mail
 
+(setopt mail-user-agent 'message-user-agent)
+
+(setq my/signatures
+      '("Best regards,\n\nMarc Wenzlawski"
+	"MfG,\n\nMarc Wenzlawski"))
+
+(defun my/message-signature (&optional no-default)
+  "Select a signature."
+  (interactive)
+  (if (eq no-default 4)
+      (completing-read "Signature: " my/signatures)
+    (car my/signatures)))
+
 (use-package message
+  :bind
+  (:map message-mode-map
+	("C-c <C-i>" . khardel-insert-email)
+	("C-c M-i" . my/consult-notmuch-address-insert))
   :custom
+  (message-signature 'my/message-signature)
   (message-sendmail-f-is-evil nil)
   (message-sendmail-extra-arguments nil)
   (message-sendmail-envelope-from 'header)
-  (message-send-mail-function 'message-send-mail-with-sendmail))
+  (message-send-mail-function 'message-send-mail-with-sendmail)
+  (message-directory "~/Maildir")
+  (message-auto-save-directory (dir-concat message-directory "drafts"))
+  (message-alternative-emails
+   (regexp-opt '("marcwenzlawski@posteo.com" "marc.wenzlawski@icloud.com"))))
 
 (use-package sendmail
   :custom
@@ -2815,9 +2898,21 @@ See URL `http://pypi.python.org/pypi/ruff'."
   ;; https://lists.gnu.org/archive/html/help-gnu-emacs/2018-11/msg00102.html
   ;; https://github.com/NixOS/nixpkgs/issues/195532
   ;; had to comment out all logging as it made emacs think it failed.
-  (sendmail-program "~/.nix-profile/bin/msmtpq"))
+  (sendmail-program (dir-concat user-emacs-directory "scripts/msmtpq")))
 
-(setq user-mail-address "marc.wenzlawski@icloud.com")
+(setopt user-mail-address "marcwenzlawski@posteo.com")
+
+(defun my/consult-notmuch-address-insert ()
+  (interactive)
+  (insert (consult-notmuch--address-prompt)))
+
+(defun my/compose-mail-to-contact (&optional prompt-for-sender)
+  (interactive "P")
+  (let ((other-headers
+	 (and (or prompt-for-sender notmuch-always-prompt-for-sender)
+	      (list (cons 'From (notmuch-mua-prompt-for-sender)))))
+	(to (completing-read "Send mail from: " (khardel--list-emails))))
+    (notmuch-mua-mail to nil other-headers nil (notmuch-mua-get-switch-function))))
 
 ;; ** notmuch
 
@@ -3352,8 +3447,10 @@ and \"apikey\" as USER."
   :straight t
   :custom
   (khalel-import-org-file-confirm-overwrite nil)
+  (khalel-khal-command (executable-find "khal"))
   :config
-  (khalel-add-capture-template))
+  (khalel-add-capture-template)
+  (advice-add #'khalel-edit-calendar-event :after #'khalel-import-events))
 
 (require 'custom-khalel)
 
@@ -3538,6 +3635,10 @@ If FRAME is omitted or nil, use currently selected frame."
   (cl-letf (((symbol-function 'yes-or-no-p) #'always)
 	    ((symbol-function 'y-or-n-p) #'always))
     (funcall-interactively (car args) (cdr args))))
+
+;; ** khard-diary
+
+(require 'khard-diary)
 
 ;; * END OF FILE
 ;; ** envrc

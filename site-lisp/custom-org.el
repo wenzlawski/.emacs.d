@@ -53,7 +53,7 @@ then opened in a new buffer."
       (insert (json-encode props)))
 
     ;; execute the shell command
-    (shell-command (format "just c-letter-t \"%s\" \"%s\"" tmp file) "*test*" "*test*")
+    (call-process "typst" nil nil nil "compile" "cv/letter-tml.typ" (format "letters/%s" file) "--font-path" "cv/src/fonts/" "--input" "file=.tmp.json")
 
     ;; open the pdf file
     (if arg
