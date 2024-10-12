@@ -14,7 +14,8 @@
 (require 'khardel)
 
 (eval-when-compile
-  (require 'cl-lib))
+  (require 'cl-lib)
+  (require 'strptime))
 
 (defvar my/diary-birthday-file (dir-concat user-emacs-directory "birthdays")
   "File for birthdays.")
@@ -36,25 +37,24 @@
 	  (push (cadr parts) names)
 	  (forward-line 1))))
     (with-temp-buffer
-      (let ((formatted (s-split "\n" (shell-command-to-string (concat "strptime -i %Y.%m.%d " (s-join " " dates)))))
-	    bday
-	    age
-	    )
-	(cl-loop for date in formatted
+	(cl-loop for date in dates
 		 for name in names
+		 for bday = (strptime date "%Y.%m.%d")
+		 for age = (- year (decoded-time-year bday))
 		 do
-		 (progn
-		   (setq bday (parse-time-string date))
-		   (setq age (- year (decoded-time-year bday)))
-		   (insert (format "%d/%d " (decoded-time-month bday) (decoded-time-day bday)) name "'s ")
-		   (insert (int-to-string age)
-			   (pcase (cl-rem age 10)
-			     (1 "st")
-			     (2 "nd")
-			     (3 "rd")
-			     (_ "th"))
-			   " Birthday\n"))))
-      (write-file my/diary-birthday-file nil))))
+		 (insert
+		  (format "%d/%d "
+			  (decoded-time-month bday)
+			  (decoded-time-day bday))
+		  name "'s "
+		  (int-to-string age)
+		  (pcase (cl-rem age 10)
+		    (1 "st")
+		    (2 "nd")
+		    (3 "rd")
+		    (_ "th"))
+		  " Birthday\n"))
+	(write-file my/diary-birthday-file nil))))
 
 
 (provide 'khard-diary)
