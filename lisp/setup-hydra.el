@@ -64,7 +64,7 @@
    (
     ("d" #'toggle-frame-fullscreen "fullscreen" :toggle (frame-parameter nil 'fullscreen))
     ("e" (lambda () (interactive) (setq visual-fill-column-center-text (not (bound-and-true-p visual-fill-column-center-text)))) "center text" :toggle (default-value (bound-and-true-p visual-fill-column-center-text)))
-    ("f" #'fontaine-set-preset "font" :exit t)
+    ("F" #'fontaine-set-preset "font" :exit t)
     ("t" #'my/consult-theme-dark "dark theme" :exit t)
     ("T" #'my/consult-theme-light "light theme" :exit t)
     ("M" #'modus-themes-toggle "modus toggle" :exit t)
