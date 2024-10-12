@@ -99,6 +99,8 @@ abort `\\[org-capture-kill]'."))))
   (org-log-into-drawer t)
   (org-habit-graph-column 55)
   (org-attach-use-inheritance t)
+  (org-attach-directory ".data/")
+  (org-attach-id-dir ".data/")
   (org-footnote-auto-adjust t)
   ;; org-clock-persist 'history
   (org-agenda-block-separator ?─)
@@ -233,11 +235,11 @@ Triggered by a custom macOS Quick Action with a keyboard shortcut."
     (my/frame-recenter)
     (delete-other-windows)
     (noflet ((switch-to-buffer-other-window (buf) (switch-to-buffer buf)))
-	    (condition-case ex
-		(org-capture)
-	      ('error
-	       ;;(message "org-capture: %s" (error-message-string ex))
-	       (delete-frame)))))
+      (condition-case ex
+	  (org-capture)
+	('error
+	 ;;(message "org-capture: %s" (error-message-string ex))
+	 (delete-frame)))))
 
   (defun my/close-if-capture (&optional a)
     (if (equal "capture" (frame-parameter nil 'name))
@@ -1622,6 +1624,32 @@ is active, that will be the link's description."
   :after org
   :straight t
   :hook (org-mode . org-pdftools-setup-link))
+
+;; ** org-mime
+
+(use-package org-mime
+  :straight t
+  :custom
+  (org-mime-export-options
+   '(:with-latex imagemagick
+		 :section-numbers nil
+		 :with-author nil
+		 :with-toc nil))
+  (org-mime-src--hint "")
+  :bind
+  (:map message-mode-map
+        ("C-c M-o" . org-mime-htmlize)
+	("C-c C-M-o" . org-mime-edit-mail-in-org-mode))
+  :config
+  (defun my/org-mime-html-styles ()
+    "Set the html styles for the email."
+    (org-mime-change-element-style
+     "pre" (format "color: %s; background-color: %s; padding: 0.5em;"
+                   "#E6E1DC" "#434444"))
+    (org-mime-change-element-style
+     "blockquote" "border-left: 2px solid gray; padding-left: 4px;"))
+
+  (add-hook 'org-mime-html-hook #'my/org-mime-html-styles))
 
 ;; ** mixed-pitch-mode
 
