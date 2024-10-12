@@ -302,6 +302,11 @@ Containing LEFT, and RIGHT aligned respectively."
     (cons (progn (beginning-of-visual-line) (point))
 	  (progn (end-of-visual-line) (point)))))
 
+;; ** indent-guide
+
+(use-package indent-guide
+  :straight t)
+
 ;; ** fontaine
 
 (use-package fontaine
@@ -475,7 +480,7 @@ Containing LEFT, and RIGHT aligned respectively."
 
 (add-hook 'after-load-theme-hook #'my/consistent-tab-bar)
 
-(defcustom my/dark-theme 'solarized-gruvbox-dark "Standard dark theme.")
+(defcustom my/dark-theme 'modus-vivendi "Standard dark theme.")
 (defcustom my/light-theme 'modus-operandi "Standard light theme.")
 
 (defun my/theme-change (&rest _)
@@ -491,6 +496,27 @@ Containing LEFT, and RIGHT aligned respectively."
 (add-hook 'after-init-hook #'my/theme-change)
 
 ;; ** Modus themes
+
+(defvar my/modus-vivendi-darker-colors
+  '((bg-main "#070707")
+    (bg-dim "#1A1A1A")))
+
+(defvar my/modus-vivendi-lighter-colors
+  '((bg-main "#1A1A1A") 
+    (bg-dim "#0E0E0E")))
+
+(defun my/modus-vivendi-dark-toggle ()
+  "Toggle darkness of modus vivendi."
+  (interactive)
+  (let ((colors (if (equal
+		     (assoc 'bg-main modus-vivendi-palette-overrides)
+		     (assoc 'bg-main my/modus-vivendi-darker-colors))
+		    my/modus-vivendi-lighter-colors
+		  my/modus-vivendi-darker-colors)))
+    (setopt modus-vivendi-palette-overrides
+	    `(,@colors
+	      (fg-main "#E2E2E2")
+	      (fg-dim "#999999")))))
 
 (use-package modus-themes
   :straight t
@@ -510,8 +536,7 @@ Containing LEFT, and RIGHT aligned respectively."
   (modus-themes-custom-auto-reload t)
   :config
   (setopt modus-vivendi-palette-overrides
-	  '((bg-main "#070707") ; 1A1A1A
-	    (bg-dim "#1A1A1A") ; 0E0E0E
+	  `(,@my/modus-vivendi-lighter-colors
 	    (fg-main "#E2E2E2")
 	    (fg-dim "#999999")))
 
@@ -532,9 +557,9 @@ Containing LEFT, and RIGHT aligned respectively."
 	    (fg-region unspecified)
 	    (name blue-warmer)
 	    (fg-line-number-inactive "gray50")
-            (fg-line-number-active fg-main)
-            (bg-line-number-inactive unspecified)
-            (bg-line-number-active bg-dim)
+	    (fg-line-number-active fg-main)
+	    (bg-line-number-inactive unspecified)
+	    (bg-line-number-active bg-dim)
 	    (bg-hl-line bg-dim)
 	    ;; (fg-heading-1 black)
 	    ;; (fg-heading-2 olive)
@@ -558,11 +583,11 @@ Containing LEFT, and RIGHT aligned respectively."
 	    ;; (fg-mode-line-inactive fg-main)
 	    (border-mode-line-active bg-dim)
 	    (border-mode-line-inactive bg-main)
-	    (bg-tab-bar bg-main)
+	    (bg-tab-bar bg-dim)
 	    (bg-tab-current bg-dim)
 	    (bg-tab-other bg-main)
 	    (prose-done green-faint)
-            (prose-todo red-faint)
+	    (prose-todo red-faint)
 	    )))
 
 (defun my/modus-theme-change (&rest _)
@@ -790,39 +815,39 @@ i.e. windows tiled side-by-side."
   (interactive)
   (let ((window (or window (selected-window))))
     (or (and (window-splittable-p window t)
-             ;; Split window horizontally
-             (with-selected-window window
-               (split-window-right)))
+	     ;; Split window horizontally
+	     (with-selected-window window
+	       (split-window-right)))
 	(and (window-splittable-p window)
-             ;; Split window vertically
-             (with-selected-window window
-               (split-window-below)))
+	     ;; Split window vertically
+	     (with-selected-window window
+	       (split-window-below)))
 	(and
-         ;; If WINDOW is the only usable window on its frame (it is
-         ;; the only one or, not being the only one, all the other
-         ;; ones are dedicated) and is not the minibuffer window, try
-         ;; to split it horizontally disregarding the value of
-         ;; `split-height-threshold'.
-         (let ((frame (window-frame window)))
-           (or
-            (eq window (frame-root-window frame))
-            (catch 'done
-              (walk-window-tree (lambda (w)
-                                  (unless (or (eq w window)
-                                              (window-dedicated-p w))
-                                    (throw 'done nil)))
-                                frame)
-              t)))
+	 ;; If WINDOW is the only usable window on its frame (it is
+	 ;; the only one or, not being the only one, all the other
+	 ;; ones are dedicated) and is not the minibuffer window, try
+	 ;; to split it horizontally disregarding the value of
+	 ;; `split-height-threshold'.
+	 (let ((frame (window-frame window)))
+	   (or
+	    (eq window (frame-root-window frame))
+	    (catch 'done
+	      (walk-window-tree (lambda (w)
+				  (unless (or (eq w window)
+					      (window-dedicated-p w))
+				    (throw 'done nil)))
+				frame)
+	      t)))
 	 (not (window-minibuffer-p window))
 	 (let ((split-width-threshold 0))
 	   (when (window-splittable-p window t)
-             (with-selected-window window
-               (split-window-right))))))))
+	     (with-selected-window window
+	       (split-window-right))))))))
 
 (defun split-window-really-sensibly (&optional window)
   (let ((window (or window (selected-window))))
     (if (> (window-total-width window) (* 2 (window-total-height window)))
-        (with-selected-window window (split-window-sensibly-prefer-horizontal window))
+	(with-selected-window window (split-window-sensibly-prefer-horizontal window))
       (with-selected-window window (split-window-sensibly window)))))
 
 
@@ -2005,7 +2030,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
   :custom
   (jinx-languages "en_US de_DE")
   :bind (("M-$" . jinx-correct)
-         ("C-M-$" . jinx-languages)))
+	 ("C-M-$" . jinx-languages)))
 
 ;; ** flyspell
 
@@ -2090,10 +2115,10 @@ See URL `http://pypi.python.org/pypi/ruff'."
   "Adviced `edebug-compute-previous-result'."
   (let ((previous-value (nth 0 r)))
     (if edebug-unwrap-results
-        (setq previous-value
+	(setq previous-value
 	      (edebug-unwrap* previous-value)))
     (setq edebug-previous-result
-          (edebug-safe-prin1-to-string previous-value))))
+	  (edebug-safe-prin1-to-string previous-value))))
 
 (advice-add #'edebug-compute-previous-result
 	    :around
@@ -3127,26 +3152,26 @@ The browser to used is specified by the
 The LINK, DESCRIPTION, and FORMAT are handled by the export
 backend."
     (let* ((path-id (denote-link--ol-resolve-link-to-target link :full-data))
-           (path (file-relative-name (nth 0 path-id)))
-           (id (nth 1 path-id))
-           (query (nth 2 path-id))
-           (anchor (file-name-sans-extension path))
-           (desc (cond
-                  (description)
-                  (query (format "denote:%s::%s" id query))
-                  (t (concat "denote:" id)))))
+	   (path (file-relative-name (nth 0 path-id)))
+	   (id (nth 1 path-id))
+	   (query (nth 2 path-id))
+	   (anchor (file-name-sans-extension path))
+	   (desc (cond
+		  (description)
+		  (query (format "denote:%s::%s" id query))
+		  (t (concat "denote:" id)))))
       (cond
        ((eq format 'html)
 	(if query
 	    (format "<a href=\"%s.html%s\">%s</a>" anchor query desc)
-          (format "<a href=\"%s.html\">%s</a>" anchor desc)))
+	  (format "<a href=\"%s.html\">%s</a>" anchor desc)))
        ((eq format 'latex) (format "\\href{%s}{%s}" (replace-regexp-in-string "[\\{}$%&_#~^]" "\\\\\\&" path) desc))
        ((eq format 'texinfo) (format "@uref{%s,%s}" path desc))
        ((eq format 'ascii) (format "[%s] <denote:%s>" desc path))
        ((eq format 'md)
 	(if query
 	    (format "[%s](%s%s)" desc path query)
-          (format "[%s](%s)" desc path)))
+	  (format "[%s](%s)" desc path)))
        (t path))))
 
   (advice-add #'denote-link-ol-export :override #'my/denote-link-ol-export))
@@ -3560,11 +3585,11 @@ If FRAME is omitted or nil, use currently selected frame."
    buffer, by creating or altering keymaps stored in buffer-local
    `minor-mode-overriding-map-alist'."
   (let* ((oldmap (cdr (assoc mode minor-mode-map-alist)))
-         (newmap (or (cdr (assoc mode minor-mode-overriding-map-alist))
-                     (let ((map (make-sparse-keymap)))
-                       (set-keymap-parent map oldmap)
-                       (push `(,mode . ,map) minor-mode-overriding-map-alist) 
-                       map))))
+	 (newmap (or (cdr (assoc mode minor-mode-overriding-map-alist))
+		     (let ((map (make-sparse-keymap)))
+		       (set-keymap-parent map oldmap)
+		       (push `(,mode . ,map) minor-mode-overriding-map-alist) 
+		       map))))
     (define-key newmap key def)))
 
 ;; * CUSTOM LISP
@@ -3635,6 +3660,11 @@ If FRAME is omitted or nil, use currently selected frame."
   (cl-letf (((symbol-function 'yes-or-no-p) #'always)
 	    ((symbol-function 'y-or-n-p) #'always))
     (funcall-interactively (car args) (cdr args))))
+
+;; ** strptime
+
+(use-package strptime
+  :load-path "site-lisp/strptime.el")
 
 ;; ** khard-diary
 
