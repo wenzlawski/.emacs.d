@@ -1323,6 +1323,8 @@ This function is called by `org-babel-execute-src-block'."
 
 ;; ** org-super-agenda
 
+;; https://github.com/alphapapa/org-super-agenda#Usage
+
 (use-package org-super-agenda
   :straight t
   :after org-agenda
@@ -1337,14 +1339,16 @@ This function is called by `org-babel-execute-src-block'."
             ;; Single arguments given alone
             :tag "bills"
             :priority "A")
+     (:name "Diary"
+	    :category "Diary")
+     (:name "Habits"
+	    :habit t
+	    :order 2)
      (:priority<= "B"
                   ;; Show this section after "Today" and "Important", because
                   ;; their order is unspecified, defaulting to 0. Sections
                   ;; are displayed lowest-number-first.
-                  :order 1)
-     (:name "Habits"
-	    :habit t
-	    :order 2)))
+                  :order 1)))
   :custom-face
   (org-super-agenda-header ((t (:height 0.75))))
   :bind
