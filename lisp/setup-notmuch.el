@@ -17,7 +17,11 @@
   :hook
   (notmuch-mua-send . notmuch-mua-attachment-check)
   (notmuch-show . (lambda () (setq-local header-line-format nil)))
+  :bind
+  ("C-x m" . notmuch-mua-new-mail)
   :custom
+  (notmuch-identities '("Marc Wenzlawski <marcwenzlawski@posteo.com>" "Marc Wenzlawski <marc.wenzlawski@icloud.com>"))
+  (notmuch-command (executable-find "notmuch"))
   (notmuch-show-logo nil)
   (notmuch-column-control 1.0)
   (notmuch-hello-auto-refresh t)
