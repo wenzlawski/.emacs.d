@@ -2889,8 +2889,9 @@ See URL `http://pypi.python.org/pypi/ruff'."
 (setopt mail-user-agent 'message-user-agent)
 
 (setq my/signatures
-      '("Best regards,\n\nMarc Wenzlawski"
-	"MfG,\n\nMarc Wenzlawski"))
+      '("Best regards,\nMarc Wenzlawski"
+	"Liebe Grüße,\nMarc Wenzlawski"
+	"MfG,\nMarc Wenzlawski"))
 
 (defun my/message-signature (&optional no-default)
   "Select a signature."
