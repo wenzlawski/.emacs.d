@@ -48,7 +48,6 @@
 
 (defcustom zig-ts-mode-indent-offset 4
   "Number of spaces for each indentation step in `zig-ts-mode'."
-  :version "29.1"
   :type 'integer
   :safe 'integerp
   :group 'zig)
@@ -231,9 +230,11 @@ If given a SOURCE, execute the CMD on it."
      ((node-is ")") parent-bol 0)
      ((node-is "]") parent-bol 0)
      ((node-is "}") (and parent parent-bol) 0)
+     ((parent-is "Block") parent-bol zig-ts-mode-indent-offset)
      ((parent-is "ParamDeclList") parent-bol zig-ts-mode-indent-offset)
      ((parent-is "InitList") parent-bol zig-ts-mode-indent-offset)
      ((parent-is "ContainerDecl") parent-bol zig-ts-mode-indent-offset)
+     ((parent-is "FnCallArguments") parent-bol zig-ts-mode-indent-offset)
      ((parent-is "SwitchExpr") parent-bol zig-ts-mode-indent-offset)))
   "Tree-sitter indent rules for `zig-ts-mode'.")
 
