@@ -56,6 +56,7 @@
     ("c" centered-cursor-mode "center cursor" :toggle t)
     ("h" hl-line-mode "hl-line" :toggle t)
     ("l" visual-line-mode "visual line" :toggle t)
+    ("L" toggle-truncate-lines "truncate lines" :toggle (default-value (bound-and-true-p truncate-lines)))
     ("m" hide-mode-line-mode "mode line" :toggle (default-value (not (bound-and-true-p hide-mode-line-mode))) :exit t)
     ("p" variable-pitch-mode "variable pitch" :toggle (default-value (bound-and-true-p buffer-face-mode)))
     ("v" visual-fill-column-mode "fill column" :toggle t)
