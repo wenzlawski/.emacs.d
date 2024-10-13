@@ -12,6 +12,11 @@
 
 ;; for sever sive https://github.com/briansniffen/muchsync
 
+(require 'custom-notmuch)
+
+(defvar my/notmuch-draft-dirs
+  '(("marcwenzlawski@posteo.com" . "posteo/Drafts")))
+
 (use-package notmuch
   :straight t
   :hook
@@ -19,8 +24,15 @@
   (notmuch-show . (lambda () (setq-local header-line-format nil)))
   :bind
   ("C-x m" . notmuch-mua-new-mail)
+  (:map notmuch-message-mode-map
+	("C-x C-s" . my/notmuch-draft-save))
   :custom
-  (notmuch-identities '("Marc Wenzlawski <marcwenzlawski@posteo.com>" "Marc Wenzlawski <marc.wenzlawski@icloud.com>"))
+  (notmuch-identities '("Marc Wenzlawski <marcwenzlawski@posteo.com>" ;; "Marc Wenzlawski <marc.wenzlawski@icloud.com>"
+			))
+  (notmuch-fcc-dirs
+   '(("marcwenzlawski@posteo.com" . "posteo/Sent -inbox +sent -unread +posteo")
+     ;; ("marc.wenzlawski@icloud.com" . "icloud/Sent -inbox +sent -unread +icloud")
+     ))
   (notmuch-command (executable-find "notmuch"))
   (notmuch-show-logo nil)
   (notmuch-column-control 1.0)
@@ -30,28 +42,34 @@
   (notmuch-hello-sections '(notmuch-hello-insert-saved-searches))
   (notmuch-show-all-tags-list t)
   (notmuch-saved-searches
-   '((:name "inbox" :query "tag:inbox" :key "i")
-     (:name "unread" :query "tag:unread" :key "u")
-     (:name "sent" :query "tag:sent" :key "s")
-     (:name "flagged" :query "tag:flagged" :key "f")
-     (:name "drafts" :query "tag:draft" :key "d")
-     (:name "icloud" :query "to:marc.wenzlawski@icloud.com" :key "c")
-     (:name "posteo" :query "to:marcwenzlawski@posteo.com" :key "p")
-     (:name "all mail" :query "*" :key "a"))
+   '((:name "Flagged" :query "tag:flagged" :key "f")
+     (:name "Inbox" :key "i"
+	    :query "tag:inbox")
+     (:name "Unread" :key "u"
+            :query "tag:inbox AND tag:unread")
+     (:name "Sent" :key "s"
+            :query "tag:sent or tag:replied")
+     (:name "Drafts" :query "tag:draft" :key "d")
+     (:name "Archive" :key "a"
+	    :query "NOT tag:inbox AND NOT tag:sent")
+     (:name "Trash" :key "t"
+            :query "tag:deleted")
+     (:name "Posteo" :query "to:marcwenzlawski@posteo.com" :key "p")
+     (:name "All mail" :query "*" :key "A"))
    )
   (notmuch-search-oldest-first nil)
   (notmuch-search-result-format
    '(("date" . "%12s  ")
      ("count" . "%-7s  ")
-     ("authors" . "%-20s  ")
-     ("subject" . "%-80s  ")
+     ("authors" . "%-20.20s  ")
+     ("subject" . "%-70.70s  ")
      ("tags" . "(%s)")))
   (notmuch-tree-result-format
    '(("date" . "%12s  ")
-     ("authors" . "%-20s  ")
+     ("authors" . "%-20.20s  ")
      ((("tree" . "%s")
        ("subject" . "%s"))
-      . " %-80s  ")
+      . " %-70.70s  ")
      ("tags" . "(%s)")))
   (notmuch-search-line-faces
    '(("unread" . notmuch-search-unread-face)
@@ -77,7 +95,7 @@
   (notmuch-mua-compose-in 'current-window)
   (notmuch-mua-hidden-headers nil)
   (notmuch-address-command 'internal) ; NOTE 2024-01-09: I am not using this and must review it.
-  (notmuch-always-prompt-for-sender t)
+  (notmuch-always-prompt-for-sender nil)
   (notmuch-mua-cite-function 'message-cite-original-without-signature)
   (notmuch-mua-reply-insert-header-p-function 'notmuch-show-reply-insert-header-p-never)
   (notmuch-mua-user-agent-function nil)
@@ -102,6 +120,12 @@
   (let ((count most-positive-fixnum)) ; I don't like the buttonisation of long quotes
     (setq notmuch-wash-citation-lines-prefix count
           notmuch-wash-citation-lines-suffix count)))
+
+(defun my/notmuch-draft-save-message (&rest _)
+  "Save draft message."
+  (message "Saved draft."))
+
+(advice-add #'notmuch-draft-save :after #'my/notmuch-draft-save-message)
 
 (provide 'setup-notmuch)
 ;;; setup-notmuch.el ends here
