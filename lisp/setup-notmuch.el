@@ -12,8 +12,6 @@
 
 ;; for sever sive https://github.com/briansniffen/muchsync
 
-(require 'custom-notmuch)
-
 (defvar my/notmuch-draft-dirs
   '(("marcwenzlawski@posteo.com" . "posteo/Drafts")))
 
@@ -117,15 +115,16 @@
   (notmuch-message-headers '("To" "Cc" "Subject" "Date"))
   (notmuch-message-headers-visible t)
   :config
+  (require 'custom-notmuch)
+
   (let ((count most-positive-fixnum)) ; I don't like the buttonisation of long quotes
     (setq notmuch-wash-citation-lines-prefix count
-          notmuch-wash-citation-lines-suffix count)))
+          notmuch-wash-citation-lines-suffix count))
+  (advice-add #'notmuch-draft-save :after #'my/notmuch-draft-save-message))
 
 (defun my/notmuch-draft-save-message (&rest _)
   "Save draft message."
   (message "Saved draft."))
-
-(advice-add #'notmuch-draft-save :after #'my/notmuch-draft-save-message)
 
 (provide 'setup-notmuch)
 ;;; setup-notmuch.el ends here
