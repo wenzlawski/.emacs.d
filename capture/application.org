@@ -1,15 +1,15 @@
 ** [0/2] [[%^{Job link}][%^{Job title}]]
 DEADLINE: %^{Job deadline}u
-
-  - Company: [[%^{Company link}][%^{Company name}]]
-  - Location: %^{Location}
+:PROPERTIES:
+:Company:  %^{Company name}
+:END:
 
 *** TODO Write a letter of motivation
 :PROPERTIES:
 :JOB_TEMPLATE: letter-tml.typ
-:JOB_EMPLOYER: %\4
-:JOB_ADDRESS1: TODO
-:JOB_ADDRESS2: TODO
+:JOB_EMPLOYER: %\3
+:JOB_ADDRESS1: 
+:JOB_ADDRESS2: 
 :JOB_TITLE: %\2
 :JOB_DATE: %<%d.%m.%Y>
 :END:
