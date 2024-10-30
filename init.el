@@ -908,6 +908,7 @@ i.e. windows tiled side-by-side."
   (define-auto-insert "shell.nix$" ["default-shell.nix" my/autoinsert-yas-expand])
   (define-auto-insert "flake.nix$" ["default-flake.nix" my/autoinsert-yas-expand])
   (define-auto-insert "\\.el\\'"   ["default-elisp.el" my/autoinsert-yas-expand])
+  (define-auto-insert "\\.html\\'"   ["default-html.html" my/autoinsert-yas-expand])
   (auto-insert-mode 1))
 
 ;; ** editorconfig
