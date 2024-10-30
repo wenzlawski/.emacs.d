@@ -2946,6 +2946,11 @@ See URL `http://pypi.python.org/pypi/ruff'."
 	(to (completing-read "Send mail from: " (khardel--list-emails))))
     (notmuch-mua-mail to nil other-headers nil (notmuch-mua-get-switch-function))))
 
+;; ** khardel
+
+(use-package khardel
+  :straight t )
+
 ;; ** notmuch
 
 (require 'setup-notmuch)
@@ -3484,13 +3489,6 @@ and \"apikey\" as USER."
   (khalel-add-capture-template)
   (advice-add #'khalel-edit-calendar-event :after #'khalel-import-events))
 
-(require 'custom-khalel)
-
-;; ** khardel
-
-(use-package khardel
-  :straight t )
-
 ;; ** ledger-mode
 
 (use-package ledger-mode
@@ -3676,6 +3674,11 @@ If FRAME is omitted or nil, use currently selected frame."
 ;; ** khard-diary
 
 (require 'khard-diary)
+
+;; ** site-lisp
+
+(require 'custom-khalel)
+(require 'custom-org)
 
 ;; * END OF FILE
 ;; ** envrc
