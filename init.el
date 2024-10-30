@@ -1667,7 +1667,6 @@ This function can be used as the value of the user option
     (mapc (lambda (c) (princ c) (princ "\n")) content)))
 
 (use-package vterm
-  :straight t
   :bind
   ("C-c t" . vterm)
   ("C-c 4 t" . vterm-other-window)
