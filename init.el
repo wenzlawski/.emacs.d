@@ -2843,10 +2843,16 @@ See URL `http://pypi.python.org/pypi/ruff'."
 ;; ** html
 
 (use-package sgml-mode
-  :hook (html-mode . (lambda () (setq tab-width 2))))
+  :hook (html-mode . (lambda () (setq tab-width 2) (jinx-mode -1)))
+  :config
+  (add-to-list 'sgml-tag-alist
+	       '(("button" nil ("name") ("value")
+		  ("type" ("submit") ("reset") ("button"))
+		  ("disabled")
+		  ("tabindex") ("accesskey") ("onfocus") ("onblur")))))
 
 (use-package html-ts-mode
-  :load-path "site-lisp"
+  :disabled
   :mode "\\.html\\'")
 
 ;; ** yaml
