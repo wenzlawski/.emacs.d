@@ -71,6 +71,13 @@
   (recenter-top-bottom 0)
   (outline-show-entry))
 
+(defun my/denote-consult-ripgrep ()
+  "Search denote directory with ripgrep."
+  (interactive)
+  (consult-ripgrep (denote-directory)))
+
+(bind-key "C-c n f f" #'my/denote-consult-ripgrep)
+
 (use-package consult-org
   :commands (consult-org-heading)
   :after consult
