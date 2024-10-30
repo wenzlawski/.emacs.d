@@ -3100,8 +3100,7 @@ The browser to used is specified by the
   ("C-c n d" . denote-date)
   ("C-c n h" . denote-org-extras-link-to-heading)
   ("C-c n f b" . denote-find-backlink)
-  ("C-c n f f" . denote-find-link)
-  ("C-c n f r" . my/denote-rg-search)
+  ("C-c n f l" . denote-find-link)
   ("C-c n i" . denote-link) ; "insert" mnemonic
   ("C-c n l" . denote-link-after-creating)
   ("C-c n n" . denote)
@@ -3602,8 +3601,6 @@ If FRAME is omitted or nil, use currently selected frame."
 
 (require 'ox-11ty)
 
-;; ** custom-org
-(require 'custom-org)
 ;; ** xah
 
 (use-package xah
