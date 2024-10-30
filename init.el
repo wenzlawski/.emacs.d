@@ -1786,7 +1786,7 @@ This function can be used as the value of the user option
 (use-package rg
   :straight t
   :config
-  (rg-define-search search-denote
+  (rg-define-search my/denote-ripgrep
     "Search files including hidden in home directory"
     :query ask
     :format literal
@@ -1795,7 +1795,7 @@ This function can be used as the value of the user option
     :menu ("Search" "n" "Denote"))
   :bind
   ("M-s r" . rg-menu)
-  ("C-c n f R" . search-denote))
+  ("C-c n f F" . my/denote-ripgrep))
 
 (use-package rg-isearch
   :after rg
