@@ -24,6 +24,8 @@
   ("C-x m" . notmuch-mua-new-mail)
   (:map notmuch-message-mode-map
 	("C-x C-s" . my/notmuch-draft-save))
+  (:map notmuch-search-mode-map
+	("." . notmuch-show-mark-read))
   :custom
   (notmuch-identities '("Marc Wenzlawski <marcwenzlawski@posteo.com>" ;; "Marc Wenzlawski <marc.wenzlawski@icloud.com>"
 			))
@@ -39,20 +41,21 @@
   (notmuch-hello-thousands-separator "")
   (notmuch-hello-sections '(notmuch-hello-insert-saved-searches))
   (notmuch-show-all-tags-list t)
+  (notmuch-saved-search-buffer-name-format "*%t %s*")
   (notmuch-saved-searches
    '((:name "Flagged" :query "tag:flagged" :key "f")
      (:name "Inbox" :key "i"
-	    :query "tag:inbox")
+	    :query "tag:inbox AND NOT tag:archive")
      (:name "Unread" :key "u"
             :query "tag:inbox AND tag:unread")
      (:name "Sent" :key "s"
-            :query "tag:sent or tag:replied")
+            :query "(tag:sent OR tag:replied) AND NOT tag:archive")
      (:name "Drafts" :query "tag:draft" :key "d")
      (:name "Archive" :key "a"
-	    :query "NOT tag:inbox AND NOT tag:sent")
+	    :query "tag:archive")
      (:name "Trash" :key "t"
             :query "tag:deleted")
-     (:name "Posteo" :query "to:marcwenzlawski@posteo.com" :key "p")
+     (:name "Posteo" :query "to:marcwenzlawski.+@posteo.com" :key "p")
      (:name "All mail" :query "*" :key "A"))
    )
   (notmuch-search-oldest-first nil)
@@ -69,6 +72,14 @@
        ("subject" . "%s"))
       . " %-70.70s  ")
      ("tags" . "(%s)")))
+  (notmuch-show-mark-read-tags '("-unread"))
+  (notmuch-archive-tags '("-inbox" "+archive"))
+  (notmuch-tagging-keys
+   '(("a" notmuch-archive-tags "Archive")
+     ("u" notmuch-show-mark-read-tags "Mark read")
+     ("f" ("+flagged") "Flag")
+     ("s" ("+spam" "-inbox") "Mark as spam")
+     ("d" ("+deleted") "Delete")))
   (notmuch-search-line-faces
    '(("unread" . notmuch-search-unread-face)
      ;; ;; NOTE 2022-09-19: I disable this because I add a cosmeic
@@ -86,11 +97,11 @@
   (notmuch-show-empty-saved-searches t)
   (notmuch-message-replied-tags '("+replied"))
   (notmuch-message-forwarded-tags '("+forwarded"))
-  (notmuch-show-mark-read-tags '("-unread"))
-  (notmuch-draft-tags '("+draft"))
+  (notmuch-draft-tags '("+drafts"))
   (notmuch-draft-folder "drafts")
   (notmuch-draft-save-plaintext 'ask)
   (notmuch-mua-compose-in 'current-window)
+  (notmuch-message-queued-tag-changes '(("tag:drafts" "+sent" "-drafts")))
   (notmuch-mua-hidden-headers nil)
   (notmuch-address-command 'internal) ; NOTE 2024-01-09: I am not using this and must review it.
   (notmuch-always-prompt-for-sender nil)
@@ -125,6 +136,34 @@
 (defun my/notmuch-draft-save-message (&rest _)
   "Save draft message."
   (message "Saved draft."))
+
+(use-package notmuch-indicator
+  :straight t
+  :custom
+  (notmuch-indicator-args
+   '((:terms "tag:unread AND tag:inbox" :label "💬")
+     (:terms "tag:flagged" :label "‼")))
+  (notmuch-indicator-refresh-count (* 60 1))
+  (notmuch-indicator-hide-empty-counters t)
+  (notmuch-indicator-notmuch-config-file "~/.config/notmuch/default/config")
+  :config
+  (defun notmuch-indicator--shell-command (terms)
+    "Run shell command for `notmuch-count(1)' with TERMS."
+    (replace-regexp-in-string
+     "\n" ""
+     (let ((default-directory "~"))
+       (shell-command-to-string
+	(format "%s count %s"
+		notmuch-indicator-notmuch-binary
+		(shell-quote-argument terms))))))
+
+  (defun notmuch-indicator-refresh (&rest other)
+    "Refresh the active indicator."
+    (when (notmuch-indicator--running-p)
+      (cancel-function-timers #'notmuch-indicator--indicator)
+      (run-at-time nil notmuch-indicator-refresh-count #'notmuch-indicator--indicator)))
+
+  (notmuch-indicator-mode 1))
 
 (provide 'setup-notmuch)
 ;;; setup-notmuch.el ends here

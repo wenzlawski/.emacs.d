@@ -290,11 +290,11 @@ Containing LEFT, and RIGHT aligned respectively."
 ;; ** hl-line
 
 (use-package hl-line
-  ;; :hook prog-mode
+  :hook (prog-mode text-mode)
   :custom
   (hl-line-range-function nil)
   :config
-  (global-hl-line-mode 1))
+  (hl-line-mode 1))
 
 (defun my/highlight-visual-line ()
   "Only highlight the visual line."
@@ -485,9 +485,9 @@ Containing LEFT, and RIGHT aligned respectively."
 
 (defun my/theme-change (&rest _)
   "Load theme, taking current system APPEARANCE into consideration."
-  (pcase (do-applescript "tell application \"System Events\" to return (dark mode of appearance preferences as string)")
-    ("true" (setq ns-system-appearance 'dark))
-    ("false" (setq ns-system-appearance 'light)))
+  ;; (pcase (do-applescript "tell application \"System Events\" to return (dark mode of appearance preferences as string)")
+  ;;   ("true" (setq ns-system-appearance 'dark))
+  ;;   ("false" (setq ns-system-appearance 'light)))
   (pcase ns-system-appearance
     ('light (load-theme my/light-theme t))
     ('dark  (load-theme my/dark-theme t)))
@@ -592,9 +592,9 @@ Containing LEFT, and RIGHT aligned respectively."
 
 (defun my/modus-theme-change (&rest _)
   "Load theme, taking current system APPEARANCE into consideration."
-  (pcase (do-applescript "tell application \"System Events\" to return (dark mode of appearance preferences as string)")
-    ("true" (setq ns-system-appearance 'dark))
-    ("false" (setq ns-system-appearance 'light)))
+  ;; (pcase (do-applescript "tell application \"System Events\" to return (dark mode of appearance preferences as string)")
+  ;;   ("true" (setq ns-system-appearance 'dark))
+  ;;   ("false" (setq ns-system-appearance 'light)))
   (pcase ns-system-appearance
     ('light (modus-themes-select 'modus-operandi))
     ('dark  (modus-themes-select 'modus-vivendi)))
@@ -889,11 +889,104 @@ i.e. windows tiled side-by-side."
 (use-package man
   :custom
   (Man-arguments "-a")
+  (manual-program "/usr/bin/man")
   :bind
   (:map help-map
 	("C-w" . my/man-plain))
   (:map Man-mode-map
 	("g" . consult-imenu)))
+
+;; Hack to make it work with MacOs not inheriting user path
+(with-eval-after-load 'man
+  (defvar Man-manpath
+    (s-join ":"
+	    '("/run/current-system/sw/share/man" ; nix
+	      "/Users/mw/.nix-profile/share/man" ; nix
+	      "/nix/var/nix/profiles/default/share/man" ; nix
+	      "/usr/local/share/man"	; Homebrew
+	      ;; "/usr/share/man"
+	      ;; "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/share/man"
+	      ;; "/Library/Developer/CommandLineTools/usr/share/man"
+	      )))
+
+  (defun Man-completion-table (string pred action)
+    (cond
+     ;; This ends up returning t for pretty much any string, and hence leads to
+     ;; spurious "complete but not unique" messages.  And since `man' doesn't
+     ;; require-match anyway, there's not point being clever.
+     ;;((eq action 'lambda) (not (string-match "([^)]*\\'" string)))
+     ((equal string "-k")
+      ;; Let SPC (minibuffer-complete-word) insert the space.
+      (complete-with-action action '("-k ") string pred))
+     (t
+      (let ((table (cdr Man-completion-cache))
+            (section nil)
+            (prefix string))
+	(when (string-match "\\`\\([[:digit:]].*?\\) " string)
+          (setq section (match-string 1 string))
+          (setq prefix (substring string (match-end 0))))
+	(unless (and Man-completion-cache
+                     (string-prefix-p (car Man-completion-cache) prefix))
+          (with-temp-buffer
+            ;; In case inherited doesn't exist.
+            (setq default-directory (Man-default-directory))
+            ;; Actually for my `man' the arg is a regexp.
+            ;; POSIX says it must be ERE and "man-db" seems to agree,
+            ;; whereas under macOS it seems to be BRE-style and doesn't
+            ;; accept backslashes at all.  Let's not bother to
+            ;; quote anything.
+            (let ((process-environment (copy-sequence process-environment)))
+              (setenv "COLUMNS" "999") ;; don't truncate long names
+              ;; manual-program might not even exist.  And since it's
+              ;; run differently in Man-getpage-in-background, an error
+              ;; here may not necessarily mean that we'll also get an
+              ;; error later.
+              (when (eq 0
+			(ignore-errors
+			  (process-file
+                           manual-program nil '(t nil) nil
+			   "-M" Man-manpath
+                           "-k" (concat (when (or Man-man-k-use-anchor
+                                                  (string-equal "" ""))
+                                          "^")
+					(if (string-equal "" "")
+                                            ""
+                                          ;; FIXME: shell-quote-argument
+                                          ;; is not entirely
+                                          ;; appropriate: we actually
+                                          ;; need to quote ERE here.
+                                          ;; But we don't have that, and
+                                          ;; shell-quote-argument does
+                                          ;; the job...
+                                          (shell-quote-argument ""))))))
+		(setq table (Man-parse-man-k)))))
+	  ;; Cache the table for later reuse.
+          (when table
+            (setq Man-completion-cache (cons prefix table))))
+	;; The table may contain false positives since the match is made
+	;; by "man -k" not just on the manpage's name.
+	(if section
+            (let ((re (concat "(" (regexp-quote section) ")\\'")))
+              (dolist (comp (prog1 table (setq table nil)))
+		(if (string-match re comp)
+                    (push (substring comp 0 (match-beginning 0)) table)))
+              (completion-table-with-context (concat section " ") table
+                                             prefix pred action))
+          ;; If the current text looks like a possible section name,
+          ;; then add a completion entry that just adds a space so SPC
+          ;; can be used to insert a space.
+          (if (string-match "\\`[[:digit:]]" string)
+              (push (concat string " ") table))
+          (let ((res (complete-with-action action table string pred)))
+            ;; In case we're completing to a single name that exists in
+            ;; several sections, the longest prefix will look like "foo(".
+            (if (and (stringp res)
+                     (string-match "([^(]*\\'" res)
+                     ;; In case the paren was already in `prefix', don't
+                     ;; remove it.
+                     (> (match-beginning 0) (length prefix)))
+		(substring res 0 (match-beginning 0))
+              res))))))))
 
 ;; ** autoinsert
 
@@ -1667,6 +1760,7 @@ This function can be used as the value of the user option
     (mapc (lambda (c) (princ c) (princ "\n")) content)))
 
 (use-package vterm
+  :straight t
   :bind
   ("C-c t" . vterm)
   ("C-c 4 t" . vterm-other-window)
@@ -1964,6 +2058,7 @@ This function can be used as the value of the user option
   (flycheck-emacs-lisp-check-declare nil)
   (flycheck-emacs-lisp-initialize-packages 'auto)
   (flycheck-emacs-lisp-package-user-dir nil)
+  (flycheck-css-csslint-executable (executable-find "csslint"))
   :hook (prog-mode . flycheck-mode))
 
 (use-package flycheck-eglot
@@ -2358,7 +2453,9 @@ See URL `http://pypi.python.org/pypi/ruff'."
   (push
    `(alejandra ,(executable-find "alejandra")) apheleia-formatters)
   (push
-   `(prettier-html ,(executable-find "prettier") "--stdin-filepath" filepath) apheleia-formatters))
+   `(prettier-html ,(executable-find "prettier") "--stdin-filepath" filepath) apheleia-formatters)
+  (push
+   `(prettier-css ,(executable-find "prettier") "--stdin-filepath" filepath) apheleia-formatters))
 
 ;; ** emmet
 
@@ -2738,7 +2835,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
 ;; ** css
 
 (use-package css-mode
-  :hook ((css-mode css-ts-mode) . (lambda nil (setq tab-width 2)))
+  :hook ((css-mode css-ts-mode) . (lambda nil (setq tab-width 2) (hl-line-mode 0)))
   :mode ("\\.css\\'" . css-mode)
   :config
   (setq css-indent-offset 2))
@@ -3228,7 +3325,6 @@ backend."
     (setq cursor-type 'bar)))
 
 (use-package nov
-  :disabled
   :straight t
   :mode ("\\.epub\\'" . nov-mode)
   :config

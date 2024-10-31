@@ -46,6 +46,22 @@
     (notmuch-search address)))
 
 ;;;###autoload
+(defun notmuch-show-mark-read (&optional unread beg end)
+  "Mark the current message as read.
+
+Mark the current message as read by applying the tag changes in
+`notmuch-show-mark-read-tags' to it (remove the \"unread\" tag by
+default). If a prefix argument is given, the message will be
+marked as unread, i.e. the tag changes in
+`notmuch-show-mark-read-tags' will be reversed."
+  (interactive (cons current-prefix-arg (notmuch-interactive-region)))
+  (when notmuch-show-mark-read-tags
+    (notmuch-search-tag
+     (notmuch-tag-change-list notmuch-show-mark-read-tags unread) beg end))
+  (when (eq beg end)
+    (notmuch-search-next-thread)))
+
+;;;###autoload
 (defun my/notmuch-draft-save ()
   "Save the current draft message in the notmuch database.
 

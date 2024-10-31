@@ -53,6 +53,15 @@
 	      nil)
 	    l)))
 
+  (defun calibredb-all-author_sort ()
+    "Get all author_sort and return as a list."
+    (seq-uniq
+     (let (l)
+       (cl-loop for item in (calibredb-candidates :distinct "author_sort") do
+                (if (listp item)
+                    (if (car item) (setq l (append (split-string (car item ) " & ") l)) "" )
+                  (setq l (append (split-string item " & ") l)))) l)))
+
   (defun calibredb-format-item (book-alist)
     "Format the candidate string shown in helm or ivy.
 Argument BOOK-ALIST ."
