@@ -17,14 +17,27 @@
   :after calibredb
   :bind
   (:map calibredb-search-mode-map
-	("f" . calibredb-add-format)))
+	("f" . calibredb-add-format)
+	("C" . calibredb-search-refresh-and-clear-filter)
+	("r" . calibredb-search-refresh)
+	("F" . calibredb-search-next-page)
+	("B" . calibredb-search-previous-page)))
 
 (setopt calibredb-root-dir "~/Calibre Library"
 	calibredb-db-dir (expand-file-name "metadata.db" calibredb-root-dir)
 	calibredb-id-width 5
 	calibredb-title-width 55
+	calibredb-search-page-max-rows (- (frame-height) 5)
 	calibredb-preferred-format "pdf"
 	calibredb-library-alist '(("~/Calibre Library")))
+
+(defun calibredb-set-results-rows (&rest _)
+  "Set the number of rows for a calibre search."
+  (setopt calibredb-search-page-max-rows (- (frame-height) 4)))
+
+(advice-add #'calibredb-search-refresh-and-clear-filter :before #'calibredb-set-results-rows)
+(advice-add #'calibredb-search-refresh :before #'calibredb-set-results-rows)
+
 
 ;;; Fix the author display
 
