@@ -10,7 +10,7 @@
 
 (use-package citar
   :straight t
-  :hook (org-mode . citar-capf-setup)
+  ;; :hook (org-mode . citar-capf-setup)
   :custom
   ;; NOTE: Having large bibtex files slows down org-mode through bibtex
   (org-cite-global-bibliography '("~/Zotero/bibtex-export.bib" "~/Calibre Library/calibre.bib"))

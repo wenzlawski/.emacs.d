@@ -1524,7 +1524,8 @@ Append with current prefix arg."
   :hook ((prog-mode . corfu-mode)
 	 (shell-mode . corfu-mode)
 	 (eshell-mode . corfu-mode)
-	 (comint-mode . corfu-mode))
+	 (comint-mode . corfu-mode)
+	 (text-mode . corfu-mode))
 
   ;; Recommended: Enable Corfu globally.  This is recommended since Dabbrev can
   ;; be used globally (M-/).  See also the customization variable
@@ -1539,12 +1540,6 @@ Append with current prefix arg."
   (use-package corfu-history
     :hook (corfu-mode . corfu-history-mode))
   (use-package corfu-info))
-
-(use-package nerd-icons-corfu
-  :after corfu
-  :straight t
-  :config
-  (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
 
 (with-eval-after-load 'corfu
   (defun corfu-insert-shell-filter (&optional _)
@@ -1593,35 +1588,11 @@ Append with current prefix arg."
   (keymap-set corfu-map "M-m" #'corfu-move-to-minibuffer)
   (add-to-list 'corfu-continue-commands #'corfu-move-to-minibuffer))
 
-;; ** prescient
-
-;; (use-package prescient
-;;   :straight t)
-
-;; (use-package corfu-prescient
-;;   :after prescient
-;;   :straight t)
-
-;; (use-package vertico-prescient
-;;   :after presciet
-;;   :straight t)
-
-;; ** abbrev
-
-(require 'setup-abbrev)
-
-;; ** dabbrev
-
-;; Use Dabbrev with Corfu!
-(use-package dabbrev
-  ;; Swap M-/ and C-M-/
-  :bind (("M-/" . dabbrev-completion)
-	 ("C-M-/" . dabbrev-expand))
+(use-package nerd-icons-corfu
+  :after corfu
+  :straight t
   :config
-  (add-to-list 'dabbrev-ignored-buffer-regexps "\\` ")
-  ;; Since 29.1, use `dabbrev-ignored-buffer-regexps' on older.
-  (add-to-list 'dabbrev-ignored-buffer-modes 'doc-view-mode)
-  (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode))
+  (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
 
 ;; ** cape
 
@@ -1661,11 +1632,23 @@ Append with current prefix arg."
 		   #'elisp-completion-at-point
 		   #'my/ignore-elisp-keywords)
 		  #'cape-dabbrev
-		  #'tempel-complete)
+		  #'tempel-expand
+		  )
 		cape-file)
 	      cape-dabbrev-min-length 5))
 
 (add-hook 'emacs-lisp-mode-hook #'my/setup-elisp)
+
+(defun my/setup-org ()
+  (setq-local completion-at-point-functions
+	      `(,(cape-capf-super
+		  #'tempel-complete
+		  #'citar-capf
+		  #'yasnippet-capf)
+		cape-file)
+	      corfu-on-exact-match 'show))
+
+(add-hook 'org-mode-hook #'my/setup-org)
 
 (defun my/setup-julia ()
   (setq-local completion-at-point-functions
@@ -1679,6 +1662,49 @@ Append with current prefix arg."
 
 (add-hook 'julia-snail-mode-hook #'my/setup-julia)
 
+;; ** prescient
+
+(use-package prescient
+  :straight t
+  :custom
+  (prescient-save-file (dir-concat user-emacs-directory ".cache/prescient-save.el"))
+  (prescient-aggressive-file-save t)
+  (completion-styles '(prescient))
+  :config
+  (prescient-persist-mode 1))
+
+(use-package corfu-prescient
+  :after (corfu prescient)
+  :straight t
+  :custom
+  (corfu-prescient-completion-styles '(prescient basic))
+  :config
+  (corfu-prescient-mode 1))
+
+(use-package vertico-prescient
+  :after (vertico prescient)
+  :straight t
+  :custom
+  (vertico-prescient-completion-styles '(prescient basic))
+  :config
+  (vertico-prescient-mode 1))
+
+;; ** abbrev
+
+(require 'setup-abbrev)
+
+;; ** dabbrev
+
+;; Use Dabbrev with Corfu!
+(use-package dabbrev
+  ;; Swap M-/ and C-M-/
+  :bind (("M-/" . dabbrev-completion)
+	 ("C-M-/" . dabbrev-expand))
+  :config
+  (add-to-list 'dabbrev-ignored-buffer-regexps "\\` ")
+  ;; Since 29.1, use `dabbrev-ignored-buffer-regexps' on older.
+  (add-to-list 'dabbrev-ignored-buffer-modes 'doc-view-mode)
+  (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode))
 
 ;; ** expand-region
 
@@ -1786,6 +1812,7 @@ This function can be used as the value of the user option
 
 (use-package orderless
   :straight t
+  :disabled
   :config
 
   (defun +orderless--consult-suffix ()
@@ -1797,8 +1824,8 @@ This function can be used as the value of the user option
       "$"))
 
   ;; Recognizes the following patterns:
-  ;; * .ext (file extension)
-  ;; * regexp$ (regexp matching at end)
+  ;; \* .ext (file extension)
+  ;; \* regexp$ (regexp matching at end)
   (defun +orderless-consult-dispatch (word _index _total)
     (cond
      ;; Ensure that $ works with Consult commands, which add disambiguation suffixes
@@ -1812,7 +1839,7 @@ This function can be used as the value of the user option
 
   ;; Define orderless style with initialism by default
   (orderless-define-completion-style +orderless-with-initialism
-    (orderless-matching-styles '(orderless-initialism orderless-literal orderless-regexp)))
+				     (orderless-matching-styles '(orderless-initialism orderless-literal orderless-regexp)))
 
   ;; You may want to combine the `orderless` style with `substring` and/or `basic`.
   ;; There are many details to consider, but the following configurations all work well.
@@ -2296,6 +2323,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
   :straight t
   :hook (prog-mode . yas-minor-mode)
   (snippet-mode . (lambda () (setq-local require-final-newline nil)))
+  (org-mode . yas-minor-mode)
   :config
   (setq yas-verbosity 0)
   (use-package yasnippet-snippets
@@ -2337,7 +2365,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
     ;; `tempel-expand' *before* the main programming mode Capf, such
     ;; that it will be tried first.
     (setq-local completion-at-point-functions
-		(cons #'tempel-complete
+		(cons #'tempel-expand
 		      completion-at-point-functions)))
   ;; Optionally make the Tempel templates available to Abbrev,
   ;; either locally or globally. `expand-abbrev' is bound to C-x '.
@@ -2992,16 +3020,16 @@ See URL `http://pypi.python.org/pypi/ruff'."
 (setopt mail-user-agent 'message-user-agent)
 
 (setq my/signatures
-      '("Best regards,\nMarc Wenzlawski"
-	"Liebe Grüße,\nMarc Wenzlawski"
-	"MfG,\nMarc Wenzlawski"))
+      '((en . "Best regards,\nMarc Wenzlawski")
+	(de . "Liebe Grüße,\nMarc Wenzlawski")
+	(de . "Mit freundlichen Grüßen,\nMarc Wenzlawski")))
 
 (defun my/message-signature (&optional no-default)
   "Select a signature."
   (interactive)
-  (if (eq no-default 4)
-      (completing-read "Signature: " my/signatures)
-    (car my/signatures)))
+  (let ((lang (message-fetch-field "content-language")))
+    (if lang (alist-get (intern lang) my/signatures)
+      (completing-read "Signature: " (mapcar #'cdr my/signatures)))))
 
 (use-package message
   :bind
@@ -3009,15 +3037,179 @@ See URL `http://pypi.python.org/pypi/ruff'."
 	("C-c <C-i>" . khardel-insert-email)
 	("C-c M-i" . my/consult-notmuch-address-insert))
   :custom
-  (message-signature 'my/message-signature)
+  (message-signature #'my/message-signature)
   (message-sendmail-f-is-evil nil)
   (message-sendmail-extra-arguments nil)
+  (message-required-mail-headers
+   '(From Subject Date (optional . In-Reply-To) Message-ID (optional . User-Agent) (optional . Content-Language))
+   )
   (message-sendmail-envelope-from 'header)
+  (message-citation-line-function #'message-insert-formatted-citation-line)
+  (message-citation-line-format "> On %d. %b %Y, at %H:%m, %f wrote:")
   (message-send-mail-function 'message-send-mail-with-sendmail)
   (message-directory "~/Maildir")
   (message-auto-save-directory (dir-concat message-directory "drafts"))
   (message-alternative-emails
-   (regexp-opt '("marcwenzlawski@posteo.com" "marc.wenzlawski@icloud.com"))))
+   (regexp-opt '("marcwenzlawski@posteo.com"))))
+
+(with-eval-after-load 'message
+  (defcustom message-setup-insert-signature nil
+    "Whether to insert a signature when setting up a message.")
+  
+  (defun message-setup-1 (headers &optional yank-action actions return-action)
+    (dolist (action actions)
+      ;; FIXME: Use functions rather than expressions!
+      (add-to-list 'message-send-actions
+		   `(apply #',(car action) ',(cdr action))))
+    (setq message-return-action return-action)
+    (setq message-reply-buffer
+	  (if (and (consp yank-action)
+		   (eq (car yank-action) 'insert-buffer))
+	      (nth 1 yank-action)
+	    yank-action))
+    (goto-char (point-min))
+    ;; Insert all the headers.
+    (mail-header-format
+     (let ((h headers)
+	   (alist message-header-format-alist))
+       (while h
+	 (unless (assq (caar h) message-header-format-alist)
+	   (push (list (caar h)) alist))
+	 (pop h))
+       alist)
+     headers)
+    (delete-region (point) (progn (forward-line -1) (point)))
+    (when message-default-headers
+      (insert
+       (if (functionp message-default-headers)
+           (funcall message-default-headers)
+	 message-default-headers))
+      (or (bolp) (insert ?\n)))
+    (insert (concat mail-header-separator "\n"))
+    (forward-line -1)
+    ;; If a crash happens while replying, the auto-save file would *not*
+    ;; have a `References:' header if `message-generate-headers-first'
+    ;; was nil.  Therefore, always generate it first.  (And why not
+    ;; include the `In-Reply-To' header as well.)
+    (let ((message-generate-headers-first
+           (if (eq message-generate-headers-first t)
+               t
+             (append message-generate-headers-first '(References In-Reply-To)))))
+      (when (message-news-p)
+	(when message-default-news-headers
+          (insert message-default-news-headers)
+          (or (bolp) (insert ?\n)))
+	(message-generate-headers
+	 (message-headers-to-generate
+          (append message-required-news-headers
+                  message-required-headers)
+          message-generate-headers-first
+          '(Lines Subject))))
+      (when (message-mail-p)
+	(when message-default-mail-headers
+          (insert message-default-mail-headers)
+          (or (bolp) (insert ?\n)))
+	(message-generate-headers
+	 (message-headers-to-generate
+          (append message-required-mail-headers
+                  message-required-headers)
+          message-generate-headers-first
+          '(Lines Subject)))))
+    (when message-setup-insert-signature
+      (run-hooks 'message-signature-setup-hook)
+      (message-insert-signature))
+    (save-restriction
+      (message-narrow-to-headers)
+      (run-hooks 'message-header-setup-hook))
+    (setq buffer-undo-list nil)
+    (when message-generate-hashcash
+      ;; Generate hashcash headers for recipients already known
+      (mail-add-payment-async))
+    ;; Gnus posting styles are applied via buffer-local `message-setup-hook'
+    ;; values.
+    (run-hooks 'message-setup-hook)
+    ;; Do this last to give it precedence over posting styles, etc.
+    (when (message-mail-p)
+      (save-restriction
+	(message-narrow-to-headers)
+	(if message-alternative-emails
+	    (message-use-alternative-email-as-from))))
+    (message-position-point)
+    ;; Allow correct handling of `message-checksum' in `message-yank-original':
+    (set-buffer-modified-p nil)
+    (undo-boundary)
+    ;; rmail-start-mail expects message-mail to return t (Bug#9392)
+    t)
+
+  (defun message-insert-signature (&optional force at-point)
+    "Insert a signature at the end of the buffer.
+
+See the documentation for the `message-signature' variable for
+more information.
+
+If FORCE is 0 (or when called interactively), the global values
+of the signature variables will be consulted if the local ones
+are null."
+    (interactive (list 0 current-prefix-arg) message-mode)
+    (let ((message-signature message-signature)
+	  (message-signature-file message-signature-file))
+      ;; If called interactively and there's no signature to insert,
+      ;; consult the global values to see whether there's anything they
+      ;; have to say for themselves.  This can happen when using
+      ;; `gnus-posting-styles', for instance.
+      (when (and (null message-signature)
+		 (null message-signature-file)
+		 (eq force 0))
+	(setq message-signature (default-value 'message-signature)
+	      message-signature-file (default-value 'message-signature-file)))
+      (let* ((signature
+	      (cond
+	       ((and (null message-signature)
+		     (eq force 0))
+		(save-excursion
+		  (goto-char (point-max))
+		  (not (re-search-backward message-signature-separator nil t))))
+	       ((and (null message-signature)
+		     force)
+		t)
+	       ((functionp message-signature)
+		(funcall message-signature))
+	       ((listp message-signature)
+		(eval message-signature t))
+	       (t message-signature)))
+	     signature-file)
+	(setq signature
+	      (cond ((stringp signature)
+		     signature)
+		    ((and (eq t signature) message-signature-file)
+		     (setq signature-file
+			   (if (and message-signature-directory
+				    ;; don't actually use the signature directory
+				    ;; if message-signature-file contains a path.
+				    (not (file-name-directory
+					  message-signature-file)))
+			       (expand-file-name message-signature-file
+						 message-signature-directory)
+			     message-signature-file))
+		     (file-exists-p signature-file))))
+	(when signature
+	  (unless at-point
+	    (goto-char (point-max)))
+	  ;; Insert the signature.
+	  (unless (bolp)
+	    (newline))
+	  (when message-signature-insert-empty-line
+	    (newline))
+	  (insert "-- ")
+	  (newline)
+	  (if (eq signature t)
+	      (insert-file-contents signature-file)
+	    (insert signature))
+	  (unless at-point
+	    (goto-char (point-max))
+	    (or (bolp) (newline)))))))
+
+  )
 
 (use-package sendmail
   :custom
@@ -3051,7 +3243,6 @@ See URL `http://pypi.python.org/pypi/ruff'."
 ;; ** notmuch
 
 (require 'setup-notmuch)
-
 ;; * APPLICATIONS
 ;; ** smudge spotify
 
@@ -3382,6 +3573,11 @@ backend."
 
 ;; ** gptel
 
+(defcustom gptel-prompt-dir (dir-concat user-emacs-directory "gptel")
+  "Gptel prompt directory"
+  :type 'string
+  :group 'gptel)
+
 (use-package gptel
   :straight t
   :bind
@@ -3392,10 +3588,28 @@ backend."
   (gptel-model "gpt-4o")
   (gptel-expert-commands t)
   (gptel-directives
-   '((default . "You are a large language model living in Emacs and a helpful assistant. Respond concisely.")
+   `((default . "You are a large language model living in Emacs and a helpful assistant. Respond concisely.")
      (programming . "You are a large language model and a careful programmer. Provide code and only code as output without any additional text, prompt or note.")
      (writing . "You are a large language model and a writing assistant. Respond concisely.")
      (chat . "You are a large language model and a conversation partner. Respond concisely."))))
+
+(defun my/notmuch-ai-response (response _)
+  (insert response)
+  (newline 2))
+
+(defun my/notmuch-ai-reply (message)
+  "Write an email in the message."
+  (interactive "sWrite the response: ")
+  (notmuch-show-reply-sender)
+  (gptel-request
+      (concat "\nOriginal Email:\n" (buffer-substring-no-properties (point-min) (point-max)) 
+	      "\n Short-form response:" message)
+    :callback #'my/notmuch-ai-response
+    :stream nil
+    :system (f-read-text (dir-concat gptel-prompt-dir "email.txt")))
+  (message "Composing response..."))
+
+(bind-key "," #'my/notmuch-ai-reply 'notmuch-show-mode-map)
 
 (use-package gptel-extensions
   :after gptel
@@ -3435,7 +3649,15 @@ and \"apikey\" as USER."
        ;;(message "org-capture: %s" (error-message-string ex))
        (delete-frame)))))
 
-(defvar my/gptel-save-dir nil
+(defun my/focus-or-make-ai-frame ()
+  "Focus or create a new frame and run `gptel'."
+  (interactive)
+  (condition-case nil
+      (select-frame-by-name "ai")
+    (error (my/make-ai-frame)))
+  nil)
+
+(defcustom my/gptel-save-dir nil
   "Default dir to save gptel conversations to.")
 
 (setq my/gptel-save-dir "~/files/ai/")
@@ -3445,14 +3667,6 @@ and \"apikey\" as USER."
   (if my/gptel-save-dir (cd my/gptel-save-dir)))
 
 (add-hook 'gptel-mode-hook #'my/gptel-set-save-dir)
-
-(defun my/focus-or-make-ai-frame ()
-  "Focus or create a new frame and run `gptel'."
-  (interactive)
-  (condition-case nil
-      (select-frame-by-name "ai")
-    (error (my/make-ai-frame)))
-  nil)
 
 ;; ** anki-helper
 
