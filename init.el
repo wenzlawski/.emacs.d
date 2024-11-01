@@ -2026,7 +2026,7 @@ This function can be used as the value of the user option
   (magit-diff-paint-whitespace nil)
   (magit-diff-hightlight-hunk-body nil)
   (magit-diff-refine-hunk nil)
-  (magit-commit-show-diff nil)
+  (magit-commit-show-diff t)
   (magit-disabled-section-inserters
    '(
      ;;   magit-insert-tags-header
@@ -3612,6 +3612,21 @@ backend."
   (message "Composing response..."))
 
 (bind-key "," #'my/notmuch-ai-reply 'notmuch-show-mode-map)
+
+(defun my/magit-ai-commit-message ()
+  "Write a commit message based on the commit."
+  (with-current-buffer (magit-get-mode-buffer 'magit-diff-mode nil 'selected)
+    (gptel-request
+	(buffer-substring-no-properties (point-min) (point-max))
+      :callback #'my/magit-ai-commit-message--handle
+      :stream nil
+      :system "Write a short and concise commit message for the following diff.")
+    (message "Writing commit...")))
+
+(defun my/magit-ai-commit-message--handle (response _)
+  (insert response))
+
+(bind-key "C-c RET" #'my/magit-ai-commit-message 'git-commit-mode-map)
 
 (use-package gptel-extensions
   :after gptel
