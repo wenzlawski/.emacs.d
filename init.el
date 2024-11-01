@@ -2035,6 +2035,8 @@ This function can be used as the value of the user option
      magit-insert-unpulled-from-pushremote
      magit-insert-unpulled-from-upstream
      magit-insert-unpushed-to-upstream-or-recent
+     forge-insert-pullreqs
+     forge-insert-issues
      )))
 
 (use-package diff-hl
