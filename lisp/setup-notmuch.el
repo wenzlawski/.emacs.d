@@ -15,11 +15,17 @@
 (defvar my/notmuch-draft-dirs
   '(("marcwenzlawski@posteo.com" . "posteo/Drafts")))
 
+(defun my/notmuch-async-poll ()
+  "Async notmuch new."
+  (interactive)
+  (start-process "notmuch-poll" nil notmuch-command "new"))
+
 (use-package notmuch
   :straight t
   :hook
   (notmuch-mua-send . notmuch-mua-attachment-check)
   (notmuch-show . (lambda () (setq-local header-line-format nil)))
+  (notmuch-hello-mode . my/notmuch-async-poll)
   :bind
   ("C-x m" . notmuch-mua-new-mail)
   (:map notmuch-message-mode-map
@@ -82,23 +88,13 @@
      ("d" ("+deleted") "Delete")))
   (notmuch-search-line-faces
    '(("unread" . notmuch-search-unread-face)
-     ;; ;; NOTE 2022-09-19: I disable this because I add a cosmeic
-     ;; ;; emoji via `notmuch-tag-formats'.  This way I do not get
-     ;; ;; an intense style which is very distracting when I filter
-     ;; ;; my mail to include this tag.
-     ;;
-     ;; ("flag" . notmuch-search-flagged-face)
-     ;;
-     ;; Using `italic' instead is just fine.  Though I also tried
-     ;; it without any face and I was okay with it.  The upside of
-     ;; having a face is that you can identify the message even
-     ;; when the window is split and you don't see the tags.
      ("flag" . italic)))
   (notmuch-show-empty-saved-searches t)
   (notmuch-message-replied-tags '("+replied"))
   (notmuch-message-forwarded-tags '("+forwarded"))
-  (notmuch-draft-tags '("+drafts"))
-  (notmuch-draft-folder "drafts")
+  (notmuch-draft-tags '("+draft"))
+  (notmuch-draft-folder "draft")
+  (notmuch-show-only-matching-messages nil)
   (notmuch-draft-save-plaintext 'ask)
   (notmuch-mua-compose-in 'current-window)
   (notmuch-message-queued-tag-changes '(("tag:drafts" "+sent" "-drafts")))
@@ -111,7 +107,7 @@
   (notmuch-maildir-use-notmuch-insert t)
   (notmuch-crypto-process-mime t)
   (notmuch-crypto-get-keys-asynchronously t)
-  (notmuch-mua-attachment-regexp   ; see `notmuch-mua-send-hook'
+  (notmuch-mua-attachment-regexp   ; TODO: german?
    (concat "\\b\\(attache\?ment\\|attached\\|attach\\|"
            "pi[èe]ce\s+jointe?\\|"
            "συνημμ[εέ]νο\\|επισυν[αά]πτω\\)\\b"))
@@ -136,6 +132,11 @@
 (defun my/notmuch-draft-save-message (&rest _)
   "Save draft message."
   (message "Saved draft."))
+
+(defun my/notmuch-async-poll ()
+  "Async notmuch new."
+  (interactive)
+  (start-process "notmuch-poll" nil notmuch-command "new"))
 
 (use-package notmuch-indicator
   :straight t
