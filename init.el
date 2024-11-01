@@ -3616,7 +3616,7 @@ backend."
 (defun my/magit-ai-commit-message ()
   "Write a commit message based on the commit."
   (interactive)
-  (with-current-buffer (magit-get-mode-buffer 'magit-diff-mode nil 'selected)
+  (with-current-buffer (magit-diff-while-committing)
     (gptel-request
 	(buffer-substring-no-properties (point-min) (point-max))
       :callback (lambda (response _) (insert response))
