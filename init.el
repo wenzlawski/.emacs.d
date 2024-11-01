@@ -3029,10 +3029,10 @@ See URL `http://pypi.python.org/pypi/ruff'."
 
 (defun my/message-signature (&optional no-default)
   "Select a signature."
-  (interactive)
-  (let ((lang (message-fetch-field "content-language")))
-    (if lang (alist-get (intern lang) my/signatures)
-      (completing-read "Signature: " (mapcar #'cdr my/signatures)))))
+  (interactive "P")
+  (if-let* (no-default (lang (message-fetch-field "content-language")))
+      (alist-get (intern lang) my/signatures)
+    (completing-read "Signature: " (mapcar #'cdr my/signatures))))
 
 (defun my/message-set-content-language ()
   "Add a language to the mail."
@@ -3183,7 +3183,8 @@ are null."
 		     force)
 		t)
 	       ((functionp message-signature)
-		(funcall message-signature))
+		(print at-point)
+		(funcall message-signature (not (equal at-point '(16)))))
 	       ((listp message-signature)
 		(eval message-signature t))
 	       (t message-signature)))
