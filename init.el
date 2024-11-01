@@ -3613,16 +3613,13 @@ backend."
 
 (bind-key "," #'my/notmuch-ai-reply 'notmuch-show-mode-map)
 
-(defun my/magit-ai-commit-message--handle (response _)
-  (insert response))
-
 (defun my/magit-ai-commit-message ()
   "Write a commit message based on the commit."
   (interactive)
   (with-current-buffer (magit-get-mode-buffer 'magit-diff-mode nil 'selected)
     (gptel-request
 	(buffer-substring-no-properties (point-min) (point-max))
-      :callback #'my/magit-ai-commit-message--handle
+      :callback (lambda (response _) (insert response))
       :stream nil
       :system "Write a short and concise commit message for the following diff.")
     (message "Writing commit...")))
