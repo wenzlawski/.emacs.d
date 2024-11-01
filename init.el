@@ -3024,7 +3024,8 @@ See URL `http://pypi.python.org/pypi/ruff'."
 (setq my/signatures
       '((en . "Best regards,\nMarc Wenzlawski")
 	(de . "Liebe Grüße,\nMarc Wenzlawski")
-	(de . "Mit freundlichen Grüßen,\nMarc Wenzlawski")))
+	(de . "Mit freundlichen Grüßen,\nMarc Wenzlawski"))
+      my/languages '(en de))
 
 (defun my/message-signature (&optional no-default)
   "Select a signature."
@@ -3032,6 +3033,13 @@ See URL `http://pypi.python.org/pypi/ruff'."
   (let ((lang (message-fetch-field "content-language")))
     (if lang (alist-get (intern lang) my/signatures)
       (completing-read "Signature: " (mapcar #'cdr my/signatures)))))
+
+(defun my/message-set-content-language ()
+  "Add a language to the mail."
+  (interactive)
+  (message-replace-header "Content-Language" (completing-read "Language: " my/languages) '("Fcc") t))
+
+(bind-key "C-c M-l" #'my/message-set-content-language 'message-mode-map)
 
 (use-package message
   :bind
