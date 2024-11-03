@@ -1570,6 +1570,7 @@ is active, that will be the link's description."
 
 ;; ** org-noter
 
+
 (use-package org-noter
   :straight t
   :bind
@@ -1591,6 +1592,22 @@ is active, that will be the link's description."
   :config
   (add-to-list 'display-buffer-alist '("Notes of" (window-width . 0.3)))
   (bind-key "C-c C-n" #'org-noter 'pdf-view-mode-map))
+
+(with-eval-after-load 'org-noter-pdf
+  (defun my/org-noter-pdf--clean-text (text)
+    "Clean the text by removing word breaks"
+    (replace-regexp-in-string (rx (or "-\n" (seq "\n" (not "-"))))
+			      "" text))
+
+  (defun my/org-noter-pdf--get-selected-text-clean (mode)
+    "Clean the selected text, clean it."
+    (when (and (eq mode 'pdf-view-mode)
+	       (pdf-view-active-region-p))
+      (mapconcat 'my/org-noter-pdf--clean-text
+		 (pdf-view-active-region-text) ? )))
+
+  (advice-add #'org-noter-pdf--get-selected-text :override
+	      #'my/org-noter-pdf--get-selected-text-clean))
 
 ;; ** org-mind-map
 
