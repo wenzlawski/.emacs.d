@@ -2867,6 +2867,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
 (use-package css-mode
   :hook ((css-mode css-ts-mode) . (lambda nil (setq tab-width 2) (hl-line-mode 0)))
   :mode ("\\.css\\'" . css-mode)
+  ("\\.qss\\'" . css-mode)
   :config
   (setq css-indent-offset 2))
 
@@ -3012,6 +3013,15 @@ See URL `http://pypi.python.org/pypi/ruff'."
 
 (use-package haskell-ts-mode
   :straight (:host codeberg :repo "pranshu/haskell-ts-mode"))
+
+;; ** qml
+
+(use-package qml-mode
+  :straight t)
+;; ** xml
+
+(use-package nxml-mode
+  :mode ("\\.qrc\\'" . nxml-mode))
 
 ;; * ORG
 
@@ -3159,7 +3169,12 @@ more information.
 
 If FORCE is 0 (or when called interactively), the global values
 of the signature variables will be consulted if the local ones
-are null."
+are null.
+
+With no prefix arg insert at bottom.
+With one prefix arg insert at point.
+With two prefix args insert at bottom while prompting for a signature.
+With three prefix args insert at point while prompting for a signature."
     (interactive (list 0 current-prefix-arg) message-mode)
     (let ((message-signature message-signature)
 	  (message-signature-file message-signature-file))
@@ -3184,7 +3199,8 @@ are null."
 		t)
 	       ((functionp message-signature)
 		(print at-point)
-		(funcall message-signature (not (equal at-point '(16)))))
+		(funcall message-signature (not (or (equal at-point '(16))
+						    (equal at-point '(64))))))
 	       ((listp message-signature)
 		(eval message-signature t))
 	       (t message-signature)))
@@ -3204,23 +3220,23 @@ are null."
 			     message-signature-file))
 		     (file-exists-p signature-file))))
 	(when signature
-	  (unless at-point
-	    (goto-char (point-max)))
-	  ;; Insert the signature.
-	  (unless (bolp)
-	    (newline))
-	  (when message-signature-insert-empty-line
-	    (newline))
-	  (insert "-- ")
-	  (newline)
-	  (if (eq signature t)
-	      (insert-file-contents signature-file)
-	    (insert signature))
-	  (unless at-point
-	    (goto-char (point-max))
-	    (or (bolp) (newline)))))))
-
-  )
+	  (let ((pt (point)))
+	    (when (or (not at-point) (equal at-point '(16)))
+	      (goto-char (point-max)))
+	    ;; Insert the signature.
+	    (unless (bolp)
+	      (newline))
+	    (when message-signature-insert-empty-line
+	      (newline))
+	    (insert "-- ")
+	    (newline)
+	    (if (eq signature t)
+		(insert-file-contents signature-file)
+	      (insert signature))
+	    (when (or (not at-point) (equal at-point '(16)))
+	      (goto-char (point-max))
+	      (or (bolp) (newline)))
+	    (goto-char pt)))))))
 
 (use-package sendmail
   :custom
