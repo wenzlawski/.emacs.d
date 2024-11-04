@@ -65,7 +65,7 @@
     "Apply eglot faces"
     (set-face-attribute
      'eglot-highlight-symbol-face nil
-     :bold t :underline nil :background (modus-themes-get-color-value 'bg-hover-secondary)))
+     :bold t :underline nil :background (modus-themes-get-color-value 'bg-hover)))
 
   (with-eval-after-load 'modus-themes
     (add-hook 'modus-themes-after-load-theme-hook #'my/eglot-apply-faces)
