@@ -134,19 +134,16 @@ abort `\\[org-capture-kill]'."))))
 	  ("os" tags "TODO=\"TODO\"" ((org-agenda-skip-function
 				       '(org-agenda-skip-entry-if 'timestamp))))
 	  ("ot" todo "TODO" nil)
-	  ("op" todo "PROG" nil)
 	  ("op" todo "NEXT" nil)
 	  ("om" todo "MAYBE" nil)
 	  ("oi" todo "INTR" nil)
-	  ("n" "Agenda / INTR / PROG / NEXT"
+	  ("n" "Agenda / INTR / NEXT"
 	   ((agenda "" nil)
 	    (todo "INTR" nil)
-	    (todo "PROG" nil)
 	    (todo "NEXT" nil))
 	   nil)
 	  ("N" "INTR / PROG / NEXT"
 	   ((todo "INTR" nil)
-	    (todo "PROG" nil)
 	    (todo "NEXT" nil))
 	   nil)))
   (setq org-agenda-include-diary t)
