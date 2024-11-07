@@ -33,11 +33,12 @@
   (:map notmuch-search-mode-map
 	("." . notmuch-show-mark-read))
   :custom
-  (notmuch-identities '("Marc Wenzlawski <marcwenzlawski@posteo.com>" ;; "Marc Wenzlawski <marc.wenzlawski@icloud.com>"
+  (notmuch-identities '("Marc Wenzlawski <marcwenzlawski@posteo.com>"
+			"Marc Wenzlawski <marc.wenzlawski@icloud.com>"
 			))
   (notmuch-fcc-dirs
    '(("marcwenzlawski@posteo.com" . "posteo/Sent -inbox +sent -unread +posteo")
-     ;; ("marc.wenzlawski@icloud.com" . "icloud/Sent -inbox +sent -unread +icloud")
+     ("marc.wenzlawski@icloud.com" . "icloud/Sent -inbox +sent -unread +icloud")
      ))
   (notmuch-command (executable-find "notmuch"))
   (notmuch-show-logo nil)
@@ -61,7 +62,10 @@
 	    :query "tag:archive")
      (:name "Trash" :key "t"
             :query "tag:deleted")
-     (:name "Posteo" :query "to:marcwenzlawski.+@posteo.com" :key "p")
+     (:name "Queue" :key "q"
+	    :query "tag:queue")
+     (:name "Posteo" :query "to:marcwenzlawski.+@posteo.com" :key "P")
+     (:name "icloud" :query "to:marc.wenzlawski.+@icloud.com" :key "G")
      (:name "All mail" :query "*" :key "A"))
    )
   (notmuch-search-oldest-first nil)
