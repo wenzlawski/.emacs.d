@@ -325,7 +325,8 @@ Containing LEFT, and RIGHT aligned respectively."
 		:line-spacing nil)
      (iosevka :default-family "Iosevka")
      (menlo :default-family "Menlo")
-     (unifont :default-family "Unifont")
+     (unifont :default-family "Unifont"
+	      :default-height 170)
      (go-mono :default-family "GoMono Nerd Font")
      (regular)
      (t :default-family "Iosevka"
@@ -3036,6 +3037,15 @@ See URL `http://pypi.python.org/pypi/ruff'."
 (use-package nxml-mode
   :mode ("\\.qrc\\'" . nxml-mode))
 
+;; ** terraform
+
+(use-package terraform-mode
+  :straight t)
+;; ** nim
+
+(use-package nim-mode
+  :straight t)
+
 ;; * ORG
 
 (require 'setup-org)
@@ -3642,11 +3652,11 @@ backend."
   (interactive "sWrite the response: ")
   (notmuch-show-reply-sender)
   (gptel-request
-      (concat "\nOriginal Email:\n" (buffer-substring-no-properties (point-min) (point-max)) 
-	      "\n Short-form response:" message)
-    :callback #'my/notmuch-ai-response
-    :stream nil
-    :system (f-read-text (dir-concat gptel-prompt-dir "email.txt")))
+   (concat "\nOriginal Email:\n" (buffer-substring-no-properties (point-min) (point-max)) 
+	   "\n Short-form response:" message)
+   :callback #'my/notmuch-ai-response
+   :stream nil
+   :system (f-read-text (dir-concat gptel-prompt-dir "email.txt")))
   (message "Composing response..."))
 
 (bind-key "," #'my/notmuch-ai-reply 'notmuch-show-mode-map)
@@ -3656,10 +3666,10 @@ backend."
   (interactive)
   (with-current-buffer (magit-diff-while-committing)
     (gptel-request
-	(buffer-substring-no-properties (point-min) (point-max))
-      :callback (lambda (response _) (insert response))
-      :stream nil
-      :system "Write a short and concise commit message for the following diff.")
+     (buffer-substring-no-properties (point-min) (point-max))
+     :callback (lambda (response _) (insert response))
+     :stream nil
+     :system "Write a short and concise commit message for the following diff.")
     (message "Writing commit...")))
 
 (bind-key "C-c RET" #'my/magit-ai-commit-message 'git-commit-mode-map)
