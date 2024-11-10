@@ -30,6 +30,7 @@ abort `\\[org-capture-kill]'."))))
   ("C-c l" . org-store-link)
   ("C-x c" . org-capture)
   (:map org-mode-map
+	("C-'" . nil)
 	("<C-i>" . org-delete-backward-char)
 	("C-c <C-i>" . org-cycle)
 	("C-c C-v <C-i>" . org-toggle-inline-images)
