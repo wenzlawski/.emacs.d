@@ -2496,6 +2496,15 @@ See URL `http://pypi.python.org/pypi/ruff'."
   (add-to-list 'apheleia-mode-alist '(zig-ts-mode . zig-fmt))
 
   (push
+   `(shfmt ,(executable-find "shfmt") "-filename" filepath "-ln"
+	   (cl-case (bound-and-true-p sh-shell) (sh "posix") (t "bash"))
+	   (when apheleia-formatters-respect-indent-level
+	     (list "-i"
+		   (number-to-string
+		    (cond (indent-tabs-mode 0)
+			  ((boundp 'sh-basic-offset) sh-basic-offset) (t 4)))))
+	   "-") apheleia-formatters)
+  (push
    '(zig-fmt "zig" "fmt" inplace) apheleia-formatters)
   (push
    `(alejandra ,(executable-find "alejandra")) apheleia-formatters)
@@ -3119,6 +3128,13 @@ If given a SOURCE, execute the CMD on it."
 
 (use-package terraform-mode
   :straight t)
+;; ** sh
+
+(use-package sh-script
+  :straight t
+  :custom
+  (sh-indentation 8))
+
 ;; * ORG
 
 (require 'setup-org)
@@ -3366,6 +3382,7 @@ With three prefix args insert at point while prompting for a signature."
 ;; ** notmuch
 
 (require 'setup-notmuch)
+
 ;; * APPLICATIONS
 ;; ** smudge spotify
 
@@ -3726,11 +3743,11 @@ backend."
   (interactive "sWrite the response: ")
   (notmuch-show-reply-sender)
   (gptel-request
-   (concat "\nOriginal Email:\n" (buffer-substring-no-properties (point-min) (point-max)) 
-	   "\n Short-form response:" message)
-   :callback #'my/notmuch-ai-response
-   :stream nil
-   :system (f-read-text (dir-concat gptel-prompt-dir "email.txt")))
+      (concat "\nOriginal Email:\n" (buffer-substring-no-properties (point-min) (point-max)) 
+	      "\n Short-form response:" message)
+    :callback #'my/notmuch-ai-response
+    :stream nil
+    :system (f-read-text (dir-concat gptel-prompt-dir "email.txt")))
   (message "Composing response..."))
 
 (bind-key "," #'my/notmuch-ai-reply 'notmuch-show-mode-map)
@@ -3740,10 +3757,10 @@ backend."
   (interactive)
   (with-current-buffer (magit-diff-while-committing)
     (gptel-request
-     (buffer-substring-no-properties (point-min) (point-max))
-     :callback (lambda (response _) (insert response) (message "Writing commit...Done"))
-     :stream nil
-     :system "Write a short and concise commit message for the following diff.")
+	(buffer-substring-no-properties (point-min) (point-max))
+      :callback (lambda (response _) (insert response) (message "Writing commit...Done"))
+      :stream nil
+      :system "Write a short and concise commit message for the following diff.")
     (message "Writing commit...")))
 
 (bind-key "C-c RET" #'my/magit-ai-commit-message 'git-commit-mode-map)
