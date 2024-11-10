@@ -17,6 +17,7 @@
   ;; C-x bindings in `ctl-x-map'
   ("C-x M-:" . consult-complex-command)
   ("C-x b" . consult-buffer)
+  ("C-'" . my/consult-buffer-projectile)
   ("C-x 4 b" . consult-buffer-other-window)
   ("C-x 5 b" . consult-buffer-other-frame)
   ("C-x t b" . consult-buffer-other-tab)
@@ -70,6 +71,16 @@
   (consult-outline)
   (recenter-top-bottom 0)
   (outline-show-entry))
+
+(defun my/consult-buffer-projectile (&optional arg)
+  "Consult buffer when in project."
+  (interactive "p")
+  (case arg
+    (4 (projectile-find-file))
+    (16 (consult-buffer))
+    (t (if (projectile-project-p)
+	   (consult-project-buffer)
+	 (consult-buffer)))))
 
 (defun my/denote-consult-ripgrep ()
   "Search denote directory with ripgrep."
