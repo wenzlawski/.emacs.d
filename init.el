@@ -2085,10 +2085,13 @@ This function can be used as the value of the user option
   (:map projectile-command-map
 	("b" . consult-project-buffer)
 	("s s" . projectile-ripgrep)
-	("s a" . projectile-ag))
+	("s a" . projectile-ag)
+	("" . consult-todo-project)
+	("R" . projectile-replace-regexp))
   :custom
   (projectile-project-search-path
    '("~/dev" "~/dev/repos" "~/dev/fun" "~/.config/nix" "~/.config/emacs"))
+  (projectile-enable-caching t)
   :config
   (projectile-mode 1))
 
@@ -2493,7 +2496,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
   (add-to-list 'apheleia-mode-alist '(zig-ts-mode . zig-fmt))
 
   (push
-   '(zig-fmt zig-zig-bin "fmt" inplace) apheleia-formatters)
+   '(zig-fmt "zig" "fmt" inplace) apheleia-formatters)
   (push
    `(alejandra ,(executable-find "alejandra")) apheleia-formatters)
   (push
@@ -2524,8 +2527,10 @@ See URL `http://pypi.python.org/pypi/ruff'."
   (xref-show-definitions-function 'xref-show-definitions-completing-read)
   (dumb-jump-prefer-searcher 'rg)
   (dumb-jump-force-searcher 'rg)
+  (dumb-jump-rg-cmd (executable-find "rg"))
   :config
   (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
+
 ;; ** irony
 
 (use-package irony
@@ -2959,7 +2964,80 @@ See URL `http://pypi.python.org/pypi/ruff'."
 ;; ** zig
 
 (use-package zig-ts-mode
-  :mode ("\\.zig\\'" . zig-ts-mode))
+  :mode ("\\.zig\\(.zon\\)?" . zig-ts-mode))
+
+
+(defcustom zig-zig-bin "zig"
+  "Path to zig executable."
+  :type 'file
+  :safe #'stringp)
+
+(defcustom zig-run-optimization-mode "Debug"
+  "Optimization mode to run code with."
+  :type 'string
+  :safe #'stringp)
+
+(defcustom zig-test-optimization-mode "Debug"
+  "Optimization mode to run tests with."
+  :type 'string
+  :safe #'stringp)
+
+
+;; zig CLI commands
+
+(defun zig--run-cmd (cmd &optional source &rest args)
+  "Use compile command to execute a zig CMD with ARGS if given.
+If given a SOURCE, execute the CMD on it."
+  (let ((cmd-args (if source (cons source args) args)))
+    (projectile-save-project-buffers)
+    (compilation-start (mapconcat 'shell-quote-argument
+                                  `(,zig-zig-bin ,cmd ,@cmd-args) " "))))
+
+;;;###autoload
+(defun zig-compile ()
+  "Compile using `zig build`."
+  (interactive)
+  (zig--run-cmd "build"))
+
+;;;###autoload
+(defun zig-build-exe ()
+  "Create executable from source or object file."
+  (interactive)
+  (zig--run-cmd "build-exe" (file-local-name (buffer-file-name))))
+
+;;;###autoload
+(defun zig-build-lib ()
+  "Create library from source or assembly."
+  (interactive)
+  (zig--run-cmd "build-lib" (file-local-name (buffer-file-name))))
+
+;;;###autoload
+(defun zig-build-obj ()
+  "Create object from source or assembly."
+  (interactive)
+  (zig--run-cmd "build-obj" (file-local-name (buffer-file-name))))
+
+;;;###autoload
+(defun zig-test-buffer ()
+  "Test buffer using `zig test`."
+  (interactive)
+  (projectile-save-project-buffers)
+  (zig--run-cmd "test" (file-local-name (buffer-file-name)) "-O" zig-test-optimization-mode))
+
+;;;###autoload
+(defun zig-run ()
+  "Create an executable from the current buffer and run it immediately."
+  (interactive)
+  (zig--run-cmd "run" (file-local-name (buffer-file-name)) "-O" zig-run-optimization-mode))
+
+(use-package zig-docs
+  :bind
+  (:map zig-ts-mode-map
+	("C-c C-d d" . zig-docs-open)
+	("C-c C-d s" . zig-docs-serve)
+	("C-c C-d k" . zig-docs-kill)
+	("C-c C-d o" . zig-docs-open-section)
+	("C-c C-d l" . zig-docs-lang-ref)))
 
 ;; ** go
 
@@ -3041,11 +3119,6 @@ See URL `http://pypi.python.org/pypi/ruff'."
 
 (use-package terraform-mode
   :straight t)
-;; ** nim
-
-(use-package nim-mode
-  :straight t)
-
 ;; * ORG
 
 (require 'setup-org)
@@ -3645,7 +3718,8 @@ backend."
 
 (defun my/notmuch-ai-response (response _)
   (insert response)
-  (newline 2))
+  (newline 2)
+  (message "Composing response...Done"))
 
 (defun my/notmuch-ai-reply (message)
   "Write an email in the message."
@@ -3667,7 +3741,7 @@ backend."
   (with-current-buffer (magit-diff-while-committing)
     (gptel-request
      (buffer-substring-no-properties (point-min) (point-max))
-     :callback (lambda (response _) (insert response))
+     :callback (lambda (response _) (insert response) (message "Writing commit...Done"))
      :stream nil
      :system "Write a short and concise commit message for the following diff.")
     (message "Writing commit...")))
@@ -3968,6 +4042,15 @@ If FRAME is omitted or nil, use currently selected frame."
 		       (push `(,mode . ,map) minor-mode-overriding-map-alist) 
 		       map))))
     (define-key newmap key def)))
+
+;; * module reload
+
+(defun fake-module-reload (module)
+  (interactive "fReload Module file: ")
+  (let ((tmpfile (make-temp-file
+                  (file-name-nondirectory module) nil module-file-suffix)))
+    (copy-file module tmpfile t)
+    (module-load tmpfile)))
 
 ;; * CUSTOM LISP
 ;; ** ox-11ty
