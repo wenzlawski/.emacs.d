@@ -1,2 +1,2 @@
-* TODO %^{Title}%^{Effort}p%
+* TODO %^{Title}%^{Effort}p
 %?
