@@ -31,7 +31,8 @@ abort `\\[org-capture-kill]'."))))
   ("C-x c" . org-capture)
   (:map org-mode-map
 	("C-'" . nil)
-	("<C-i>" . org-delete-backward-char)
+	("<C-i>" . backward-kill-word)
+	("M-i" . org-delete-backward-char)
 	("C-c <C-i>" . org-cycle)
 	("C-c C-v <C-i>" . org-toggle-inline-images)
 	("C-c C-x <DEL>" . org-cut-subtree)
@@ -39,7 +40,6 @@ abort `\\[org-capture-kill]'."))))
 	("C-c C-x h" . org-edit-headline)
 	("C-c C-x i" . org-indent-mode)
 	("C-c C-x t" . (lambda () (interactive) (setopt visual-fill-column-center-text (not visual-fill-column-center-text)) (visual-fill-column-mode 1)))
-	("M-i" . backward-kill-word)
         ("C-c 4 C-o" . my/org-open-at-point-other-window)
         ("C-c 4 o" . my/org-open-at-point-other-window)
         ("C-c 5 C-o" . my/org-open-at-point-other-frame)
@@ -1670,6 +1670,29 @@ is active, that will be the link's description."
      "blockquote" "border-left: 2px solid gray; padding-left: 4px;"))
 
   (add-hook 'org-mime-html-hook #'my/org-mime-html-styles))
+
+;; ** toc-org
+
+(use-package toc-org
+  :straight t)
+;; ** orgit
+
+(use-package orgit
+  :straight t)
+
+;; ** org-re-reveal
+;; TODO set the org-re-reveal-root variable
+
+(use-package org-re-reveal
+  :straight t)
+
+;; ** org-present org tree-slide
+
+(use-package org-present
+  :straight t)
+
+(use-package org-tree-slide
+  :straight t)
 
 ;; ** mixed-pitch-mode
 
