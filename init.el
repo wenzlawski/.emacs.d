@@ -328,11 +328,12 @@ Containing LEFT, and RIGHT aligned respectively."
      (unifont :default-family "Unifont"
 	      :default-height 170)
      (go-mono :default-family "GoMono Nerd Font")
+     (present :default-height 350)
      (regular)
      (t :default-family "Iosevka"
 	:default-weight regular
 	:default-slant normal
-	:default-height 150
+	:default-height 200
 	:fixed-pitch-family nil
 	:fixed-pitch-weight nil
 	:fixed-pitch-slant nil
@@ -1311,9 +1312,9 @@ Append with current prefix arg."
   :straight t
   :custom
   (eldoc-echo-area-display-truncation-message nil)
-  (eldoc-echo-area-use-multiline-p nil)
-  (eldoc-idle-delay 0.05)
-  (eldoc-current-idle-delay 0.05)
+  (eldoc-echo-area-use-multiline-p t)
+  (eldoc-idle-delay 0.03)
+  (eldoc-current-idle-delay 0.03)
   (eldoc-documentation-strategy #'eldoc-documentation-compose-eagerly)
   :config
   (add-to-list 'display-buffer-alist
@@ -1443,6 +1444,7 @@ Append with current prefix arg."
   :straight t)
 
 (use-package embark-vc
+  :after embark
   :straight t)
 
 ;; ** hydra
@@ -1676,6 +1678,18 @@ Append with current prefix arg."
 
 (add-hook 'julia-snail-mode-hook #'my/setup-julia)
 
+(defun my/setup-sly ()
+  (setq-local completion-at-point-functions
+	      `(,(cape-capf-super
+		  #'tempel-expand
+		  #'yasnippet-capf
+		  #'sly-complete-symbol))
+	      corfu-prescient-completion-styles '(sly--external-completion prescient basic))
+  (corfu-prescient-mode 1))
+
+(add-hook 'sly-mrepl-mode-hook #'my/setup-sly)
+(add-hook 'sly-editing-mode-hook #'my/setup-sly)
+
 ;; ** prescient
 
 (use-package prescient
@@ -1826,7 +1840,6 @@ This function can be used as the value of the user option
 
 (use-package orderless
   :straight t
-  :disabled
   :config
 
   (defun +orderless--consult-suffix ()
@@ -1853,7 +1866,7 @@ This function can be used as the value of the user option
 
   ;; Define orderless style with initialism by default
   (orderless-define-completion-style +orderless-with-initialism
-				     (orderless-matching-styles '(orderless-initialism orderless-literal orderless-regexp)))
+    (orderless-matching-styles '(orderless-initialism orderless-literal orderless-regexp)))
 
   ;; You may want to combine the `orderless` style with `substring` and/or `basic`.
   ;; There are many details to consider, but the following configurations all work well.
@@ -2062,6 +2075,10 @@ This function can be used as the value of the user option
 (use-package vc-git
   :config
   (autoload 'vc-git-root "vc-git"))
+
+(use-package forge
+  :after magit
+  :straight t)
 
 ;; not a lot of discussion on this since about 3 years ago.
 ;; it works and compiles (obv nix problems), but the work in magit
@@ -2585,12 +2602,18 @@ See URL `http://pypi.python.org/pypi/ruff'."
   :straight t
   :custom-face
   (sly-db-section-face ((t (:box (:line-width (2 . 2) :style flat-button :color "gray80")))))
+  (sly-stickers-armed-face ((t (:inherit nil :background "#add8e6"))))
+  :custom
+  (sly-description-autofocus t)
+  (sly-contribs '(sly-fancy sly-mrepl sly-scratch))
   :bind
   (:map sly-mode-map
 	("C-j" . sly-eval-print-last-expression)
 	("C-h C-h" . sly-hyperspec-lookup))
   :init
-  (setq inferior-lisp-program "sbcl"))
+  (setq inferior-lisp-program "sbcl")
+  :config
+  (sly-symbol-completion-mode -1))
 
 (use-package sly-mrepl
   :after sly
@@ -2621,8 +2644,9 @@ See URL `http://pypi.python.org/pypi/ruff'."
 
 (use-package hyperspec
   :after sly
+  :defer t
   :custom
-  (common-lisp-hyperspec-root "file:///nix/store/la0s72z56hgh6zi641bcdxhhcr85ldlr-sbcl-clhs-0.6.3/HyperSpec-7-0/HyperSpec/"))
+  (common-lisp-hyperspec-root (concat "file://" (dir-concat (shell-command-to-string "nix eval --raw nixpkgs#sbclPackages.clhs") "/HyperSpec-7-0/HyperSpec/"))))
 
 (with-eval-after-load 'hyperspec
   (defun my/common-lisp-hyperspec-after (_)
@@ -2632,6 +2656,12 @@ See URL `http://pypi.python.org/pypi/ruff'."
     (scroll-up 7))
 
   (advice-add #'common-lisp-hyperspec :after #'my/common-lisp-hyperspec-after))
+
+
+;; ** simple-httpd
+
+(use-package simple-httpd
+  :straight t)
 
 ;; * LANGUAGE MODES
 ;; ** lisp
@@ -2889,6 +2919,11 @@ See URL `http://pypi.python.org/pypi/ruff'."
   :bind
   (:map c-mode-base-map
 	("C-c C-t" . comment-region)))
+;; ** cmake
+
+(use-package cmake-ts-mode
+  :straight t
+  :mode ("\\'CMakeLists\\.txt\\'" . cmake-ts-mode))
 
 ;; ** css
 
@@ -3134,6 +3169,40 @@ If given a SOURCE, execute the CMD on it."
   :straight t
   :custom
   (sh-indentation 8))
+
+;; ** ocaml
+
+(use-package tuareg
+  :straight t)
+
+(use-package merlin
+  :straight t
+  :hook tuareg-mode)
+
+(use-package dune
+  :straight (dune :type git :flavor melpa :files ("editor-integration/emacs/*.el" "dune-pkg.el") :host github :repo "ocaml/dune"))
+
+(use-package merlin-eldoc
+  :straight t
+  :hook ((reason-mode tuareg-mode caml-mode) . merlin-eldoc-setup))
+
+;; ** rust
+
+(use-package rust-mode
+  :straight t
+  :custom
+  (rust-mode-treesitter-derive t))
+
+(use-package flycheck-rust
+  :after flycheck
+  :straight t)
+
+;; (use-package cargo
+;;   :straight t)
+
+;; use lsp?
+;; (use-package racer
+;;   :straight t)
 
 ;; * ORG
 
@@ -3743,11 +3812,11 @@ backend."
   (interactive "sWrite the response: ")
   (notmuch-show-reply-sender)
   (gptel-request
-      (concat "\nOriginal Email:\n" (buffer-substring-no-properties (point-min) (point-max)) 
-	      "\n Short-form response:" message)
-    :callback #'my/notmuch-ai-response
-    :stream nil
-    :system (f-read-text (dir-concat gptel-prompt-dir "email.txt")))
+   (concat "\nOriginal Email:\n" (buffer-substring-no-properties (point-min) (point-max)) 
+	   "\n Short-form response:" message)
+   :callback #'my/notmuch-ai-response
+   :stream nil
+   :system (f-read-text (dir-concat gptel-prompt-dir "email.txt")))
   (message "Composing response..."))
 
 (bind-key "," #'my/notmuch-ai-reply 'notmuch-show-mode-map)
@@ -3757,10 +3826,10 @@ backend."
   (interactive)
   (with-current-buffer (magit-diff-while-committing)
     (gptel-request
-	(buffer-substring-no-properties (point-min) (point-max))
-      :callback (lambda (response _) (insert response) (message "Writing commit...Done"))
-      :stream nil
-      :system "Write a short and concise commit message for the following diff.")
+     (buffer-substring-no-properties (point-min) (point-max))
+     :callback (lambda (response _) (insert response) (message "Writing commit...Done"))
+     :stream nil
+     :system "Write a short and concise commit message for the following diff.")
     (message "Writing commit...")))
 
 (bind-key "C-c RET" #'my/magit-ai-commit-message 'git-commit-mode-map)
@@ -4158,6 +4227,13 @@ If FRAME is omitted or nil, use currently selected frame."
   :hook (after-init . envrc-global-mode)
   :config
   (define-key envrc-mode-map (kbd "C-c e") 'envrc-command-map))
+
+(use-package inheritenv
+  :straight t
+  :config
+  (inheritenv-add-advice #'compile)
+  (inheritenv-add-advice #'compilation-start)
+  (inheritenv-add-advice #'start-file-process-shell-command))
 
 ;; * LOCAL-VARIABLES
 
