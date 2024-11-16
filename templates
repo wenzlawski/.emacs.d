@@ -65,10 +65,6 @@ org-mode
 
 lisp-mode sly-mrepl-mode
 
-(lsy "asdf:load-system '" q)
-(dp "defparameter " q)
-(dv "defvar " q)
-
 ;; Local Variables:
 ;; mode: lisp-data
 ;; outline-regexp: "[a-z]"
