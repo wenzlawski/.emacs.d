@@ -1115,7 +1115,9 @@ i.e. windows tiled side-by-side."
   (tab-bar-format '(tab-bar-format-tabs tab-bar-separator))
   (tab-bar-close-last-tab-choice (lambda (_) (my/toggle-frame-tab-bar nil 'disable)))
   (tab-bar-tab-pre-close-functions '(my/tab-bar-last-tab))
-  (tab-bar-tab-post-open-functions '((lambda (_) (my/toggle-frame-tab-bar nil 'enable)))))
+  (tab-bar-tab-post-open-functions '((lambda (_) (my/toggle-frame-tab-bar nil 'enable))))
+  :config
+  (advice-add #'tab-bar-close-other-tabs :after #'my/tab-bar-last-tab))
 
 ;; ** exec-path-from-shell
 
