@@ -326,14 +326,14 @@ Containing LEFT, and RIGHT aligned respectively."
      (iosevka :default-family "Iosevka")
      (menlo :default-family "Menlo")
      (unifont :default-family "Unifont"
-	      :default-height 170)
+	      :default-height 200)
      (go-mono :default-family "GoMono Nerd Font")
      (present :default-height 350)
      (regular)
      (t :default-family "Iosevka"
 	:default-weight regular
 	:default-slant normal
-	:default-height 200
+	:default-height 180
 	:fixed-pitch-family nil
 	:fixed-pitch-weight nil
 	:fixed-pitch-slant nil
