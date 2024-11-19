@@ -58,12 +58,17 @@
 
 (with-eval-after-load 'consult
   (setopt consult-buffer-sources
-	  '(consult--source-hidden-buffer consult--source-modified-buffer
-					  consult--source-buffer
-					  consult--source-file-register
-					  consult--source-bookmark
-					  consult--source-project-buffer-hidden
-					  consult--source-project-recent-file-hidden)))
+	  '(consult--source-hidden-buffer
+	    consult--source-modified-buffer
+	    consult--source-buffer
+	    consult--source-file-register
+	    consult--source-bookmark
+	    consult--source-project-buffer-hidden
+	    consult--source-project-recent-file-hidden)
+	  consult-project-buffer-sources
+	  '(consult--source-project-recent-file
+	    consult--source-project-buffer)
+	  ))
 
 (defun my/consult-outline-minor-mode-goto ()
   "Goto an outline minor mode heading."
