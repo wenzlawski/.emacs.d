@@ -333,7 +333,7 @@ Containing LEFT, and RIGHT aligned respectively."
      (t :default-family "Iosevka"
 	:default-weight regular
 	:default-slant normal
-	:default-height 180
+	:default-height 160
 	:fixed-pitch-family nil
 	:fixed-pitch-weight nil
 	:fixed-pitch-slant nil
@@ -2056,7 +2056,9 @@ This function can be used as the value of the user option
   (magit-diff-hightlight-hunk-body nil)
   (magit-diff-refine-hunk nil)
   (magit-commit-show-diff t)
-  (magit-disabled-section-inserters
+  :config
+  (setq-default
+   magit-disabled-section-inserters
    '(
      ;;   magit-insert-tags-header
      magit-insert-status-headers
@@ -2353,6 +2355,13 @@ See URL `http://pypi.python.org/pypi/ruff'."
 (use-package visual-regexp-steroids
   :straight t
   :after visual-regexp)
+
+;; ** activity-watch
+
+(use-package activity-watch-mode
+  :straight t
+  :config
+  (global-activity-watch-mode))
 
 ;; * LANGUAGE TOOLS
 ;; ** yasnippet
@@ -3796,7 +3805,7 @@ backend."
   ("C-c s" . gptel-menu)
   :custom
   (gptel-default-mode #'org-mode)
-  (gptel-model "gpt-4o")
+  (gptel-model 'gpt-4o)
   (gptel-expert-commands t)
   (gptel-directives
    `((default . "You are a large language model living in Emacs and a helpful assistant. Respond concisely.")
