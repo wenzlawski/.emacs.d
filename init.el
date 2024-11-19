@@ -1243,14 +1243,54 @@ Append with current prefix arg."
 
 ;; ** TODO isearch
 
+(defun my/isearchp-custom-faces ()
+  "Set the custom faces for isearch+."
+  (set-face-attribute 'isearchp-overwrapped nil
+		      :inherit 'minibuffer-prompt
+		      :overline nil :underline nil
+		      :foreground 'unspecified :weight 'unspecified)
+  (set-face-attribute 'isearchp-wrapped nil
+		      :inherit 'minibuffer-prompt
+		      :overline nil :underline nil
+		      :foreground 'unspecified :weight 'unspecified))
+
 (use-package isearch+
   :after isearch
   :straight t
   :bind
   (:map isearch-mode-map
-	("\C-o" . (lambda () (interactive) (isearch-process-search-char ?\n)))))
+	("\C-o" . (lambda () (interactive) (isearch-process-search-char ?\n))))
+  :config
+  (add-hook 'modus-themes-after-load-theme-hook #'my/isearchp-custom-faces))
 
-;; ** replace
+(use-package isearch-prop
+  :straight t)
+
+;; ** anzu
+
+(defun my/anzu-custom-faces ()
+  "Set the custom faces for anzu."
+  (modus-themes-with-colors
+    (set-face-attribute 'anzu-mode-line nil
+			:foreground magenta :weight 'bold)))
+
+(use-package anzu
+  :after (isearch anzu)
+  :straight t
+  :demand
+  :bind
+  ([remap query-replace] . anzu-query-replace)
+  ([remap query-replace-regexp] . anzu-query-replace-regexp)
+  (:map
+   isearch-mode-map
+   ([remap isearch-query-replace] . anzu-isearch-query-replace)
+   ([remap isearch-query-replace-regexp] . anzu-isearch-query-replace-regexp)
+   ("C-h"  . anzu-isearch-query-replace))
+  :config
+  (global-anzu-mode 1)
+  (add-hook 'modus-themes-after-load-theme-hook #'my/anzu-custom-faces))
+
+;; ** TODO replace
 
 (use-package replace+
   :straight t)
@@ -1969,24 +2009,6 @@ This function can be used as the value of the user option
   ("C-c r n" . substitute-target-below-point)
   ("C-c r >" . substitute-target-to-end-of-buffer)
   ("C-c r <" . substitute-target-to-beginning-of-buffer))
-
-;; ** anzu
-
-(use-package anzu
-  :straight t
-  :demand
-  :bind
-  ([remap query-replace] . anzu-query-replace)
-  ([remap query-replace-regexp] . anzu-query-replace-regexp)
-  (:map
-   isearch-mode-map
-   ([remap isearch-query-replace] . anzu-isearch-query-replace)
-   ([remap isearch-query-replace-regexp] . anzu-isearch-query-replace-regexp)
-   ("C-h"  . anzu-isearch-query-replace))
-  :config
-  (global-anzu-mode 1)
-  (set-face-attribute 'anzu-mode-line nil
-		      :foreground "yellow" :weight 'bold))
 
 ;; ** occur-x
 
@@ -3823,11 +3845,11 @@ backend."
   (interactive "sWrite the response: ")
   (notmuch-show-reply-sender)
   (gptel-request
-      (concat "\nOriginal Email:\n" (buffer-substring-no-properties (point-min) (point-max)) 
-	      "\n Short-form response:" message)
-    :callback #'my/notmuch-ai-response
-    :stream nil
-    :system (f-read-text (dir-concat gptel-prompt-dir "email.txt")))
+   (concat "\nOriginal Email:\n" (buffer-substring-no-properties (point-min) (point-max)) 
+	   "\n Short-form response:" message)
+   :callback #'my/notmuch-ai-response
+   :stream nil
+   :system (f-read-text (dir-concat gptel-prompt-dir "email.txt")))
   (message "Composing response..."))
 
 (bind-key "," #'my/notmuch-ai-reply 'notmuch-show-mode-map)
@@ -3837,10 +3859,10 @@ backend."
   (interactive)
   (with-current-buffer (magit-diff-while-committing)
     (gptel-request
-	(buffer-substring-no-properties (point-min) (point-max))
-      :callback (lambda (response _) (insert response) (message "Writing commit...Done"))
-      :stream nil
-      :system "Write a short and concise commit message for the following diff.")
+     (buffer-substring-no-properties (point-min) (point-max))
+     :callback (lambda (response _) (insert response) (message "Writing commit...Done"))
+     :stream nil
+     :system "Write a short and concise commit message for the following diff.")
     (message "Writing commit...")))
 
 (bind-key "C-c RET" #'my/magit-ai-commit-message 'git-commit-mode-map)
