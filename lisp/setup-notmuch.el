@@ -51,21 +51,15 @@
   (notmuch-saved-search-buffer-name-format "*%t %s*")
   (notmuch-saved-searches
    '((:name "Flagged" :query "tag:flagged" :key "f")
-     (:name "Inbox" :key "i"
-	    :query "tag:inbox AND NOT tag:archive")
-     (:name "Unread" :key "u"
-            :query "tag:inbox AND tag:unread")
-     (:name "Sent" :key "s"
-            :query "(tag:sent OR tag:replied) AND NOT tag:archive")
+     (:name "Inbox" :key "i" :query "tag:inbox AND NOT tag:archive")
+     (:name "Unread" :key "u" :query "tag:inbox AND tag:unread")
      (:name "Drafts" :query "tag:draft" :key "d")
-     (:name "Archive" :key "a"
-	    :query "tag:archive")
-     (:name "Trash" :key "t"
-            :query "tag:deleted")
-     (:name "Queue" :key "q"
-	    :query "tag:queue")
+     (:name "Queue" :key "q" :query "tag:queue")
+     (:name "Sent" :key "s" :query "(tag:sent OR tag:replied) AND NOT tag:archive")
+     (:name "Archive" :key "a" :query "tag:archive")
+     (:name "Trash" :key "t" :query "tag:deleted")
      (:name "Posteo" :query "to:marcwenzlawski.+@posteo.com" :key "P")
-     (:name "icloud" :query "to:marc.wenzlawski.+@icloud.com" :key "G")
+     (:name "icloud" :query "to:@privaterelay.appleid.com OR to:marc.wenzlawski.+@icloud.com" :key "G")
      (:name "All mail" :query "*" :key "A"))
    )
   (notmuch-search-oldest-first nil)
@@ -141,6 +135,16 @@
   "Async notmuch new."
   (interactive)
   (start-process "notmuch-poll" nil notmuch-command "new"))
+
+(use-package ol-notmuch
+  :straight t
+  :after (org notmuch))
+
+(use-package notmuch-addr
+  :straight t
+  :after notmuch-address
+  :config
+  (notmuch-addr-setup))
 
 (use-package notmuch-indicator
   :straight t
