@@ -794,7 +794,7 @@ Containing LEFT, and RIGHT aligned respectively."
 	auto-save-no-message t
 	jit-lock-defer-time 0
 	)
-  ;; (pixel-scroll-precision-mode)
+  (pixel-scroll-precision-mode)
   (delete-selection-mode)
   (fringe-mode '(0 . 0))
   ;; (blink-cursor-mode)
@@ -1275,7 +1275,7 @@ Append with current prefix arg."
 			:foreground magenta :weight 'bold)))
 
 (use-package anzu
-  :after (isearch anzu)
+  :after (isearch isearch+)
   :straight t
   :demand
   :bind
@@ -2135,6 +2135,7 @@ This function can be used as the value of the user option
   (projectile-project-search-path
    '("~/dev" "~/dev/repos" "~/dev/fun" "~/.config/nix" "~/.config/emacs"))
   (projectile-enable-caching t)
+  (projectile-fd-executable (executable-find "fd"))
   :config
   (projectile-mode 1))
 
@@ -3833,7 +3834,8 @@ backend."
    `((default . "You are a large language model living in Emacs and a helpful assistant. Respond concisely.")
      (programming . "You are a large language model and a careful programmer. Provide code and only code as output without any additional text, prompt or note.")
      (writing . "You are a large language model and a writing assistant. Respond concisely.")
-     (chat . "You are a large language model and a conversation partner. Respond concisely."))))
+     (chat . "You are a large language model and a conversation partner. Respond concisely.")
+     (research . "You are a large language model and a research assistant. Respond concisely, giving detailed and well covering answers."))))
 
 (defun my/notmuch-ai-response (response _)
   (insert response)
@@ -4036,7 +4038,12 @@ and \"apikey\" as USER."
 
 (use-package gnuplot
   :straight t
-  :mode ("\\.gp\\'" . gnuplot-mode))
+  :mode ("\\.gp\\'" . gnuplot-mode)
+  :hook (gnuplot-mode . (lambda () (gnuplot-context-sensitive-mode 1)))
+  :custom
+  (gnuplot-eldoc-mode t))
+
+(add-to-list 'Info-directory-list (dir-concat user-emacs-directory "site-lisp/gnuplot-info/"))
 
 ;; ** ebdb
 
