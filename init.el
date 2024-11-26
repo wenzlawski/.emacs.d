@@ -189,6 +189,7 @@
 
 (use-package rainbow-delimiters
   :straight t
+  :disabled
   :custom-face
   ;; (rainbow-delimiters-depth-1-face ((t (:foreground "#D19A66"))))
   ;; (rainbow-delimiters-depth-2-face ((t (:foreground "#C678DD"))))
@@ -196,6 +197,13 @@
   :hook (prog-mode . rainbow-delimiters-mode)
   :custom
   (rainbow-delimiters-max-face-count 3))
+;; ** highlight-parentheses
+
+(use-package highlight-parentheses
+  :straight t
+  :hook
+  (prog-mode . highlight-parentheses-mode)
+  (minibuffer-setup . highlight-parentheses-minibuffer-setup))
 
 ;; ** ns-auto-titlebar
 
@@ -302,6 +310,19 @@ Containing LEFT, and RIGHT aligned respectively."
   (save-excursion
     (cons (progn (beginning-of-visual-line) (point))
 	  (progn (end-of-visual-line) (point)))))
+
+;; ** show-paren
+
+(use-package paren
+  :hook (prog-mode . show-paren-mode)
+  :custom-face
+  (show-paren-match ((t (:inverse-video nil))))
+  :custom
+  (show-paren-delay 0)
+  (show-paren-when-point-inside-paren t)
+  (show-paren-when-point-in-periphery t)
+  (show-paren-context-when-offscreen 'overlay))
+
 
 ;; ** indent-guide
 
@@ -470,7 +491,6 @@ Containing LEFT, and RIGHT aligned respectively."
 	(fg-mode-line-a (face-attribute 'mode-line :foreground))
 	(bg-mode-line-i (face-attribute 'mode-line-inactive :background)))
     (custom-set-faces
-     '(show-paren-match ((t (:inverse-video t))))
      '(mode-line-inactive ((t (:box nil))))
      `(tab-bar ((t (:background ,bg-default))))
      `(tab-bar-tab-inactive ((t (:background ,bg-default :foreground ,fg-default :inverse-video nil :overline nil))))
@@ -579,7 +599,7 @@ Containing LEFT, and RIGHT aligned respectively."
 	    (accent-2 blue-warmer)
 	    (accent-3 red-cooler)
 	    (bg-completion bg-blue-nuanced)
-	    (bg-paren-match bg-magenta-intense)
+	    (bg-paren-match bg-hover)
 	    (bg-mode-line-active bg-dim)
 	    ;; (fg-mode-line-active fg-dim)
 	    (bg-mode-line-inactive bg-main)
@@ -708,14 +728,13 @@ Containing LEFT, and RIGHT aligned respectively."
       (append '("/Users/mw/.nix-profile/bin/"
 		"/etc/profiles/per-user/mw/bin/"
 		"/run/current-system/sw/bin/"
-		"/nix/var/nix/profiles/default/bin/")
+		"/nix/var/nix/profiles/default/bin/"
+		"/Applications/recoll.app/Contents/MacOS/")
 	      exec-path))
 
 
 (use-package emacs
-  :hook (prog-mode . show-paren-mode)
   :custom-face
-  (show-paren-match ((t (:underline nil :inverse-video nil))))
   (deault ((t (:family "Fira Code"))))
   ;; (variable-pitch ((t (:family "iA Writer Quattro V"))))
   (fixed-pitch ((t (:family "Fira Code"))))
@@ -785,9 +804,6 @@ Containing LEFT, and RIGHT aligned respectively."
 	window-combination-resize t
 	x-stretch-cursor t
 	large-file-warning-threshold 100000000
-	show-paren-delay 0
-	show-paren-when-point-inside-paren t
-	show-paren-when-point-in-periphery t
 	fit-window-to-buffer-horizontally t
 	calendar-latitude '[50 50 north]
 	calendar-longitude '[12 55 east]
@@ -1878,6 +1894,11 @@ This function can be used as the value of the user option
   (vterm-max-scrollback 10000)
   (vterm-min-window-width 20))
 
+(defun my/vterm-history ()
+  "Search vterm history"
+  (interactive)
+  (vterm-insert (completing-read "Command: " (s-split "\n" (shell-command-to-string "fish -c history")))))
+
 ;; ** orderless
 
 (use-package orderless
@@ -2696,6 +2717,17 @@ See URL `http://pypi.python.org/pypi/ruff'."
 
 (use-package simple-httpd
   :straight t)
+
+;; ** geiser
+
+(use-package geiser
+  :straight t)
+
+(use-package geiser-chez
+  :after geiser
+  :straight t
+  :custom
+  (geiser-chez-binary (executable-find "scheme")))
 
 ;; * LANGUAGE MODES
 ;; ** lisp
@@ -3655,7 +3687,44 @@ The browser to used is specified by the
   (denote-backlinks-show-context t)
   :config
   ;; (denote-rename-buffer-mode)
+  (require 'denote-silo-extras)
   )
+
+(defvar my/denote-silo-directories
+  `("~/work/notes"
+    ;; You don't actually need to include the `denote-directory' here
+    ;; if you use the regular commands in their global context.  I am
+    ;; including it for completeness.
+    ,denote-directory)
+  "List of file paths pointing to my Denote silos.
+  This is a list of strings.")
+
+(defvar my/denote-commands-for-silos
+  '(denote
+    denote-date
+    denote-subdirectory
+    denote-template
+    denote-type)
+  "List of Denote commands to call after selecting a silo.
+  This is a list of symbols that specify the note-creating
+  interactive functions that Denote provides.")
+
+(defun my/denote-pick-silo-then-command (silo command)
+  "Select SILO and run Denote COMMAND in it.
+  SILO is a file path from `my-denote-silo-directories', while
+  COMMAND is one among `my-denote-commands-for-silos'."
+  (interactive
+   (list (completing-read "Select a silo: " my/denote-silo-directories nil t)
+         (intern (completing-read
+                  "Run command in silo: "
+                  my/denote-commands-for-silos nil t))))
+  (let ((denote-directory silo))
+    (call-interactively command)))
+
+(use-package denote-silo-extras
+  :after denote
+  :custom
+  (denote-silo-extras-directories `(,denote-directory "~/work/notes")))
 
 (use-package denote-org-extras
   :after denote)
