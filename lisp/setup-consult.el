@@ -37,6 +37,7 @@
   ("M-s g" . consult-grep)
   ("M-s G" . consult-git-grep)
   ("M-s R" . consult-ripgrep)
+  ("M-s M-r" . consult-ripgrep-all)
   ("M-s l" . consult-line)
   ("M-s L" . consult-line-multi)
   ("M-s k" . consult-keep-lines)
@@ -106,10 +107,21 @@
 
 (use-package consult-recoll
   :straight t
-  :commands (consult-recoll consult-recoll-embark-setup)
-  :after consult
+  :after (consult embark)
   :config
   (consult-recoll-embark-setup))
+
+;; still doesn't work
+(with-eval-after-load 'consult-recoll
+  (defvar consult-recoll--recollq (executable-find "recollq"))
+
+  (defun consult-recoll--command (text)
+    "Command used to perform queries for TEXT."
+    (setq consult-recoll--current nil)
+    (setq consult-recoll--index 0)
+    (setq consult-recoll--snippets nil)
+    `(,consult-recoll--recollq ,@(consult-recoll--search-flags) ,text))
+  )
 
 (use-package consult-notes
   :straight t
