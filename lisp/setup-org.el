@@ -94,6 +94,7 @@ abort `\\[org-capture-kill]'."))))
   (org-src-window-setup 'current-window)
   (org-tags-column 0)
   (org-agenda-tags-column 0)
+  (org-export-allow-bind-keywords t)
   (org-auto-align-tags nil)
   (org-tags-exclude-from-inheritance '("ARCHIVE"))
   (org-global-properties '(("Effort_ALL" . "0:15 0:30 1:00 2:00 4:00 8:00")))
@@ -184,25 +185,26 @@ Triggered by a custom macOS Quick Action with a keyboard shortcut."
   (setq org-capture-templates
 	`(("r" "refile" entry (file "refile.org")
 	   "* %^{Title}\n%U\n\n%i%?" :prepend t :empty-lines-after 1)
-	  ;; ("t" "today" entry (file+olp+datetree "daily.org")
-	  ;;  "* %^{Title}\n\n%?")
-	  ;; ("T" "today+open" entry (file+olp+datetree "daily.org")
-	  ;;  "* %^{Title}\n\n%?" :jump-to-captured t)
-	  ("j" "Journal" entry (file+olp+datetree "journal.org")
-	   "* %U %^{Title}\n%i\n\n%?")
-	  ;; ("p" "project")
-	  ;; ("pn" "project simple" entry (id "316F33BA-71DE-41B9-B21B-928D3778A097")
-	  ;;  "* [/] %^{Title} %^{CATEGORY}p :project:\n- [ ] %?" :prepend t)
+
 	  ("p" "project" entry (id "316F33BA-71DE-41B9-B21B-928D3778A097")
 	   (file ,(dir-concat user-emacs-directory "capture/project.org")) :prepend t)
+
+	  ("e" "email")
+	  ("et" "task" entry (file "~/work/work.org") (file ,(dir-concat user-emacs-directory "capture/mail-task.org")) :prepend t)
+
+	  ("j" "job")
+	  ("jt" "job task" entry (file "~/work/work.org") (file ,(dir-concat user-emacs-directory "capture/task.org")) :prepend t)
+
 	  ("c" "clock")
 	  ("cn" "clock note" entry (clock) "%^{Title}\n%?")
 	  ("ct" "clock task" entry (clock) (file ,(dir-concat user-emacs-directory "capture/task.org")) :prepend t)
 	  ("cw" "clock web"  entry (clock) "%?%:description\nSource: %:link\n\nTitle: %:description\n\n#+begin_quote\n%i\n#+end_quote" :empty-lines 1)
+
 	  ("t" "Task" entry (id "6FA6128F-4291-4508-8EB8-8951D736D81C")
 	   (file ,(dir-concat user-emacs-directory "capture/task.org")) :prepend t)
 	  ("h" "Habit" entry (id "7F689015-46F8-4BD8-9B09-164AA168A16A")
 	   (file ,(dir-concat user-emacs-directory "capture/habit.org")) :prepend t)
+
 	  ("l" "later")
 	  ("lp" "Read later prompt" entry (id "F86FBB48-767F-436D-926E-D118F57AE534")
 	   (function my/read-later-template-from-prompt))
@@ -213,8 +215,10 @@ Triggered by a custom macOS Quick Action with a keyboard shortcut."
 	  ("lL" "Read later librewolf edit" entry (file "refile.org")
 	   "* %(my/org-mac-link-librewolf-get-frontmost-url) :link:\n%U\n%?" :prepend t)
 	  ("lb" "Bookmark" entry (id "23CDFA52-0EE4-4DAA-8B8B-E2D105E6293E") "*** [[%:link][%:description]] %^g\nSCHEDULED: %T%?")
+
 	  ("w" "Web template" entry (file "refile.org")
            "* %?%:description\nSource: %:link\n\nTitle: %:description\n\n#+begin_quote\n%i\n#+end_quote" :empty-lines 1 :prepend t)
+
 	  ("a" "Application" entry (file "~/personal/job-apps/applications.org::* Applications")
 	   (file ,(dir-concat user-emacs-directory "capture/application.org")) :prepend t)
 	  ))
@@ -1485,7 +1489,7 @@ that."
 	     "tell application \"System Events\"\n"
 	     "   tell its application process \"LibreWolf\"\n"
 	     "       set theTitle to get name of window 1\n"
-	     "       set theUrl to get value of UI element 1 of combo box 1 of toolbar \"Navigation\" of first group of front window\n"
+	     "       set theUrl to get value of UI element 1 of combo box 1 of toolbar \"Navigation\" of first group of window 1\n"
 	     "    end tell\n"
 	     "end tell\n"
 	     "set theResult to (get theUrl) & \"::split::\" & (get theTitle)\n"
