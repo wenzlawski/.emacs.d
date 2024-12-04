@@ -2087,6 +2087,9 @@ This function can be used as the value of the user option
   :straight t
   :after dired)
 
+(use-package dired-preview
+  :straight t)
+
 ;; ** magit / git
 
 (use-package magit
@@ -2999,6 +3002,11 @@ See URL `http://pypi.python.org/pypi/ruff'."
   ("\\.qss\\'" . css-mode)
   :config
   (setq css-indent-offset 2))
+
+(use-package css-eldoc
+  :straight t
+  :config
+  (turn-on-css-eldoc))
 
 ;; ** nix
 
