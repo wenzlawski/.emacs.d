@@ -155,7 +155,7 @@
       (consult-notes)))
 
   ;; NOTE: ' and #' don't seem to work here.
-  (consult-customize consult-notes my/consult-notes-other-window :preview-key "M-.")
+  (consult-customize consult-notes my/consult-notes-other-window consult-fd :preview-key "M-.")
 
   (consult-customize
    consult-theme
