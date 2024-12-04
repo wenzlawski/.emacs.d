@@ -26,6 +26,10 @@
 
 ;;; Code:
 
+(defconst is-darwin (eq system-type 'darwin))
+(defconst is-win (eq system-type 'windows-nt))
+(defconst is-linoux (eq system-type 'gnu/linux))
+
 ;; Temporarily increase the garbage collection threshold.  These
 ;; changes help shave off about half a second of startup time.  The
 ;; `most-positive-fixnum' is DANGEROUS AS A PERMANENT VALUE.  See the
