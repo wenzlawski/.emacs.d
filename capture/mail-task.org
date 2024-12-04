@@ -1,0 +1,8 @@
+* TODO %?
+
+[[notmuch:id:%:message-id][Email from %:fromname: %:subject]]
+
+[[mailto:%:from][%:fromname]]
+
+%:date-timestamp-inactive
+
