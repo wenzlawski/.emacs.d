@@ -93,6 +93,7 @@ abort `\\[org-capture-kill]'."))))
   (org-blank-before-new-entry '((heading . auto) (plain-list-item . auto)))
   (org-src-window-setup 'current-window)
   (org-tags-column 0)
+  (org-image-actual-width nil)
   (org-agenda-tags-column 0)
   (org-export-allow-bind-keywords t)
   (org-auto-align-tags nil)
@@ -221,6 +222,10 @@ Triggered by a custom macOS Quick Action with a keyboard shortcut."
 
 	  ("a" "Application" entry (file "~/personal/job-apps/applications.org::* Applications")
 	   (file ,(dir-concat user-emacs-directory "capture/application.org")) :prepend t)
+	  ("s" "Screenshot" entry (file "refile.org")
+	   "* %^{Title}\n\n%?" :prepend t :hook (lambda ()
+						  (let ((org-attach-screenshot-dirfunction nil))
+						    (call-interactively #'org-attach-screenshot))))
 	  ))
 
   ;; ** org-capture frame
@@ -930,8 +935,8 @@ and rewrite link paths to make blogging more seamless."
      ;;(?3 "to markdown_mmd." org-pandoc-export-to-markdown_mmd)
      ;;(?3 "to markdown_mmd and open." org-pandoc-export-to-markdown_mmd-and-open)
      ;;(?# "as markdown_mmd." org-pandoc-export-as-markdown_mmd)
-     ;;(?4 "to html5." org-pandoc-export-to-html5)
-     (?4 "to html5 and open." org-pandoc-export-to-html5-and-open)
+     (?4 "to html5." org-pandoc-export-to-html5)
+     ;;(?4 "to html5 and open." org-pandoc-export-to-html5-and-open)
      (?$ "as html5." org-pandoc-export-as-html5)
      (?5 "to html5-pdf and open." org-pandoc-export-to-html5-pdf-and-open)
      (?% "to html5-pdf." org-pandoc-export-to-html5-pdf)
@@ -1045,7 +1050,28 @@ and rewrite link paths to make blogging more seamless."
      ;;(?~ "to haddock." org-pandoc-export-to-haddock)
      ;;(?~ "to haddock and open." org-pandoc-export-to-haddock-and-open)
      ;;(?^ "as haddock." org-pandoc-export-as-haddock)
-     )))
+     ))
+  :config
+  (defconst org-pandoc-valid-options
+    '(abbreviations
+      ascii atx-headers base-header-level bash-completion biblatex
+      bibliography citation-abbreviations citeproc columns csl css data-dir
+      default-image-extension defaults dpi dump-args email-obfuscation embed-resources
+      eol epub-cover-image epub-embed-font epub-metadata
+      epub-subdirectory extract-media fail-if-warnings file-scope filter
+      highlight-style html-q-tags id-prefix ignore-args include-after-body
+      include-before-body include-in-header incremental
+      indented-code-classes katex list-extensions list-highlight-languages
+      list-highlight-styles listings log lua-filter mathjax mathml metadata
+      natbib no-highlight number-offset number-sections pdf-engine-opt
+      pdf-engine preserve-tabs print-default-data-file
+      print-default-template quiet reference-doc reference-links
+      reference-location resource-path section-divs self-contained
+      shift-heading-level-by slide-level standalone strip-comments
+      syntax-definition tab-stop table-of-contents template title-prefix toc
+      top-level-division toc-depth trace track-changes variable verbose
+      version webtex wrap
+      )))
 
 
 ;; ** ox-latex
@@ -1453,7 +1479,7 @@ that."
 
 (use-package org-mac-link
   :straight t
-  :when (eq system-type 'darwin)
+  :when is-darwin
   :after org
   :bind
   (:map org-mode-map ("C-c L" . my/org-mac-link-get-link))
@@ -1706,6 +1732,23 @@ is active, that will be the link's description."
   :hook
   ;; If you want it in all text modes:
   (text-mode . mixed-pitch-mode))
+
+;; ** org-screenshot
+
+(use-package org-attach-screenshot
+  :straight t
+  :bind (:map org-mode-map
+	      ("C-c M-s t" . org-attach-screenshot))
+  :custom
+  (org-attach-screenshot-dirfunction nil)
+  (org-attach-screenshot-command-line "screencapture -i %f")
+  (org-attach-screenshot-insertfunction #'org-attach-screenshot-attachinsert))
+
+(defun org-attach-screenshot-attachinsert (linkfilename)
+  "Default function for inserting the image link into the document.
+The image's filename is passed as the only argument `LINKFILENAME'."
+  (insert (concat "[[attachment:" (file-name-nondirectory linkfilename) "]]")))
+
 
 ;; * LOCAL-VARIABLES
 
