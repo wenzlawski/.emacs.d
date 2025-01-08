@@ -201,7 +201,7 @@ Triggered by a custom macOS Quick Action with a keyboard shortcut."
 	  ("ct" "clock task" entry (clock) (file ,(dir-concat user-emacs-directory "capture/task.org")) :prepend t)
 	  ("cw" "clock web"  entry (clock) "%?%:description\nSource: %:link\n\nTitle: %:description\n\n#+begin_quote\n%i\n#+end_quote" :empty-lines 1)
 
-	  ("t" "Task" entry (id "6FA6128F-4291-4508-8EB8-8951D736D81C")
+	  ("t" "Task" entry (id "316F33BA-71DE-41B9-B21B-928D3778A097")
 	   (file ,(dir-concat user-emacs-directory "capture/task.org")) :prepend t)
 	  ("h" "Habit" entry (id "7F689015-46F8-4BD8-9B09-164AA168A16A")
 	   (file ,(dir-concat user-emacs-directory "capture/habit.org")) :prepend t)

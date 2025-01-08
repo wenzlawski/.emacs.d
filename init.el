@@ -809,6 +809,7 @@ Containing LEFT, and RIGHT aligned respectively."
 	calendar-longitude '[12 55 east]
 	auto-save-no-message t
 	jit-lock-defer-time 0
+	idle-update-delay 1
 	)
   (pixel-scroll-precision-mode)
   (delete-selection-mode)
@@ -2161,6 +2162,7 @@ This function can be used as the value of the user option
   (projectile-enable-caching t)
   (projectile-fd-executable (executable-find "fd"))
   :config
+  (add-to-list 'projectile-globally-ignored-directories "^node_modules$")
   (projectile-mode 1))
 
 ;; ** flycheck
@@ -2526,6 +2528,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
 	  (html "https://github.com/tree-sitter/tree-sitter-html")
 	  (javascript "https://github.com/tree-sitter/tree-sitter-javascript"
 		      "master" "src")
+	  (astro "https://github.com/virchau13/tree-sitter-astro")
 	  (nix "https://github.com/nix-community/tree-sitter-nix")
 	  (json "https://github.com/tree-sitter/tree-sitter-json")
 	  (make "https://github.com/alemuller/tree-sitter-make")
@@ -2535,6 +2538,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
 	  (toml "https://github.com/tree-sitter/tree-sitter-toml")
 	  (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master"
 	       "tsx/src")
+	  (dotnet "https://github.com/profMagija/dotnet-tree-sitter.git")
 	  (typescript "https://github.com/tree-sitter/tree-sitter-typescript"
 		      "master" "typescript/src")
 	  (typst "https://github.com/uben0/tree-sitter-typst")
@@ -3203,12 +3207,24 @@ If given a SOURCE, execute the CMD on it."
 (use-package toml-ts-mode
   :mode "\\.toml\\'")
 
+;; ** web-mode
+
+(use-package web-mode
+  :straight t)
+
 ;; ** js json
 
 (use-package js
   :hook (js-json-mode . (lambda () (setq tab-width 2)))
+  :mode ("\\.mjs\\'$" . js-mode)
   :custom
   (js-indent-level 2))
+
+;; ** astro
+
+(use-package astro-ts-mode
+  :straight t
+  :mode "\\.astro\\'")
 
 ;; ** graphviz
 
@@ -3277,6 +3293,11 @@ If given a SOURCE, execute the CMD on it."
 ;; use lsp?
 ;; (use-package racer
 ;;   :straight t)
+
+;; ** meson
+
+(use-package meson-mode
+  :straight t)
 
 ;; * ORG
 
@@ -3924,11 +3945,11 @@ backend."
   (interactive "sWrite the response: ")
   (notmuch-show-reply-sender)
   (gptel-request
-   (concat "\nOriginal Email:\n" (buffer-substring-no-properties (point-min) (point-max)) 
-	   "\n Short-form response:" message)
-   :callback #'my/notmuch-ai-response
-   :stream nil
-   :system (f-read-text (dir-concat gptel-prompt-dir "email.txt")))
+      (concat "\nOriginal Email:\n" (buffer-substring-no-properties (point-min) (point-max)) 
+	      "\n Short-form response:" message)
+    :callback #'my/notmuch-ai-response
+    :stream nil
+    :system (f-read-text (dir-concat gptel-prompt-dir "email.txt")))
   (message "Composing response..."))
 
 (bind-key "," #'my/notmuch-ai-reply 'notmuch-show-mode-map)
@@ -3938,10 +3959,10 @@ backend."
   (interactive)
   (with-current-buffer (magit-diff-while-committing)
     (gptel-request
-     (buffer-substring-no-properties (point-min) (point-max))
-     :callback (lambda (response _) (insert response) (message "Writing commit...Done"))
-     :stream nil
-     :system "Write a short and concise commit message for the following diff.")
+	(buffer-substring-no-properties (point-min) (point-max))
+      :callback (lambda (response _) (insert response) (message "Writing commit...Done"))
+      :stream nil
+      :system "Write a short and concise commit message for the following diff.")
     (message "Writing commit...")))
 
 (bind-key "C-c RET" #'my/magit-ai-commit-message 'git-commit-mode-map)
