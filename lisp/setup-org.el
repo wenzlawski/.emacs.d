@@ -155,6 +155,13 @@ abort `\\[org-capture-kill]'."))))
 	   nil)))
   (setq org-agenda-include-diary t)
 
+  <<<<<<< HEAD
+  ||||||| parent of 1c4ddfb (merge org)
+  <<<<<<< HEAD
+  =======
+  <<<<<<< Updated upstream
+  <<<<<<< HEAD
+  >>>>>>> 1c4ddfb (merge org)
   ;; ** org-capture
   (defun my/read-later-template (url)
     "capture template for read later"
