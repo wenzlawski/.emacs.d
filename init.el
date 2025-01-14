@@ -200,6 +200,7 @@
 ;; ** highlight-parentheses
 
 (use-package highlight-parentheses
+  :disabled
   :straight t
   :hook
   (prog-mode . highlight-parentheses-mode)
@@ -209,12 +210,12 @@
 
 (use-package ns-auto-titlebar
   :straight t
-  :when (eq system-type 'darwin)
+  :when is-darwin
   :config
   (ns-auto-titlebar-mode))
 (use-package osx-trash
   :straight t
-  :when (eq system-type 'darwin)
+  :when is-darwin
   :config
   (osx-trash-setup))
 
@@ -335,7 +336,7 @@ Containing LEFT, and RIGHT aligned respectively."
   :straight t
   :custom
   (fontaine-presets
-   '(
+   `(
      (input :default-family "Input Mono"
 	    :line-spacing nil)
      (jetbrains :default-family "JetBrains Mono")
@@ -350,11 +351,16 @@ Containing LEFT, and RIGHT aligned respectively."
 	      :default-height 200)
      (go-mono :default-family "GoMono Nerd Font")
      (present :default-height 350)
+     (arial :default-family "Arial")
+     (libsans :default-family "LiberationSans" :default-height 180)
+     (libserif :default-family "LiberationSerif")
+     (libmono :default-family "LiberationMono")
+     (iaquattro :default-family "iAWriterQuattroS")
      (regular)
      (t :default-family "Iosevka"
 	:default-weight regular
 	:default-slant normal
-	:default-height 160
+	:default-height 140
 	:fixed-pitch-family nil
 	:fixed-pitch-weight nil
 	:fixed-pitch-slant nil
@@ -363,7 +369,7 @@ Containing LEFT, and RIGHT aligned respectively."
 	:fixed-pitch-serif-weight nil
 	:fixed-pitch-serif-slant nil
 	:fixed-pitch-serif-height 1.0
-	:variable-pitch-family "iA Writer Quattro V"
+	:variable-pitch-family ,(if IS-MAC "iA Writer Quattro V" "iAWriterQuattroS")
 	:variable-pitch-weight nil
 	:variable-pitch-slant nil
 	:variable-pitch-height 1.0
@@ -516,7 +522,7 @@ Containing LEFT, and RIGHT aligned respectively."
     ('dark  (load-theme my/dark-theme t)))
   (if (eq major-mode 'pdf-view-mode) (pdf-view-themed-minor-mode 1)))
 
-(add-hook 'after-init-hook #'my/theme-change)
+(if is-darwin (add-hook 'after-init-hook #'my/theme-change))
 
 ;; ** Modus themes
 
@@ -641,7 +647,7 @@ Containing LEFT, and RIGHT aligned respectively."
      :underline `(:color ,bg-tab-current))))
 
 (with-eval-after-load 'modus-themes
-  (add-to-list 'ns-system-appearance-change-functions #'my/modus-theme-change)
+  (if is-darwin (add-to-list 'ns-system-appearance-change-functions #'my/modus-theme-change))
   (add-hook 'modus-themes-after-load-theme-hook #'my/modus-themes-custom-faces))
 
 ;; ** shades-of-purple
@@ -2408,6 +2414,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
 ;; ** activity-watch
 
 (use-package activity-watch-mode
+  :when (equal system-name "MarcsMacbook-Pro")
   :straight t
   :config
   (global-activity-watch-mode))
@@ -4045,7 +4052,6 @@ and \"apikey\" as USER."
 ;; ** pdf-tools
 
 (use-package pdf-tools
-  :straight t
   :defer 2
   :hook (pdf-outline-buffer-mode . visual-line-mode)
   :config
@@ -4156,7 +4162,7 @@ and \"apikey\" as USER."
   (khalel-import-org-file-confirm-overwrite nil)
   (khalel-khal-command (executable-find "khal"))
   :config
-  (khalel-add-capture-template)
+  ;; (khalel-add-capture-template)
   (advice-add #'khalel-edit-calendar-event :after #'khalel-import-events))
 
 ;; ** ledger-mode
@@ -4277,6 +4283,16 @@ If FRAME is omitted or nil, use currently selected frame."
     (module-load tmpfile)))
 
 ;; * CUSTOM LISP
+(defun org-clock-kill-emacs-query ()
+  "Query user when killing Emacs.
+This function is added to `kill-emacs-query-functions'."
+  (let ((buf (org-clocking-buffer)))
+    (when (and buf (yes-or-no-p "Clock out and save? "))
+      (with-current-buffer buf
+        (org-clock-out)
+        (save-buffer))))
+  ;; Unconditionally return t for `kill-emacs-query-functions'.
+  t)
 ;; ** ox-11ty
 
 (require 'ox-11ty)
@@ -4345,12 +4361,12 @@ If FRAME is omitted or nil, use currently selected frame."
 
 ;; ** strptime
 
-(use-package strptime
-  :load-path "site-lisp/strptime.el")
+;; (use-package strptime
+;;   :disabled)
 
 ;; ** khard-diary
 
-(require 'khard-diary)
+;; (require 'khard-diary)
 
 ;; ** site-lisp
 
@@ -4358,6 +4374,10 @@ If FRAME is omitted or nil, use currently selected frame."
 (require 'custom-org)
 
 ;; * END OF FILE
+
+(when (equal system-name "nixos")
+  (require 'work))
+
 ;; ** envrc
 
 (use-package envrc
@@ -4368,10 +4388,13 @@ If FRAME is omitted or nil, use currently selected frame."
 
 (use-package inheritenv
   :straight t
+  :disabled
   :config
   (inheritenv-add-advice #'compile)
   (inheritenv-add-advice #'compilation-start)
   (inheritenv-add-advice #'start-file-process-shell-command))
+
+
 
 ;; * LOCAL-VARIABLES
 
