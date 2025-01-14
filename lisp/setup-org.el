@@ -155,7 +155,6 @@ abort `\\[org-capture-kill]'."))))
 	   nil)))
   (setq org-agenda-include-diary t)
 
-<<<<<<< HEAD
   ;; ** org-capture
   (defun my/read-later-template (url)
     "capture template for read later"
@@ -232,85 +231,6 @@ Triggered by a custom macOS Quick Action with a keyboard shortcut."
 						  (let ((org-attach-screenshot-dirfunction nil))
 						    (call-interactively #'org-attach-screenshot))))
 	  ))
-||||||| parent of f0d158c (index on main: 4580520 capture config)
-  ;; ** org-capture
-  (defun my/read-later-template (url)
-    "capture template for read later"
-    (let* ((article (my/read-it-later-attach url))
-	   (name (nth 0 article))
-	   (file (nth 1 article))
-	   (dir (nth 2 article))
-	   (url (nth 3 article))
-	   (effort (org-minutes-to-clocksum-string
-		    ( / (string-to-number
-			 (string-trim (shell-command-to-string
-				       (concat "wc -w < '" (expand-file-name file dir)"'")))) 100))))
-      (concat "* TODO " name "\n:PROPERTIES:\n:URL: " url "\n:Effort: " effort "\n:END:\n%U\nAvailable at: [[attachment:" file "][" name "]]\n%?")))
-
-
-  (defun my/read-later-template-from-kill ()
-    (require 'org-web-tools)
-    (my/read-later-template (org-web-tools--get-first-url)))
-
-  (defun my/read-later-template-from-prompt ()
-    (my/read-later-template (read-string "URL: ")))
-
-  (defun my/url-librewolf-capture-to-org ()
-    "Call `org-capture-string' on the current front most Safari window.
-Use `org-mac-link-safari-get-frontmost-url' to capture url from Safari.
-Triggered by a custom macOS Quick Action with a keyboard shortcut."
-    (interactive)
-    (org-capture-string (my/org-mac-link-librewolf-get-frontmost-url) "lz")
-    (ignore-errors)
-    (org-capture-finalize)
-    nil)
-
-  (setq org-capture-templates
-	`(("r" "refile" entry (file "refile.org")
-	   "* %^{Title}\n%U\n\n%i%?" :prepend t :empty-lines-after 1)
-
-	  ("p" "project" entry (id "316F33BA-71DE-41B9-B21B-928D3778A097")
-	   (file ,(dir-concat user-emacs-directory "capture/project.org")) :prepend t)
-
-	  ("e" "email")
-	  ("et" "task" entry (file "~/work/work.org") (file ,(dir-concat user-emacs-directory "capture/mail-task.org")) :prepend t)
-
-	  ("j" "job")
-	  ("jt" "job task" entry (file "~/work/work.org") (file ,(dir-concat user-emacs-directory "capture/task.org")) :prepend t)
-
-	  ("c" "clock")
-	  ("cn" "clock note" entry (clock) "%^{Title}\n%?")
-	  ("ct" "clock task" entry (clock) (file ,(dir-concat user-emacs-directory "capture/task.org")) :prepend t)
-	  ("cw" "clock web"  entry (clock) "%?%:description\nSource: %:link\n\nTitle: %:description\n\n#+begin_quote\n%i\n#+end_quote" :empty-lines 1)
-
-	  ("t" "Task" entry (id "6FA6128F-4291-4508-8EB8-8951D736D81C")
-	   (file ,(dir-concat user-emacs-directory "capture/task.org")) :prepend t)
-	  ("h" "Habit" entry (id "7F689015-46F8-4BD8-9B09-164AA168A16A")
-	   (file ,(dir-concat user-emacs-directory "capture/habit.org")) :prepend t)
-
-	  ("l" "later")
-	  ("lp" "Read later prompt" entry (id "F86FBB48-767F-436D-926E-D118F57AE534")
-	   (function my/read-later-template-from-prompt))
-	  ("lk" "Read later kill" entry (id "F86FBB48-767F-436D-926E-D118F57AE534")
-	   (function my/read-later-template-from-kill))
-	  ("ll" "Read later librewolf" entry (file "refile.org")
-	   "* %(my/org-mac-link-librewolf-get-frontmost-url) :link:\n%U" :immediate-finish t :prepend t)
-	  ("lL" "Read later librewolf edit" entry (file "refile.org")
-	   "* %(my/org-mac-link-librewolf-get-frontmost-url) :link:\n%U\n%?" :prepend t)
-	  ("lb" "Bookmark" entry (id "23CDFA52-0EE4-4DAA-8B8B-E2D105E6293E") "*** [[%:link][%:description]] %^g\nSCHEDULED: %T%?")
-
-	  ("w" "Web template" entry (file "refile.org")
-           "* %?%:description\nSource: %:link\n\nTitle: %:description\n\n#+begin_quote\n%i\n#+end_quote" :empty-lines 1 :prepend t)
-
-	  ("a" "Application" entry (file "~/personal/job-apps/applications.org::* Applications")
-	   (file ,(dir-concat user-emacs-directory "capture/application.org")) :prepend t)
-	  ("s" "Screenshot" entry (file "refile.org")
-	   "* %^{Title}\n\n%?" :prepend t :hook (lambda ()
-						  (let ((org-attach-screenshot-dirfunction nil))
-						    (call-interactively #'org-attach-screenshot))))
-	  ))
-=======
->>>>>>> f0d158c (index on main: 4580520 capture config)
 
   ;; ** org-capture frame
 
