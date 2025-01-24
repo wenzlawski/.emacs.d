@@ -11,13 +11,13 @@
 ;;; Code:
 
 (setopt sql-connection-alist
-	'((VMWSDB01 (sql-product 'ms)
-		    (sql-server "VMWSDB01")
-		    (sql-port 1433)
-		    (sql-user "sa")
-		    (sql-password "sql_admin15")
-		    (sql-database "db_Lohn")
-		    ))
+	'(("VMWSDB01" (sql-product 'ms)
+	   (sql-server "VMWSDB01")
+	   (sql-port 1433)
+	   (sql-user "sa")
+	   (sql-password "sql_admin15")
+	   (sql-database "db_Lohn")
+	   ))
 	sql-ms-program "sqlcmd"
 	sql-ms-options '("-w" "300" "-q" "select '1>'"))
 
@@ -26,9 +26,11 @@
 ;; (use-package ob-sql-mode
 ;;   :straight t)
 
-;; (use-package vbnet-mode
-;;   :straight (:host github :repo "emacsmirror/vbnet-mode")
-;;   :mode "\\.vb\\'")
+(use-package vbnet-mode
+  :straight (:host github :repo "emacsmirror/vbnet-mode")
+  :mode "\\.vb\\'"
+  :custom
+  (vbnet-want-flymake-fixup nil))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Emacs on WSL open links in Windows web browser
@@ -104,8 +106,15 @@ SQL Server on Windows and Linux platform."
 
 (shell-command "xset r rate 170 30")
 
-(with-eval-after-load 'outlook
+(with-eval-after-load 'org
   (require 'ol-outlook))
+
+(when (eq window-system nil)
+  (with-eval-after-load 'org
+    (bind-key "<C-i>" #'org-cycle 'org-mode-map)
+    (bind-key "C-j" #'org-insert-heading-respect-content 'org-mode-map))
+  (bind-key "M-'" #'embark-act)
+  (bind-key "<C-i>" #'indent-for-tab-command))
 
 (provide 'work)
 ;;; work.el ends here

@@ -334,6 +334,7 @@ Containing LEFT, and RIGHT aligned respectively."
 
 (use-package fontaine
   :straight t
+  :when (not (eq window-system nil))
   :custom
   (fontaine-presets
    `(
@@ -534,15 +535,34 @@ Containing LEFT, and RIGHT aligned respectively."
   '((bg-main "#1A1A1A") 
     (bg-dim "#0E0E0E")))
 
+(defvar my/modus-operandi-darker-colors
+  '((bg-main "#F8F8F8")
+    (bg-dim "#EBEBEB")))
+
+(defvar my/modus-operandi-lighter-colors
+  '((bg-main "#EBEBEB")
+    (bg-dim "#d1d1d1")))
+
+
 (defun my/modus-vivendi-dark-toggle ()
   "Toggle darkness of modus vivendi."
   (interactive)
-  (let ((colors (if (equal
-		     (assoc 'bg-main modus-vivendi-palette-overrides)
-		     (assoc 'bg-main my/modus-vivendi-darker-colors))
-		    my/modus-vivendi-lighter-colors
-		  my/modus-vivendi-darker-colors)))
-    (setopt modus-vivendi-palette-overrides
+  (let* ((ct (modus-themes--current-theme))
+	 (palette (pcase ct
+		    ('modus-operandi 'modus-operandi-palette-overrides)
+		    ('modus-vivendi 'modus-vivendi-palette-overrides)))
+	 (lighter (pcase ct
+		    ('modus-operandi my/modus-operandi-lighter-colors)
+		    ('modus-vivendi my/modus-vivendi-lighter-colors)))
+	 (darker (pcase ct
+		   ('modus-operandi my/modus-operandi-darker-colors)
+		   ('modus-vivendi my/modus-vivendi-darker-colors)))
+	 (colors (if (equal
+		      (assoc 'bg-main (symbol-value palette))
+		      (assoc 'bg-main darker))
+		     lighter
+		   darker)))
+    (setopt palette
 	    `(,@colors
 	      (fg-main "#E2E2E2")
 	      (fg-dim "#999999")))))
@@ -570,8 +590,8 @@ Containing LEFT, and RIGHT aligned respectively."
 	    (fg-dim "#999999")))
 
   (setopt modus-operandi-palette-overrides
-	  '((bg-main "#F8F8F8")
-	    (bg-dim "#EBEBEB")
+	  '((bg-main "#EBEBEB") ; "#F8F8F8"
+	    (bg-dim "#d1d1d1") ; "#EBEBEB"
 	    (fg-main "#2C2C2C")
 	    (fg-dim "#8B8B8B")))
   (setopt modus-operandi-tinted-palette-overrides modus-operandi-palette-overrides)
@@ -3952,11 +3972,11 @@ backend."
   (interactive "sWrite the response: ")
   (notmuch-show-reply-sender)
   (gptel-request
-      (concat "\nOriginal Email:\n" (buffer-substring-no-properties (point-min) (point-max)) 
-	      "\n Short-form response:" message)
-    :callback #'my/notmuch-ai-response
-    :stream nil
-    :system (f-read-text (dir-concat gptel-prompt-dir "email.txt")))
+   (concat "\nOriginal Email:\n" (buffer-substring-no-properties (point-min) (point-max)) 
+	   "\n Short-form response:" message)
+   :callback #'my/notmuch-ai-response
+   :stream nil
+   :system (f-read-text (dir-concat gptel-prompt-dir "email.txt")))
   (message "Composing response..."))
 
 (bind-key "," #'my/notmuch-ai-reply 'notmuch-show-mode-map)
@@ -3966,10 +3986,10 @@ backend."
   (interactive)
   (with-current-buffer (magit-diff-while-committing)
     (gptel-request
-	(buffer-substring-no-properties (point-min) (point-max))
-      :callback (lambda (response _) (insert response) (message "Writing commit...Done"))
-      :stream nil
-      :system "Write a short and concise commit message for the following diff.")
+     (buffer-substring-no-properties (point-min) (point-max))
+     :callback (lambda (response _) (insert response) (message "Writing commit...Done"))
+     :stream nil
+     :system "Write a short and concise commit message for the following diff.")
     (message "Writing commit...")))
 
 (bind-key "C-c RET" #'my/magit-ai-commit-message 'git-commit-mode-map)
@@ -4403,8 +4423,8 @@ This function is added to `kill-emacs-query-functions'."
 ;; MAY CAUSE FILE CORRUPTION.
 (fset 'epg-wait-for-status 'ignore)
 
-(x-focus-frame nil)
-
+(unless (eq window-system nil)
+  (x-focus-frame nil))
 
 ;; Local Variables:
 ;; outline-regexp: " *;; \\*+"
