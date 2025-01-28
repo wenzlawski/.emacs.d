@@ -31,6 +31,7 @@ abort `\\[org-capture-kill]'."))))
   ("C-x c" . org-capture)
   (:map org-mode-map
 	("C-'" . nil)
+	("C-," . nil)
 	("M-o" . consult-outline)
 	("<C-i>" . backward-kill-word)
 	("M-i" . org-delete-backward-char)
@@ -106,7 +107,7 @@ abort `\\[org-capture-kill]'."))))
   (org-attach-directory ".data/")
   (org-attach-id-dir ".data/")
   (org-footnote-auto-adjust t)
-  ;; (org-clock-persist 'history)
+  (org-clock-persist 'history)
   (org-agenda-block-separator ?─)
   (org-agenda-time-grid '((daily today require-timed)
 			  (800 1000 1200 1400 1600 1800 2000)
@@ -122,10 +123,11 @@ abort `\\[org-capture-kill]'."))))
   (require 'org-clock)
   (unless (executable-find "x11idle")
     (setopt org-clock-x11idle-program-name "xprintidle"))
-  (setf (cdr (assoc 'file org-link-frame-setup)) 'find-file)
 
-  ;; (when (equal system-name "MarcsMacbook-Pro") (org-clock-persistence-insinuate))
+  (org-clock-persistence-insinuate)
   (add-to-list 'org-babel-load-languages '(shell . t))
+
+  (setf (cdr (assoc 'file org-link-frame-setup)) 'find-file)
 
   ;; ** org-agenda
 

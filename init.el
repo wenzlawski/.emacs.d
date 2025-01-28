@@ -529,19 +529,27 @@ Containing LEFT, and RIGHT aligned respectively."
 
 (defvar my/modus-vivendi-darker-colors
   '((bg-main "#070707")
-    (bg-dim "#1A1A1A")))
+    (bg-dim "#1A1A1A")
+    (fg-main "#E2E2E2")
+    (fg-dim "#999999")))
 
 (defvar my/modus-vivendi-lighter-colors
   '((bg-main "#1A1A1A") 
-    (bg-dim "#0E0E0E")))
+    (bg-dim "#0E0E0E")
+    (fg-main "#E2E2E2")
+    (fg-dim "#999999")))
 
 (defvar my/modus-operandi-darker-colors
   '((bg-main "#F8F8F8")
-    (bg-dim "#EBEBEB")))
+    (bg-dim "#EBEBEB")
+    (fg-main "#2C2C2C")
+    (fg-dim "#8B8B8B")))
 
 (defvar my/modus-operandi-lighter-colors
   '((bg-main "#EBEBEB")
-    (bg-dim "#d1d1d1")))
+    (bg-dim "#d1d1d1")
+    (fg-main "#2C2C2C")
+    (fg-dim "#8B8B8B")))
 
 
 (defun my/modus-vivendi-dark-toggle ()
@@ -562,10 +570,8 @@ Containing LEFT, and RIGHT aligned respectively."
 		      (assoc 'bg-main darker))
 		     lighter
 		   darker)))
-    (setopt palette
-	    `(,@colors
-	      (fg-main "#E2E2E2")
-	      (fg-dim "#999999")))))
+    (eval `(setopt ,palette
+		   ',colors))))
 
 (use-package modus-themes
   :straight t
@@ -584,16 +590,9 @@ Containing LEFT, and RIGHT aligned respectively."
      (t . (variable-pitch medium))))
   (modus-themes-custom-auto-reload t)
   :config
-  (setopt modus-vivendi-palette-overrides
-	  `(,@my/modus-vivendi-lighter-colors
-	    (fg-main "#E2E2E2")
-	    (fg-dim "#999999")))
+  (setopt modus-vivendi-palette-overrides my/modus-vivendi-lighter-colors)
+  (setopt modus-operandi-palette-overrides my/modus-operandi-lighter-colors)
 
-  (setopt modus-operandi-palette-overrides
-	  '((bg-main "#EBEBEB") ; "#F8F8F8"
-	    (bg-dim "#d1d1d1") ; "#EBEBEB"
-	    (fg-main "#2C2C2C")
-	    (fg-dim "#8B8B8B")))
   (setopt modus-operandi-tinted-palette-overrides modus-operandi-palette-overrides)
   (setopt modus-vivendi-tinted-palette-overrides modus-vivendi-palette-overrides)
   (setopt modus-themes-common-palette-overrides

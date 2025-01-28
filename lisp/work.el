@@ -28,7 +28,7 @@
 
 (use-package vbnet-mode
   :straight (:host github :repo "emacsmirror/vbnet-mode")
-  :mode "\\.vb\\'"
+  :mode "\\.vbs?\\'"
   :custom
   (vbnet-want-flymake-fixup nil))
 
