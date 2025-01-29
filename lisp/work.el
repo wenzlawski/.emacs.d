@@ -23,9 +23,6 @@
 
 (add-to-list 'process-coding-system-alist '("sqlcmd" . cp850-dos))
 
-;; (use-package ob-sql-mode
-;;   :straight t)
-
 (bind-key "M-j" #'indent-new-comment-line 'prog-mode-map)
 
 (add-hook 'before-save-hook #'time-stamp)
@@ -52,6 +49,7 @@
 	  browse-url-generic-args     cmd-args
 	  browse-url-browser-function 'browse-url-generic
 	  search-web-default-browser 'browse-url-generic)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun my/embark-open-externally (file)
   "Open FILE or url using system's default application."
@@ -77,10 +75,11 @@
  '((sql . t)))
 
 (use-package sqlup-mode
-  :straight t)
+  :straight t
+  :hook (sql-mode . sqlup-mode))
 
-;; (add-to-list 'apheleia-formatters '(sqlfluff "sqlfluff" "format" "-d" "tsql" "--stdin-filename" filepath))
-;; (add-to-list 'apheleia-mode-alist '(sql-mode . sqlfluff))
+(add-to-list 'apheleia-formatters '(sqlfluff "sqlfluff" "format" "-d" "tsql" inplace))
+(add-to-list 'apheleia-mode-alist '(sql-mode . sqlfluff))
 
 ;; Handle spaces correctly in ob-sql
 (defun my/org-babel-sql-dbstring-mssql (host user password database)
