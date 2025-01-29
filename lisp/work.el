@@ -26,6 +26,16 @@
 ;; (use-package ob-sql-mode
 ;;   :straight t)
 
+(bind-key "M-j" #'indent-new-comment-line 'prog-mode-map)
+
+(add-hook 'before-save-hook #'time-stamp)
+(use-package time-stamp
+  :custom
+  (time-stamp-format "%Y-%02m-%02d %02H:%02M:%02S %L"))
+
+(use-package powershell
+  :straight t)
+
 (use-package vbnet-mode
   :straight (:host github :repo "emacsmirror/vbnet-mode")
   :mode "\\.vbs?\\'"
@@ -115,6 +125,8 @@ SQL Server on Windows and Linux platform."
     (bind-key "C-j" #'org-insert-heading-respect-content 'org-mode-map))
   (bind-key "M-'" #'embark-act)
   (bind-key "<C-i>" #'indent-for-tab-command))
+
+(require 'steps)
 
 (provide 'work)
 ;;; work.el ends here

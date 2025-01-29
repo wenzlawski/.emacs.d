@@ -370,10 +370,10 @@ Containing LEFT, and RIGHT aligned respectively."
 	:fixed-pitch-serif-weight nil
 	:fixed-pitch-serif-slant nil
 	:fixed-pitch-serif-height 1.0
-	:variable-pitch-family ,(if IS-MAC "iA Writer Quattro V" "iAWriterQuattroS")
-	:variable-pitch-weight nil
+	:variable-pitch-family ,(if IS-MAC "iA Writer Quattro V" "LiberationSans")
+	:variable-pitch-weight bold
 	:variable-pitch-slant nil
-	:variable-pitch-height 1.0
+	:variable-pitch-height 1.1
 	:mode-line-active-family nil
 	:mode-line-active-weight nil
 	:mode-line-active-slant nil
@@ -2200,6 +2200,7 @@ This function can be used as the value of the user option
   (flycheck-emacs-lisp-initialize-packages 'auto)
   (flycheck-emacs-lisp-package-user-dir nil)
   (flycheck-css-csslint-executable (executable-find "csslint"))
+  (flycheck-disabled-checkers '(emacs-lisp-checkdoc))
   :hook (prog-mode . flycheck-mode))
 
 (use-package flycheck-eglot
