@@ -78,8 +78,9 @@
   :straight t
   :hook (sql-mode . sqlup-mode))
 
-(add-to-list 'apheleia-formatters '(sqlfluff "sqlfluff" "format" "-d" "tsql" inplace))
-(add-to-list 'apheleia-mode-alist '(sql-mode . sqlfluff))
+;; (add-to-list 'apheleia-formatters '(sqlfluff "sqlfluff" "format" "-d" "tsql" inplace))
+(add-to-list 'apheleia-formatters '(sqlformatter "sql-formatter" "-l" "tsql"))
+(add-to-list 'apheleia-mode-alist '(sqlformatter . sqlfluff))
 
 ;; Handle spaces correctly in ob-sql
 (defun my/org-babel-sql-dbstring-mssql (host user password database)
