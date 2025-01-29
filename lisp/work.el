@@ -23,7 +23,7 @@
 
 (add-to-list 'process-coding-system-alist '("sqlcmd" . cp850-dos))
 
-(bind-key "M-j" #'indent-new-comment-line 'prog-mode-map)
+;; (bind-key "M-j" #'indent-new-comment-line 'prog-mode-map)
 
 (add-hook 'before-save-hook #'time-stamp)
 (use-package time-stamp
@@ -114,11 +114,14 @@ SQL Server on Windows and Linux platform."
 	("ct" "clock task" entry (clock) (file ,(dir-concat user-emacs-directory "capture/task.org")) :prepend t)
 	("cw" "clock web"  entry (clock) "%?%:description\nSource: %:link\n\nTitle: %:description\n\n#+begin_quote\n%i\n#+end_quote" :empty-lines 1)))
 
-(shell-command "xset r rate 170 30")
+(shell-command "xset r rate 165 50")
 
 (with-eval-after-load 'org
   (require 'ol-outlook))
 
+;; TODO Make a global minor mode that I can enable when working on the console within
+;; an emacsclient. It temporarily enables all the changes for the terminal, and
+;; reverts when disabled
 (when (eq window-system nil)
   (with-eval-after-load 'org
     (bind-key "<C-i>" #'org-cycle 'org-mode-map)
