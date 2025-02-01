@@ -3,7 +3,21 @@ fundamental-mode ;; Available everywhere
 (today (format-time-string "%Y-%m-%d"))
 (todayde (format-time-string "%d/%m/%Y"))
 
-;; prog-mode
+prog-mode
+
+(metadata comment-start comment-start " " (buffer-name) n
+	  comment-start n
+	  comment-start " Author: " user-full-name n
+	  comment-start " Created: " (i today) n
+	  comment-start " Last Modified: Time-stamp: \"2025-01-29 16:20:32 Marc Wenzlawski\"" n
+	  comment-start n
+	  comment-start comment-start " Changelog:" n
+	  comment-start n
+	  comment-start "  " n
+	  comment-start n
+	  comment-start comment-start " Commentary:" n
+	  comment-start n
+	  comment-start "  ")
 
 ;; (todo comment-start "TODO: " q)
 ;; (note comment-start "NOTE: " q)

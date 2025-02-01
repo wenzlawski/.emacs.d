@@ -15,20 +15,20 @@
 (pretty-hydra-define my/hydra-launch-menu
   (:title "Launch Menu" :quit-key "q" :color teal)
   ("Applications"
-   (("a" #'org-agenda "Agenda")
-    ("b" #'calibredb "Calibre")
-    ("c" #'calendar "Calendar")
-    ("e" #'eww "EWW")
-    ("f" #'elfeed "Elfeed")
-    ("m" #'notmuch "Mail")
-    ("t" #'vterm "Terminal"))
+   (("a" org-agenda "Agenda")
+    ("b" calibredb "Calibre")
+    ("c" calendar "Calendar")
+    ("e" eww "EWW")
+    ("f" elfeed "Elfeed")
+    ("m" notmuch "Mail")
+    ("t" vterm "Terminal"))
    "Files"
    (
     ("i" (lambda () (interactive) (find-file user-init-file)) "init")
     ("j" (lambda () (interactive) (let ((projectile-project-root user-emacs-directory)) (projectile-find-file))) ".emacs.d")
     ("p" (lambda () (interactive) (find-file (dir-concat org-directory "personal.org"))) "personal")
-    ("w" (lambda () (interactive) (find-file "~/work/work.org")) "work")
-    ("C" #'org-clock-goto "Clocked task")
+    ("w" (lambda () (interactive) (find-file "~/org/work.org")) "work")
+    ("C" org-clock-goto "Clocked task")
     )
    "Programs"
    (("C-z" (lambda () (interactive) (shell-command "open /Applications/Zotero.app")) "Zotero")
@@ -36,11 +36,11 @@
     ("C-l" (lambda () (interactive) (shell-command "open /Applications/LibreWolf.app")) "LibreWolf")
     ("C-s" (lambda () (interactive) (shell-command "open /Applications/Spotify.app")) "Spotify"))
    "Utilities"
-   (("d" #'dired "Dired")
-    ("h" #'helpful-at-point "Help")
-    ("r" #'ielm "REPL")
+   (("d" dired "Dired")
+    ("h" helpful-at-point "Help")
+    ("r" ielm "REPL")
     ("s" (lambda () (interactive) (switch-to-buffer "*scratch*")) "Scratch")
-    ("S" #'scratch "Mode Scratch")
+    ("S" scratch "Mode Scratch")
     ("D" toggle-debug-on-error "debug on error" :toggle (default-value 'debug-on-error))
     ("X" toggle-debug-on-quit "debug on quit" :toggle (default-value 'debug-on-quit))
     )
@@ -363,7 +363,6 @@
     ("B" denote-explore-keywords-barchart "Keywords Barchart")
     )
    ))
-
 
 (provide 'setup-hydra)
 ;;; setup-hydra.el ends here

@@ -200,6 +200,7 @@
 ;; ** highlight-parentheses
 
 (use-package highlight-parentheses
+  :disabled
   :straight t
   :hook
   (prog-mode . highlight-parentheses-mode)
@@ -209,12 +210,12 @@
 
 (use-package ns-auto-titlebar
   :straight t
-  :when (eq system-type 'darwin)
+  :when is-darwin
   :config
   (ns-auto-titlebar-mode))
 (use-package osx-trash
   :straight t
-  :when (eq system-type 'darwin)
+  :when is-darwin
   :config
   (osx-trash-setup))
 
@@ -333,9 +334,10 @@ Containing LEFT, and RIGHT aligned respectively."
 
 (use-package fontaine
   :straight t
+  :when (not (eq window-system nil))
   :custom
   (fontaine-presets
-   '(
+   `(
      (input :default-family "Input Mono"
 	    :line-spacing nil)
      (jetbrains :default-family "JetBrains Mono")
@@ -350,11 +352,16 @@ Containing LEFT, and RIGHT aligned respectively."
 	      :default-height 200)
      (go-mono :default-family "GoMono Nerd Font")
      (present :default-height 350)
+     (arial :default-family "Arial")
+     (libsans :default-family "LiberationSans" :default-height 180)
+     (libserif :default-family "LiberationSerif")
+     (libmono :default-family "LiberationMono")
+     (iaquattro :default-family "iAWriterQuattroS")
      (regular)
      (t :default-family "Iosevka"
 	:default-weight regular
 	:default-slant normal
-	:default-height 160
+	:default-height 140
 	:fixed-pitch-family nil
 	:fixed-pitch-weight nil
 	:fixed-pitch-slant nil
@@ -363,10 +370,10 @@ Containing LEFT, and RIGHT aligned respectively."
 	:fixed-pitch-serif-weight nil
 	:fixed-pitch-serif-slant nil
 	:fixed-pitch-serif-height 1.0
-	:variable-pitch-family "iA Writer Quattro V"
-	:variable-pitch-weight nil
+	:variable-pitch-family ,(if IS-MAC "iA Writer Quattro V" "LiberationSans")
+	:variable-pitch-weight bold
 	:variable-pitch-slant nil
-	:variable-pitch-height 1.0
+	:variable-pitch-height 1.1
 	:mode-line-active-family nil
 	:mode-line-active-weight nil
 	:mode-line-active-slant nil
@@ -516,30 +523,55 @@ Containing LEFT, and RIGHT aligned respectively."
     ('dark  (load-theme my/dark-theme t)))
   (if (eq major-mode 'pdf-view-mode) (pdf-view-themed-minor-mode 1)))
 
-(add-hook 'after-init-hook #'my/theme-change)
+(if is-darwin (add-hook 'after-init-hook #'my/theme-change))
 
 ;; ** Modus themes
 
 (defvar my/modus-vivendi-darker-colors
   '((bg-main "#070707")
-    (bg-dim "#1A1A1A")))
+    (bg-dim "#1A1A1A")
+    (fg-main "#E2E2E2")
+    (fg-dim "#999999")))
 
 (defvar my/modus-vivendi-lighter-colors
   '((bg-main "#1A1A1A") 
-    (bg-dim "#0E0E0E")))
+    (bg-dim "#0E0E0E")
+    (fg-main "#E2E2E2")
+    (fg-dim "#999999")))
+
+(defvar my/modus-operandi-darker-colors
+  '((bg-main "#F8F8F8")
+    (bg-dim "#EBEBEB")
+    (fg-main "#2C2C2C")
+    (fg-dim "#8B8B8B")))
+
+(defvar my/modus-operandi-lighter-colors
+  '((bg-main "#EBEBEB")
+    (bg-dim "#d1d1d1")
+    (fg-main "#2C2C2C")
+    (fg-dim "#8B8B8B")))
+
 
 (defun my/modus-vivendi-dark-toggle ()
   "Toggle darkness of modus vivendi."
   (interactive)
-  (let ((colors (if (equal
-		     (assoc 'bg-main modus-vivendi-palette-overrides)
-		     (assoc 'bg-main my/modus-vivendi-darker-colors))
-		    my/modus-vivendi-lighter-colors
-		  my/modus-vivendi-darker-colors)))
-    (setopt modus-vivendi-palette-overrides
-	    `(,@colors
-	      (fg-main "#E2E2E2")
-	      (fg-dim "#999999")))))
+  (let* ((ct (modus-themes--current-theme))
+	 (palette (pcase ct
+		    ('modus-operandi 'modus-operandi-palette-overrides)
+		    ('modus-vivendi 'modus-vivendi-palette-overrides)))
+	 (lighter (pcase ct
+		    ('modus-operandi my/modus-operandi-lighter-colors)
+		    ('modus-vivendi my/modus-vivendi-lighter-colors)))
+	 (darker (pcase ct
+		   ('modus-operandi my/modus-operandi-darker-colors)
+		   ('modus-vivendi my/modus-vivendi-darker-colors)))
+	 (colors (if (equal
+		      (assoc 'bg-main (symbol-value palette))
+		      (assoc 'bg-main darker))
+		     lighter
+		   darker)))
+    (eval `(setopt ,palette
+		   ',colors))))
 
 (use-package modus-themes
   :straight t
@@ -558,16 +590,9 @@ Containing LEFT, and RIGHT aligned respectively."
      (t . (variable-pitch medium))))
   (modus-themes-custom-auto-reload t)
   :config
-  (setopt modus-vivendi-palette-overrides
-	  `(,@my/modus-vivendi-lighter-colors
-	    (fg-main "#E2E2E2")
-	    (fg-dim "#999999")))
+  (setopt modus-vivendi-palette-overrides my/modus-vivendi-lighter-colors)
+  (setopt modus-operandi-palette-overrides my/modus-operandi-lighter-colors)
 
-  (setopt modus-operandi-palette-overrides
-	  '((bg-main "#F8F8F8")
-	    (bg-dim "#EBEBEB")
-	    (fg-main "#2C2C2C")
-	    (fg-dim "#8B8B8B")))
   (setopt modus-operandi-tinted-palette-overrides modus-operandi-palette-overrides)
   (setopt modus-vivendi-tinted-palette-overrides modus-vivendi-palette-overrides)
   (setopt modus-themes-common-palette-overrides
@@ -641,7 +666,7 @@ Containing LEFT, and RIGHT aligned respectively."
      :underline `(:color ,bg-tab-current))))
 
 (with-eval-after-load 'modus-themes
-  (add-to-list 'ns-system-appearance-change-functions #'my/modus-theme-change)
+  (if is-darwin (add-to-list 'ns-system-appearance-change-functions #'my/modus-theme-change))
   (add-hook 'modus-themes-after-load-theme-hook #'my/modus-themes-custom-faces))
 
 ;; ** shades-of-purple
@@ -2175,6 +2200,7 @@ This function can be used as the value of the user option
   (flycheck-emacs-lisp-initialize-packages 'auto)
   (flycheck-emacs-lisp-package-user-dir nil)
   (flycheck-css-csslint-executable (executable-find "csslint"))
+  (flycheck-disabled-checkers '(emacs-lisp-checkdoc))
   :hook (prog-mode . flycheck-mode))
 
 (use-package flycheck-eglot
@@ -2408,6 +2434,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
 ;; ** activity-watch
 
 (use-package activity-watch-mode
+  :when (equal system-name "MarcsMacbook-Pro")
   :straight t
   :config
   (global-activity-watch-mode))
@@ -3944,11 +3971,11 @@ backend."
   (interactive "sWrite the response: ")
   (notmuch-show-reply-sender)
   (gptel-request
-      (concat "\nOriginal Email:\n" (buffer-substring-no-properties (point-min) (point-max)) 
-	      "\n Short-form response:" message)
-    :callback #'my/notmuch-ai-response
-    :stream nil
-    :system (f-read-text (dir-concat gptel-prompt-dir "email.txt")))
+   (concat "\nOriginal Email:\n" (buffer-substring-no-properties (point-min) (point-max)) 
+	   "\n Short-form response:" message)
+   :callback #'my/notmuch-ai-response
+   :stream nil
+   :system (f-read-text (dir-concat gptel-prompt-dir "email.txt")))
   (message "Composing response..."))
 
 (bind-key "," #'my/notmuch-ai-reply 'notmuch-show-mode-map)
@@ -3958,10 +3985,10 @@ backend."
   (interactive)
   (with-current-buffer (magit-diff-while-committing)
     (gptel-request
-	(buffer-substring-no-properties (point-min) (point-max))
-      :callback (lambda (response _) (insert response) (message "Writing commit...Done"))
-      :stream nil
-      :system "Write a short and concise commit message for the following diff.")
+     (buffer-substring-no-properties (point-min) (point-max))
+     :callback (lambda (response _) (insert response) (message "Writing commit...Done"))
+     :stream nil
+     :system "Write a short and concise commit message for the following diff.")
     (message "Writing commit...")))
 
 (bind-key "C-c RET" #'my/magit-ai-commit-message 'git-commit-mode-map)
@@ -4044,7 +4071,6 @@ and \"apikey\" as USER."
 ;; ** pdf-tools
 
 (use-package pdf-tools
-  :straight t
   :defer 2
   :hook (pdf-outline-buffer-mode . visual-line-mode)
   :config
@@ -4155,7 +4181,7 @@ and \"apikey\" as USER."
   (khalel-import-org-file-confirm-overwrite nil)
   (khalel-khal-command (executable-find "khal"))
   :config
-  (khalel-add-capture-template)
+  ;; (khalel-add-capture-template)
   (advice-add #'khalel-edit-calendar-event :after #'khalel-import-events))
 
 ;; ** ledger-mode
@@ -4276,6 +4302,16 @@ If FRAME is omitted or nil, use currently selected frame."
     (module-load tmpfile)))
 
 ;; * CUSTOM LISP
+(defun org-clock-kill-emacs-query ()
+  "Query user when killing Emacs.
+This function is added to `kill-emacs-query-functions'."
+  (let ((buf (org-clocking-buffer)))
+    (when (and buf (yes-or-no-p "Clock out and save? "))
+      (with-current-buffer buf
+        (org-clock-out)
+        (save-buffer))))
+  ;; Unconditionally return t for `kill-emacs-query-functions'.
+  t)
 ;; ** ox-11ty
 
 (require 'ox-11ty)
@@ -4344,12 +4380,12 @@ If FRAME is omitted or nil, use currently selected frame."
 
 ;; ** strptime
 
-(use-package strptime
-  :load-path "site-lisp/strptime.el")
+;; (use-package strptime
+;;   :disabled)
 
 ;; ** khard-diary
 
-(require 'khard-diary)
+;; (require 'khard-diary)
 
 ;; ** site-lisp
 
@@ -4357,6 +4393,10 @@ If FRAME is omitted or nil, use currently selected frame."
 (require 'custom-org)
 
 ;; * END OF FILE
+
+(when (equal system-name "nixos")
+  (require 'work))
+
 ;; ** envrc
 
 (use-package envrc
@@ -4367,10 +4407,13 @@ If FRAME is omitted or nil, use currently selected frame."
 
 (use-package inheritenv
   :straight t
+  :disabled
   :config
   (inheritenv-add-advice #'compile)
   (inheritenv-add-advice #'compilation-start)
   (inheritenv-add-advice #'start-file-process-shell-command))
+
+
 
 ;; * LOCAL-VARIABLES
 
@@ -4379,8 +4422,8 @@ If FRAME is omitted or nil, use currently selected frame."
 ;; MAY CAUSE FILE CORRUPTION.
 (fset 'epg-wait-for-status 'ignore)
 
-(x-focus-frame nil)
-
+(unless (eq window-system nil)
+  (x-focus-frame nil))
 
 ;; Local Variables:
 ;; outline-regexp: " *;; \\*+"

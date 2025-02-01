@@ -1,0 +1,11 @@
+[package]
+name = "ssms-core"
+version = "1.0.0"
+edition = "2021"
+
+[dependencies]
+emacs = "0.19.0"
+odbc-api = "10.1.1"
+
+[lib]
+crate-type = ["cdylib"]

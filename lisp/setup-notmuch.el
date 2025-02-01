@@ -21,6 +21,7 @@
   (start-process "notmuch-poll" nil notmuch-command "new"))
 
 (use-package notmuch
+  :when (eq system-name "MarcsMacbook-Pro")
   :straight t
   :hook
   (notmuch-mua-send . notmuch-mua-attachment-check)
@@ -147,6 +148,7 @@
   (notmuch-addr-setup))
 
 (use-package notmuch-indicator
+  :after notmuch
   :straight t
   :custom
   (notmuch-indicator-args
@@ -172,7 +174,7 @@
       (cancel-function-timers #'notmuch-indicator--indicator)
       (run-at-time nil notmuch-indicator-refresh-count #'notmuch-indicator--indicator)))
 
-  (notmuch-indicator-mode 1))
+  (when (eq system-name "MarcsMacbook-Pro") (notmuch-indicator-mode 1)))
 
 (provide 'setup-notmuch)
 ;;; setup-notmuch.el ends here
