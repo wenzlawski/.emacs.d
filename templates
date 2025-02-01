@@ -18,12 +18,22 @@ prog-mode
 	  comment-start comment-start " Commentary:" n
 	  comment-start n
 	  comment-start "  ")
+(nixbang "#!/usr/bin/env nix" n)
+(nixenv (i nixbang) "#! nix shell nixpkgs#" p " -c " q)
 
 ;; (todo comment-start "TODO: " q)
 ;; (note comment-start "NOTE: " q)
 ;; (fail comment-start "FAIL: " q)
 ;; (fixme comment-start "FIXME: " q)
 ;; (review comment-start "REVIEW: " q)
+
+scheme-mode
+
+(nixenv (i nixbang) "#|" n "#! nix shell nixpkgs#chez -c scheme --script" n "|#" q)
+
+lisp-mode
+
+(nixenv (i nixbang) "#|" n "#! nix shell nixpkgs#sbcl -c sbcl --script" n "|#" q)
 
 emacs-lisp-mode lisp-interaction-mode
 
@@ -77,7 +87,6 @@ org-mode
 (mshc "@@hugo:{{% " (p "shc" shc) " %}} " q " {{% /" (p "shc" shc) " %}}@@")
 (hugo "#+begin_export hugo" n r n "#+end_export")
 
-lisp-mode sly-mrepl-mode
 
 ;; Local Variables:
 ;; mode: lisp-data
