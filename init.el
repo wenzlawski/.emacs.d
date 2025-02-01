@@ -2668,12 +2668,11 @@ See URL `http://pypi.python.org/pypi/ruff'."
   :custom
   (sly-description-autofocus t)
   (sly-contribs '(sly-fancy sly-mrepl sly-scratch))
+  (inferior-lisp-program "sbcl")
   :bind
   (:map sly-mode-map
 	("C-j" . sly-eval-print-last-expression)
 	("C-h C-h" . sly-hyperspec-lookup))
-  :init
-  (setq inferior-lisp-program "sbcl")
   :config
   (sly-symbol-completion-mode -1))
 
