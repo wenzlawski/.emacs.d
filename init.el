@@ -2696,6 +2696,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
   (sly-description-autofocus t)
   (sly-contribs '(sly-fancy sly-mrepl sly-scratch))
   (inferior-lisp-program "sbcl")
+  (sly-lisp-implementations '((sbcl ("sbcl" "--core" "~/.local/share/common-lisp/sbcl.core-for-sly"))))
   :bind
   (:map sly-mode-map
 	("C-j" . sly-eval-print-last-expression)
@@ -2732,9 +2733,8 @@ See URL `http://pypi.python.org/pypi/ruff'."
 
 (use-package hyperspec
   :after sly
-  :defer t
-  :custom
-  (common-lisp-hyperspec-root (concat "file://" (dir-concat (shell-command-to-string "nix eval --raw nixpkgs#sbclPackages.clhs") "/HyperSpec-7-0/HyperSpec/"))))
+  :config
+  (load "/Users/mw/quicklisp/clhs-use-local.el" t))
 
 (with-eval-after-load 'hyperspec
   (defun my/common-lisp-hyperspec-after (_)

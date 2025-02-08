@@ -21,7 +21,6 @@
   (start-process "notmuch-poll" nil notmuch-command "new"))
 
 (use-package notmuch
-  :when (eq system-name "MarcsMacbook-Pro")
   :straight t
   :hook
   (notmuch-mua-send . notmuch-mua-attachment-check)
