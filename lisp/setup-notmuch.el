@@ -60,6 +60,7 @@
      (:name "Trash" :key "t" :query "tag:deleted")
      (:name "Posteo" :query "to:marcwenzlawski.+@posteo.com" :key "P")
      (:name "icloud" :query "to:@privaterelay.appleid.com OR to:marc.wenzlawski.+@icloud.com" :key "G")
+     (:name "go" :query "to:m.wenzlawski.+@goldstein.de" :key "g")
      (:name "All mail" :query "*" :key "A"))
    )
   (notmuch-search-oldest-first nil)
@@ -173,7 +174,8 @@
       (cancel-function-timers #'notmuch-indicator--indicator)
       (run-at-time nil notmuch-indicator-refresh-count #'notmuch-indicator--indicator)))
 
-  (when (eq system-name "MarcsMacbook-Pro") (notmuch-indicator-mode 1)))
+  ;; (notmuch-indicator-mode 1)
+  )
 
 (provide 'setup-notmuch)
 ;;; setup-notmuch.el ends here

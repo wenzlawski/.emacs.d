@@ -8,6 +8,22 @@
 
 ;; * BASIC SETTINGS
 
+;; ** CUSTOM FILE
+
+;; Get custom-set-variables out of init.el
+(defvar my/custom-file (dir-concat user-emacs-directory "custom.el"))
+(setq custom-file my/custom-file)
+
+(defun my/cus-edit ()
+  (let ((file my/custom-file))
+    (unless (file-exists-p file)
+      (make-empty-file file))
+    (load-file file)))
+
+(my/cus-edit)
+
+(setq disabled-command-function nil)
+
 (setopt warning-minimum-level :emergency)
 (defun dir-concat (dir file)
   "Join path DIR with filename FILE correctly."
@@ -902,27 +918,6 @@ i.e. windows tiled side-by-side."
 (use-package simple
   :config
   (line-number-mode -1))
-
-;; ** CUSTOM FILE
-
-(use-package cus-edit
-  :config
-  ;; Get custom-set-variables out of init.el
-  (defvar my/custom-file (dir-concat user-emacs-directory "custom.el"))
-  (setq custom-file my/custom-file)
-
-  (defun my/cus-edit ()
-    (let ((file my/custom-file))
-      (unless (file-exists-p file)
-	(make-empty-file file))
-      (load-file file)))
-  :hook (after-init . my/cus-edit))
-
-(setq disabled-command-function nil)
-
-;; Always start with *scratch*
-;;(setq initial-buffer-choice t)
-
 
 ;; ** Man
 
@@ -2568,6 +2563,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
 	  (dotnet "https://github.com/profMagija/dotnet-tree-sitter.git")
 	  (typescript "https://github.com/tree-sitter/tree-sitter-typescript"
 		      "master" "typescript/src")
+	  (sql "https://github.com/DerekStride/tree-sitter-sql" "gh-pages")
 	  (typst "https://github.com/uben0/tree-sitter-typst")
 	  (yaml "https://github.com/ikatyang/tree-sitter-yaml")
 	  (zig "https://github.com/maxxnino/tree-sitter-zig")))

@@ -88,6 +88,11 @@ org-mode
 (hugo "#+begin_export hugo" n r n "#+end_export")
 
 
+vbnet-mode
+
+(gdt "Runtime.Datastore.GetDataTable(" q ")")
+(deb "Runtime.Debug.Print(\"" q "\")")
+
 ;; Local Variables:
 ;; mode: lisp-data
 ;; outline-regexp: "[a-z]"
