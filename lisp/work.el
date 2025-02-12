@@ -48,7 +48,13 @@
 (setq browse-url-generic-program  "wslview"
       browse-url-generic-args     '()
       browse-url-browser-function 'browse-url-generic
-      search-web-default-browser 'browse-url-generic)
+      search-web-default-browser 'browse-url-generic
+      my/browse-generic-program "wslview -s"
+      shell-command-guess-open "wslview"
+      trash-directory "~/.trash"
+      tab-bar-select-tab-modifiers '(control meta))
+
+(bind-key "C-t" #'avy-goto-word-or-subword-1 'dired-mode-map)
 
 (defun my/embark-open-externally (file)
   "Open FILE or url using system's default application."

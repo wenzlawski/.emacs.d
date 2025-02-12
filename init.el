@@ -1889,8 +1889,11 @@ This function can be used as the value of the user option
 ;; ** vterm
 
 (defun my/vterm-to-buffer (&rest content)
-  (with-output-to-temp-buffer "*vterm-out*"
-    (mapc (lambda (c) (princ c) (princ "\n")) content)))
+  (with-current-buffer (get-buffer-create "*vterm-out*")
+    (erase-buffer)
+    (mapc (lambda (c) (insert c) (insert "\n")) content)
+    (fundamental-mode))
+  (switch-to-buffer-other-window "*vterm-out*"))
 
 (use-package vterm
   :straight t
@@ -2068,6 +2071,8 @@ This function can be used as the value of the user option
 
 ;; ** TODO dired
 
+(setq my/browse-generic-program "open")
+
 (use-package dired
   :bind
   (:map dired-mode-map
@@ -2080,10 +2085,13 @@ This function can be used as the value of the user option
   (defun my/open-current-dir-in-finder ()
     "Open current directory in Finder."
     (interactive)
-    (shell-command "open .")))
+    (shell-command (concat my/browse-generic-program " ."))))
 
 (use-package dired-x
-  :after dired)
+  :after dired
+  :mode ("\\.dired\\'" . dired-virtual-mode)
+  :custom
+  (dired-x-hands-off-my-keys nil))
 
 (use-package dired-hacks-utils
   :straight t
@@ -2100,9 +2108,11 @@ This function can be used as the value of the user option
   (diredfl-global-mode))
 
 (use-package fd-dired
-  :straight t)
+  :straight t
+  :bind
+  ("C-x D f" . fd-dired))
 
-(when (memq window-system '(mac ns x)) (require 'dired-qlmanage))
+(when (memq window-system '(mac ns)) (require 'dired-qlmanage))
 
 (use-package dired+
   :straight t
@@ -2550,6 +2560,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
 	  (html "https://github.com/tree-sitter/tree-sitter-html")
 	  (javascript "https://github.com/tree-sitter/tree-sitter-javascript"
 		      "master" "src")
+	  (dockerfile "https://github.com/camdencheek/tree-sitter-dockerfile")
 	  (astro "https://github.com/virchau13/tree-sitter-astro")
 	  (nix "https://github.com/nix-community/tree-sitter-nix")
 	  (json "https://github.com/tree-sitter/tree-sitter-json")
@@ -4133,7 +4144,8 @@ and \"apikey\" as USER."
 (use-package saveplace-pdf-view
   :straight t
   :config
-  (save-place-mode 1))
+  ;; (save-place-mode 1)
+  )
 
 (use-package pdf-annot
   :after pdf-tools

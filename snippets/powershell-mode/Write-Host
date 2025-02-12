@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: Write-Host
+# key: wh
+# --
+Write-Host $0

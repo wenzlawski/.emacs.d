@@ -29,6 +29,7 @@
     ("p" (lambda () (interactive) (find-file (dir-concat org-directory "personal.org"))) "personal")
     ("w" (lambda () (interactive) (find-file "~/org/work.org")) "work")
     ("C" org-clock-goto "Clocked task")
+    ("k" khalel-import-events "Sync events")
     )
    "Programs"
    (("C-z" (lambda () (interactive) (shell-command "open /Applications/Zotero.app")) "Zotero")
