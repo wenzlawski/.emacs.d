@@ -2081,6 +2081,7 @@ This function can be used as the value of the user option
   :hook (dired-mode . (lambda () (setq truncate-lines t)))
   :custom
   (dired-use-ls-dired nil)
+  (dired-dwim-target t)
   :config
   (defun my/open-current-dir-in-finder ()
     "Open current directory in Finder."

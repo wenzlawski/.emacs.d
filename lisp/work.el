@@ -23,7 +23,7 @@
 
 (add-to-list 'process-coding-system-alist '("sqlcmd" . cp850-dos))
 
-;; (bind-key "M-j" #'indent-new-comment-line 'prog-mode-map)
+(bind-key "M-RET" #'indent-new-comment-line 'prog-mode-map)
 
 (add-hook 'before-save-hook #'time-stamp)
 (use-package time-stamp
