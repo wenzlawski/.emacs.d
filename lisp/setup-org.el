@@ -11,6 +11,16 @@
   (when org-inline-image-overlays
     (org-redisplay-inline-images)))
 
+(defun my/org-apply-faces ()
+  "Apply org modern faces"
+  (set-face-attribute
+   'org-block nil :background (modus-themes-get-color-value 'bg-main t)))
+
+(with-eval-after-load 'modus-themes
+  (add-hook 'modus-themes-after-load-theme-hook #'my/org-apply-faces)
+  (my/org-apply-faces))
+
+
 (use-package org
   :straight t
   :hook

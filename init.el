@@ -1297,6 +1297,8 @@ Append with current prefix arg."
   :bind
   (:map isearch-mode-map
 	("\C-o" . (lambda () (interactive) (isearch-process-search-char ?\n))))
+  :custom
+  (isearchp-case-fold t)
   :config
   (add-hook 'modus-themes-after-load-theme-hook #'my/isearchp-custom-faces))
 
@@ -2461,7 +2463,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
   (yas-reload-all)
   (with-eval-after-load 'modus-themes
     (set-face-attribute 'yas-field-highlight-face nil
-			:inherit 'region :background (modus-themes-get-color-value 'bg-blue-subtle))))
+			:inherit 'region :background (modus-themes-get-color-value 'bg-blue-subtle t))))
 
 (require 'yas-abbrev-mode)
 
