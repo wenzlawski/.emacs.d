@@ -4258,7 +4258,18 @@ and \"apikey\" as USER."
   :custom
   (docker-show-messages nil)
   :bind
-  ("C-c d" . docker))
+  ("C-c d" . docker)
+  :config
+  (setopt docker-container-columns
+	  '((:name "Id" :width 13 :template "{{ json .ID }}" :sort nil :format nil)
+	    (:name "Image" :width 30 :template "{{ json .Image }}" :sort nil :format nil)
+	    (:name "Command" :width 23 :template "{{ json .Command }}" :sort nil :format nil)
+	    (:name "Created" :width 20 :template "{{ json .CreatedAt }}" :sort nil :format
+		   (lambda (x) (format-time-string "%F %T" (date-to-time x))))
+	    (:name "Status" :width 25 :template "{{ json .Status }}" :sort nil :format nil)
+	    (:name "Ports" :width 10 :template "{{ json .Ports }}" :sort nil :format nil)
+	    (:name "Names" :width 10 :template "{{ json .Names }}" :sort nil :format nil))
+	  ))
 
 ;; * enable all commands
 
