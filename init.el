@@ -607,7 +607,7 @@ Containing LEFT, and RIGHT aligned respectively."
   (modus-themes-custom-auto-reload t)
   :config
   (setopt modus-vivendi-palette-overrides my/modus-vivendi-lighter-colors)
-  (setopt modus-operandi-palette-overrides my/modus-operandi-lighter-colors)
+  (setopt modus-operandi-palette-overrides my/modus-operandi-darker-colors)
 
   (setopt modus-operandi-tinted-palette-overrides modus-operandi-palette-overrides)
   (setopt modus-vivendi-tinted-palette-overrides modus-vivendi-palette-overrides)
@@ -1297,6 +1297,8 @@ Append with current prefix arg."
   :bind
   (:map isearch-mode-map
 	("\C-o" . (lambda () (interactive) (isearch-process-search-char ?\n))))
+  :custom
+  (isearchp-case-fold t)
   :config
   (add-hook 'modus-themes-after-load-theme-hook #'my/isearchp-custom-faces))
 
@@ -2081,6 +2083,7 @@ This function can be used as the value of the user option
   :hook (dired-mode . (lambda () (setq truncate-lines t)))
   :custom
   (dired-use-ls-dired nil)
+  (dired-dwim-target t)
   :config
   (defun my/open-current-dir-in-finder ()
     "Open current directory in Finder."
@@ -2460,7 +2463,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
   (yas-reload-all)
   (with-eval-after-load 'modus-themes
     (set-face-attribute 'yas-field-highlight-face nil
-			:inherit 'region :background (modus-themes-get-color-value 'bg-blue-subtle))))
+			:inherit 'region :background (modus-themes-get-color-value 'bg-blue-subtle t))))
 
 (require 'yas-abbrev-mode)
 
@@ -3995,11 +3998,11 @@ backend."
   (interactive "sWrite the response: ")
   (notmuch-show-reply-sender)
   (gptel-request
-      (concat "\nOriginal Email:\n" (buffer-substring-no-properties (point-min) (point-max)) 
-	      "\n Short-form response:" message)
-    :callback #'my/notmuch-ai-response
-    :stream nil
-    :system (f-read-text (dir-concat gptel-prompt-dir "email.txt")))
+   (concat "\nOriginal Email:\n" (buffer-substring-no-properties (point-min) (point-max)) 
+	   "\n Short-form response:" message)
+   :callback #'my/notmuch-ai-response
+   :stream nil
+   :system (f-read-text (dir-concat gptel-prompt-dir "email.txt")))
   (message "Composing response..."))
 
 (bind-key "," #'my/notmuch-ai-reply 'notmuch-show-mode-map)
@@ -4009,10 +4012,10 @@ backend."
   (interactive)
   (with-current-buffer (magit-diff-while-committing)
     (gptel-request
-	(buffer-substring-no-properties (point-min) (point-max))
-      :callback (lambda (response _) (insert response) (message "Writing commit...Done"))
-      :stream nil
-      :system "Write a short and concise commit message for the following diff.")
+     (buffer-substring-no-properties (point-min) (point-max))
+     :callback (lambda (response _) (insert response) (message "Writing commit...Done"))
+     :stream nil
+     :system "Write a short and concise commit message for the following diff.")
     (message "Writing commit...")))
 
 (bind-key "C-c RET" #'my/magit-ai-commit-message 'git-commit-mode-map)
@@ -4267,7 +4270,18 @@ and \"apikey\" as USER."
   :custom
   (docker-show-messages nil)
   :bind
-  ("C-c d" . docker))
+  ("C-c d" . docker)
+  :config
+  (setopt docker-container-columns
+	  '((:name "Id" :width 13 :template "{{ json .ID }}" :sort nil :format nil)
+	    (:name "Image" :width 30 :template "{{ json .Image }}" :sort nil :format nil)
+	    (:name "Command" :width 23 :template "{{ json .Command }}" :sort nil :format nil)
+	    (:name "Created" :width 20 :template "{{ json .CreatedAt }}" :sort nil :format
+		   (lambda (x) (format-time-string "%F %T" (date-to-time x))))
+	    (:name "Status" :width 25 :template "{{ json .Status }}" :sort nil :format nil)
+	    (:name "Ports" :width 10 :template "{{ json .Ports }}" :sort nil :format nil)
+	    (:name "Names" :width 10 :template "{{ json .Names }}" :sort nil :format nil))
+	  ))
 
 ;; ** ejc-sql
 

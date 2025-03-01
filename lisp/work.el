@@ -23,7 +23,14 @@
 
 (add-to-list 'process-coding-system-alist '("sqlcmd" . cp850-dos))
 
-;; (bind-key "M-j" #'indent-new-comment-line 'prog-mode-map)
+(bind-key "M-RET" #'indent-new-comment-line 'prog-mode-map)
+
+(defun my/vterm-powershell (&optional arg)
+  (interactive "P")
+  (let ((vterm-shell (executable-find "powershell.exe")))
+    (vterm arg)))
+
+(bind-key "C-c T" #'my/vterm-powershell)
 
 (add-hook 'before-save-hook #'time-stamp)
 (use-package time-stamp

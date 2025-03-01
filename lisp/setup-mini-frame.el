@@ -18,7 +18,7 @@
   (mini-frame-show-parameters #'my/mini-frame-show-parameters)
   :config
   (with-eval-after-load 'modus-themes
-    (setopt mini-frame-background-color-function (lambda () (modus-themes-get-color-value 'bg-blue-nuanced)))))
+    (setopt mini-frame-background-color-function (lambda () (modus-themes-get-color-value 'bg-blue-nuanced t)))))
 
 (with-eval-after-load 'mini-frame
 
@@ -36,7 +36,7 @@
   
   (defun my/mini-frame-update-color ()
     "Update the color of the posframe"
-    (setopt mini-frame-internal-border-color (modus-themes-get-color-value 'bg-blue-nuanced))
+    (setopt mini-frame-internal-border-color (modus-themes-get-color-value 'bg-blue-nuanced t))
     (when mini-frame-internal-border-color
       (set-face-background 'child-frame-border mini-frame-internal-border-color mini-frame-frame)
       (set-face-background 'internal-border mini-frame-internal-border-color mini-frame-frame)))
@@ -68,13 +68,13 @@
 	    `((top . 250)
 	      (width . 0.8)
 	      (left . 0.5)
-	      ;; (background-color . ,(modus-themes-get-color-value 'bg-blue-nuanced))
+	      ;; (background-color . ,(modus-themes-get-color-value 'bg-blue-nuanced t))
 	      ))
 
     (defun my/mini-frame-update-color (&optional _)
       "Update the color of the posframe"
       (when mini-frame-mode
-	(setopt mini-frame-internal-border-color (modus-themes-get-color-value 'bg-blue-nuanced))
+	(setopt mini-frame-internal-border-color (modus-themes-get-color-value 'bg-blue-nuanced t))
 	(when (and mini-frame-internal-border-color mini-frame-frame)
 	  (set-face-background 'child-frame-border mini-frame-internal-border-color mini-frame-frame)
 	  (set-face-background 'internal-border mini-frame-internal-border-color mini-frame-frame))))
