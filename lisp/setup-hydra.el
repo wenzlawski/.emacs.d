@@ -1,4 +1,4 @@
-;;; setup-hydra.el --- Hydra setup
+;;; setup-hydra.el --- Hydra setup  -*- lexical-binding: t; -*-
 ;;; Commentary:
 ;;; Code:
 
@@ -8,6 +8,9 @@
 (use-package pretty-hydra
   :after hydra
   :straight t)
+
+(require 'hydra)
+(require 'pretty-hydra)
 
 (defvar my/web-launch-menu)
 
