@@ -9,6 +9,17 @@
   :after hydra
   :straight t)
 
+(defvar my/web-launch-menu)
+
+(defhydra my/web-launch-menu (:color blue :columns 4)
+  "Web launch menu"
+  ("s" (funcall browse-url-secondary-browser-function "https://sync.k867.uk") "Syncthing")
+  ("b" (funcall browse-url-secondary-browser-function "https://books.k867.uk") "Calibre-Web")
+  ("v" (funcall browse-url-secondary-browser-function "https://bitwarden.k867.uk") "Vaultwarden")
+  ("g" (funcall browse-url-secondary-browser-function "https://projects.k867.uk/grafana") "Grafana")
+  ("c" (funcall browse-url-secondary-browser-function "https://job.k867.uk") "Cronicle")
+  ("n" (funcall browse-url-secondary-browser-function "https://cloud.k867.uk") "Nextcloud"))
+
 
 ;;; Launch Menu
 (defvar my/hydra-launch-menu)
@@ -24,23 +35,24 @@
     ("t" vterm "Terminal"))
    "Files"
    (
-    ("i" (lambda () (interactive) (find-file user-init-file)) "init")
-    ("j" (lambda () (interactive) (let ((projectile-project-root user-emacs-directory)) (projectile-find-file))) ".emacs.d")
-    ("p" (lambda () (interactive) (find-file (dir-concat org-directory "personal.org"))) "personal")
-    ("w" (lambda () (interactive) (find-file "~/org/work.org")) "work")
+    ("i" (find-file user-init-file) "init")
+    ("j" (let ((projectile-project-root user-emacs-directory)) (projectile-find-file)) ".emacs.d")
+    ("p" (find-file (dir-concat org-directory "personal.org")) "personal")
+    ("w" (find-file "~/org/work.org") "work")
     ("C" org-clock-goto "Clocked task")
     ("k" khalel-import-events "Sync events")
     )
    "Programs"
-   (("C-z" (lambda () (interactive) (shell-command "open /Applications/Zotero.app")) "Zotero")
-    ("C-c" (lambda () (interactive) (shell-command "open /Applications/Calibre.app")) "Calibre")
-    ("C-l" (lambda () (interactive) (shell-command "open /Applications/LibreWolf.app")) "LibreWolf")
-    ("C-s" (lambda () (interactive) (shell-command "open /Applications/Spotify.app")) "Spotify"))
+   (("C-z" (shell-command "open /Applications/Zotero.app") "Zotero")
+    ("C-c" (shell-command "open /Applications/Calibre.app") "Calibre")
+    ("C-l" (shell-command "open /Applications/LibreWolf.app") "LibreWolf")
+    ("C-s" (shell-command "open /Applications/Spotify.app") "Spotify"))
    "Utilities"
    (("d" dired "Dired")
     ("h" helpful-at-point "Help")
+    ("l" (call-interactively #'my/web-launch-menu/body) "Self-hosted apps" :exit t)
     ("r" ielm "REPL")
-    ("s" (lambda () (interactive) (switch-to-buffer "*scratch*")) "Scratch")
+    ("s" (switch-to-buffer "*scratch*") "Scratch")
     ("S" scratch "Mode Scratch")
     ("D" toggle-debug-on-error "debug on error" :toggle (default-value 'debug-on-error))
     ("X" toggle-debug-on-quit "debug on quit" :toggle (default-value 'debug-on-quit))
@@ -67,9 +79,8 @@
    "Display"
    (
     ("d" toggle-frame-fullscreen "fullscreen" :toggle (frame-parameter nil 'fullscreen))
-    ("e" (lambda () (interactive)
-	   (setq visual-fill-column-center-text
-		 (not (bound-and-true-p visual-fill-column-center-text))))
+    ("e" (setq visual-fill-column-center-text
+	       (not (bound-and-true-p visual-fill-column-center-text)))
      "center text" :toggle (default-value (bound-and-true-p visual-fill-column-center-text)))
     ("u" mini-frame-mode "mini-frame" :toggle t :exit t)
     ("w" my/distraction-free "writing" :toggle (default-value (bound-and-true-p olivetti-mode)))
@@ -88,7 +99,7 @@
     ("f" flycheck-mode "flycheck" :toggle t)
     ("i" indent-guide-mode "indent guide" :toggle t)
     ("s" display-line-numbers-mode "line numbers" :toggle t)
-    ("x" (lambda () (interactive) (setopt corfu-auto (not corfu-auto)) (corfu-mode -1) (corfu-mode)) "corfu auto" :toggle (default-value (bound-and-true-p corfu-auto)))
+    ("x" (progn (setopt corfu-auto (not corfu-auto)) (corfu-mode -1) (corfu-mode)) "corfu auto" :toggle (default-value (bound-and-true-p corfu-auto)))
     ("y" yas-minor-mode "yasnippet" :toggle t)
     )))
 

@@ -3243,7 +3243,19 @@ If given a SOURCE, execute the CMD on it."
 ;; ** web-mode
 
 (use-package web-mode
-  :straight t)
+  :straight t
+  :mode
+  (("\\.phtml\\'" . web-mode)
+   ("\\.php\\'" . web-mode)
+   ("\\.tpl\\'" . web-mode)
+   ("\\.[agj]sp\\'" . web-mode)
+   ("\\.as[cp]x\\'" . web-mode)
+   ("\\.erb\\'" . web-mode)
+   ("\\.mustache\\'" . web-mode)
+   ("\\.djhtml\\'" . web-mode)
+   ("\\.html?\\'" . web-mode))
+  :custom
+  (web-mode-markup-indent-offset 2))
 
 ;; ** js json
 
@@ -4256,6 +4268,11 @@ and \"apikey\" as USER."
   (docker-show-messages nil)
   :bind
   ("C-c d" . docker))
+
+;; ** ejc-sql
+
+(use-package ejc-sql
+  :straight t)
 
 ;; * enable all commands
 
