@@ -10,6 +10,53 @@
 ;;
 ;;; Code:
 
+(use-package ejc-sql
+  :straight t
+  :hook
+  (ejc-sql-minor-mode . ejc-eldoc-setup)
+  :custom
+  (clomacs-httpd-default-port 8091)
+  (ejc-result-table-impl 'ejc-result-mode)
+  :config
+  (add-hook 'ejc-sql-connected-hook
+            (lambda ()
+              (ejc-set-fetch-size 100)
+              (ejc-set-max-rows 100)
+              (ejc-set-show-too-many-rows-message t)
+              (ejc-set-column-width-limit 25)
+              (ejc-set-use-unicode nil))))
+
+(with-eval-after-load 'ejc-sql
+  (ejc-create-connection
+   "Goldstein 206"
+   :dependencies [[com.microsoft.sqlserver/mssql-jdbc "6.2.2.jre8"]]
+   :connection-uri (concat "jdbc:sqlserver://VMWSDB01.gold.local:1433;"
+                           "databaseName=Goldstein 206;"
+                           "user=sa;"
+                           "password=sql_admin15;"))
+
+  (ejc-create-connection
+   "Lohndialog 200"
+   :dependencies [[com.microsoft.sqlserver/mssql-jdbc "6.2.2.jre8"]]
+   :connection-uri (concat "jdbc:sqlserver://VMWSDB01.gold.local:1433;"
+                           "databaseName=Lohndialog 200;"
+                           "user=sa;"
+                           "password=sql_admin15;"))
+  )
+(defun View-scroll-half-page-right (&optional columns)
+  (interactive "P")
+  (scroll-right (or columns (/ (window-total-width) 2))))
+
+(defun View-scroll-half-page-left (&optional columns)
+  (interactive "P")
+  (scroll-left (or columns (/ (window-total-width) 2))))
+
+(use-package view
+  :bind
+  (:map view-mode-map
+	("f" . View-scroll-half-page-left)
+	("b" . View-scroll-half-page-right)))
+
 (setopt sql-connection-alist
 	'(("VMWSDB01" (sql-product 'ms)
 	   (sql-server "VMWSDB01")
@@ -113,6 +160,8 @@ SQL Server on Windows and Linux platform."
 (advice-add 'org-babel-sql-dbstring-mssql :override 'my/org-babel-sql-dbstring-mssql)
 
 (setopt org-directory "~/org/"
+	org-refile-targets '((org-agenda-files :level . 8)
+			     ("work.org" :level . 2))
 	org-capture-templates
 	`(("i" "inbox" entry (id "0d0b8397-b242-4f88-983d-90a67fd51eb0")
 	   "* %?\n%U\n" :prepend t)
@@ -179,6 +228,82 @@ SQL Server on Windows and Linux platform."
 
 (use-package simple-httpd
   :straight t)
+
+(fontaine-presets
+ `(
+   (input :default-family "Input Mono"
+	  :line-spacing nil)
+   (jetbrains :default-family "JetBrainsMono Nerd Font"
+	      :line-spacing 0.02)
+   (source-code-pro :default-family "Source Code Pro"
+		    :line-spacing nil)
+   (dejavu-sans-mono :default-family "DejaVuSansM Nerd Font")
+   (fira-code :default-family "Fira Code Nerd Font"
+	      :line-spacing nil)
+   (iosevka :default-family "Iosevka Nerd Font")
+   (menlo :default-family "Menlo")
+   (meslo :default-family "MesloLGM Nerd Font")
+   (unifont :default-family "Unifont"
+	    :default-height 160
+	    :default-weight bold)
+   (go-mono :default-family "GoMono Nerd Font")
+   (present :default-height 350)
+   (arial :default-family "Arial")
+   (libsans :default-family "LiberationSans" :default-height 180)
+   (libserif :default-family "LiberationSerif")
+   (libmono :default-family "LiberationMono")
+   (iaquattro :default-family "iAWriterQuattroS")
+   (regular)
+   (t :default-family "Iosevka Nerd Font"
+      :default-weight regular
+      :default-slant normal
+      :default-height 140
+      :line-spacing 1
+      :fixed-pitch-family nil
+      :fixed-pitch-weight nil
+      :fixed-pitch-slant nil
+      :fixed-pitch-height 1.0
+      :fixed-pitch-serif-family nil
+      :fixed-pitch-serif-weight nil
+      :fixed-pitch-serif-slant nil
+      :fixed-pitch-serif-height 1.0
+      :variable-pitch-family ,(if IS-MAC "iA Writer Quattro V" "LiberationSans")
+      :variable-pitch-weight bold
+      :variable-pitch-slant nil
+      :variable-pitch-height 1.1
+      :mode-line-active-family nil
+      :mode-line-active-weight nil
+      :mode-line-active-slant nil
+      :mode-line-active-height 1.0
+      :mode-line-inactive-family nil
+      :mode-line-inactive-weight nil
+      :mode-line-inactive-slant nil
+      :mode-line-inactive-height 1.0
+      :header-line-family nil
+      :header-line-weight nil
+      :header-line-slant nil
+      :header-line-height 1.0
+      :line-number-family nil
+      :line-number-weight normal
+      :line-number-slant nil
+      :line-number-height 1.0
+      :tab-bar-family nil
+      :tab-bar-weight nil
+      :tab-bar-slant nil
+      :tab-bar-height 1.0
+      :tab-line-family nil
+      :tab-line-weight nil
+      :tab-line-slant nil
+      :tab-line-height 1.0
+      :bold-family nil
+      :bold-slant nil
+      :bold-weight bold
+      :bold-height 1.0
+      :italic-family nil
+      :italic-weight nil
+      :italic-slant italic
+      :italic-height 1.0)
+   ))
 
 (require 'steps)
 
