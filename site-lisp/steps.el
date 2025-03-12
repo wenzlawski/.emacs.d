@@ -8,26 +8,60 @@
 (require 'consult)
 (require 'vbnet-mode)
 
-(defcustom steps-db-connection '((instance . "VMWSDB01")
-				 (database . "Lohndialog 200")
-				 (user . "sa")
-				 (password . "sql_admin15"))
-  "Db connection settings." :group 'steps :type '(sexp))
-
-(defcustom steps-db-db nil
-  "DB override to use." :group 'steps :type '(string))
-
-(defcustom steps-db-dbs '("Goldstein 206" "Lohndialog 200")
-  "Steps Databases" :group 'steps :type '(sexp))
-
 (defcustom steps-asj-number nil
   "Set the ASJ" :group 'step :type '(string))
 
-(defvar steps--sql-cmd "sqlcmd")
+(defcustom steps-db-connections '("go" "ld")
+  "Db connections" :group 'steps :type '(sexp))
 
-(defvar steps--sql-cmd-args '("-W"
-			      "-h" "-1"
-			      "-m" "-1"))
+(defvar steps-usql-connection "go")
+
+(defvar steps-usql-command "usql")
+
+(defvar steps-usql-global-arguments '("-J" "-t" "-q"))
+
+(defun steps-db-select-db ()
+  "Select the db to use"
+  (interactive)
+  (setq steps-usql-connection (completing-read "Db: " steps-db-connections))
+  (message "Set STEPS db to %s" steps-usql-connection))
+
+(defun steps-usql-to-string (args)
+  "Execute program with args"
+  (with-temp-buffer
+    (steps-call-usql args t)
+    (goto-char (point-min))
+    (let ((data (json-read)))
+      (print data)
+      )))
+
+(defun steps-usql-extract-only (jsons))
+
+(defun steps-usql-to-buffer (buf args count)
+  "Output to buffer"
+  (with-current-buffer (get-buffer-create buf)
+    (erase-buffer)
+    (steps-call-usql args buf)
+    (unless count
+      (end-of-buffer)
+      (delete-line)))
+  (switch-to-buffer-other-window buf))
+
+(defun steps-call-usql (ARGS BUF)
+  (apply #'steps-usql-execute
+	 steps-usql-command
+	 BUF
+	 steps-usql-connection
+	 (steps-process-usql-arguments ARGS)))
+
+(defun steps-usql-execute (PROGRAM BUF &rest ARGS)
+  (apply #'call-process PROGRAM nil BUF nil (print ARGS)))
+
+(defun steps-process-usql-arguments (args)
+  "Prepare ARGS for a function that invokes usql."
+  (append steps-usql-global-arguments args))
+
+
 
 (defun steps-sql-command (command &optional instance database user password)
   "Build the initial query"

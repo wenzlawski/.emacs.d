@@ -976,12 +976,12 @@ i.e. windows tiled side-by-side."
             ;; accept backslashes at all.  Let's not bother to
             ;; quote anything.
             (let ((process-environment (copy-sequence process-environment)))
-              (setenv "COLUMNS" "999") ;; don't truncate long names
-              ;; manual-program might not even exist.  And since it's
-              ;; run differently in Man-getpage-in-background, an error
-              ;; here may not necessarily mean that we'll also get an
-              ;; error later.
-              (when (eq 0
+	      (setenv "COLUMNS" "999") ;; don't truncate long names
+	      ;; manual-program might not even exist.  And since it's
+	      ;; run differently in Man-getpage-in-background, an error
+	      ;; here may not necessarily mean that we'll also get an
+	      ;; error later.
+	      (when (eq 0
 			(ignore-errors
 			  (process-file
                            manual-program nil '(t nil) nil
@@ -1007,16 +1007,16 @@ i.e. windows tiled side-by-side."
 	;; by "man -k" not just on the manpage's name.
 	(if section
             (let ((re (concat "(" (regexp-quote section) ")\\'")))
-              (dolist (comp (prog1 table (setq table nil)))
+	      (dolist (comp (prog1 table (setq table nil)))
 		(if (string-match re comp)
                     (push (substring comp 0 (match-beginning 0)) table)))
-              (completion-table-with-context (concat section " ") table
+	      (completion-table-with-context (concat section " ") table
                                              prefix pred action))
           ;; If the current text looks like a possible section name,
           ;; then add a completion entry that just adds a space so SPC
           ;; can be used to insert a space.
           (if (string-match "\\`[[:digit:]]" string)
-              (push (concat string " ") table))
+	      (push (concat string " ") table))
           (let ((res (complete-with-action action table string pred)))
             ;; In case we're completing to a single name that exists in
             ;; several sections, the longest prefix will look like "foo(".
@@ -1026,7 +1026,7 @@ i.e. windows tiled side-by-side."
                      ;; remove it.
                      (> (match-beginning 0) (length prefix)))
 		(substring res 0 (match-beginning 0))
-              res))))))))
+	      res))))))))
 
 ;; ** autoinsert
 
@@ -1399,10 +1399,10 @@ Append with current prefix arg."
   (eldoc-documentation-strategy #'eldoc-documentation-compose-eagerly)
   :config
   (add-to-list 'display-buffer-alist
-               '("^\\*eldoc for" display-buffer-at-bottom
+	       '("^\\*eldoc for" display-buffer-at-bottom
 		 (window-height . 4)))
   (add-to-list 'display-buffer-alist
-               '("^\\*eldoc\\*$" display-buffer-at-bottom
+	       '("^\\*eldoc\\*$" display-buffer-at-bottom
 		 (window-height . 4))))
 
 (use-package eldoc-box
@@ -3445,7 +3445,7 @@ If given a SOURCE, execute the CMD on it."
     ;; include the `In-Reply-To' header as well.)
     (let ((message-generate-headers-first
            (if (eq message-generate-headers-first t)
-               t
+	       t
              (append message-generate-headers-first '(References In-Reply-To)))))
       (when (message-news-p)
 	(when message-default-news-headers

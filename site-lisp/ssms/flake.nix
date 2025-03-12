@@ -18,6 +18,7 @@
         pkgs = (import nixpkgs) {
           inherit system;
           overlays = [fenix.overlays.default];
+          config.allowUnfree = true;
         };
 
         naersk' = pkgs.callPackage naersk {};
@@ -31,6 +32,15 @@
         };
 
         devShell = pkgs.mkShell {
+          shellHook = ''
+            export LD_LIBRARY_PATH="${pkgs.unixODBC}/lib"
+
+            export ODBCSYSINI=$(realpath ./)
+
+            echo "[ODBC Driver 18 for SQL Server]" > ./odbcinst.ini
+            echo "Description = ODBC Driver 18 for SQL Server" >> ./odbcinst.ini
+            echo "Driver = ${pkgs.unixODBCDrivers.msodbcsql18}/lib/libmsodbcsql-18.1.so.1.1" >> ./odbcinst.ini
+          '';
           nativeBuildInputs = with pkgs; [
             alejandra
             rust-analyzer
