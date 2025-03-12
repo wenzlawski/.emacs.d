@@ -17,7 +17,9 @@
 (defhydra my/web-launch-menu (:color blue :columns 4)
   "Web launch menu"
   ("s" (funcall browse-url-secondary-browser-function "https://sync.k867.uk") "Syncthing")
+  ("S" (funcall browse-url-secondary-browser-function "http://127.0.0.1:8384/") "Syncthing local")
   ("b" (funcall browse-url-secondary-browser-function "https://books.k867.uk") "Calibre-Web")
+  ("B" (funcall browse-url-secondary-browser-function "https://calibre.k867.uk") "Calibre-Server")
   ("v" (funcall browse-url-secondary-browser-function "https://bitwarden.k867.uk") "Vaultwarden")
   ("g" (funcall browse-url-secondary-browser-function "https://projects.k867.uk/grafana") "Grafana")
   ("c" (funcall browse-url-secondary-browser-function "https://job.k867.uk") "Cronicle")
