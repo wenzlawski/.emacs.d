@@ -1,0 +1,10 @@
+# key: inccomp
+# name: incrementalcompilation
+# --
+// $ zig build -Dno-bin -fincremental --watch
+const no_bin = b.option(bool, "no-bin", "skip emitting binary") orelse false;
+if (no_bin) {
+    b.getInstallStep().dependOn(&exe.step);
+} else {
+    b.installArtifact(exe);
+}
