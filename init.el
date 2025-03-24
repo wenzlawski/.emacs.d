@@ -3260,6 +3260,7 @@ If given a SOURCE, execute the CMD on it."
    ("\\.mustache\\'" . web-mode)
    ("\\.djhtml\\'" . web-mode)
    ("\\.html?\\'" . web-mode))
+  :hook (web-mode . (lambda () (setq tab-width 2)))
   :custom
   (web-mode-markup-indent-offset 2))
 
@@ -4001,11 +4002,11 @@ backend."
   (interactive "sWrite the response: ")
   (notmuch-show-reply-sender)
   (gptel-request
-      (concat "\nOriginal Email:\n" (buffer-substring-no-properties (point-min) (point-max)) 
-	      "\n Short-form response:" message)
-    :callback #'my/notmuch-ai-response
-    :stream nil
-    :system (f-read-text (dir-concat gptel-prompt-dir "email.txt")))
+   (concat "\nOriginal Email:\n" (buffer-substring-no-properties (point-min) (point-max)) 
+	   "\n Short-form response:" message)
+   :callback #'my/notmuch-ai-response
+   :stream nil
+   :system (f-read-text (dir-concat gptel-prompt-dir "email.txt")))
   (message "Composing response..."))
 
 (bind-key "," #'my/notmuch-ai-reply 'notmuch-show-mode-map)
@@ -4015,10 +4016,10 @@ backend."
   (interactive)
   (with-current-buffer (magit-diff-while-committing)
     (gptel-request
-	(buffer-substring-no-properties (point-min) (point-max))
-      :callback (lambda (response _) (insert response) (message "Writing commit...Done"))
-      :stream nil
-      :system "Write a short and concise commit message for the following diff.")
+     (buffer-substring-no-properties (point-min) (point-max))
+     :callback (lambda (response _) (insert response) (message "Writing commit...Done"))
+     :stream nil
+     :system "Write a short and concise commit message for the following diff.")
     (message "Writing commit...")))
 
 (bind-key "C-c RET" #'my/magit-ai-commit-message 'git-commit-mode-map)
