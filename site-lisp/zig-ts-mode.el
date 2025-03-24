@@ -483,7 +483,7 @@ Return nil if there is no name or if NODE is not a defun node."
     (setq-local treesit-font-lock-settings zig-ts-mode--font-lock-settings)
     (setq-local treesit-font-lock-feature-list
                 '(( comment )		; definitions
-		  ( keyword string types )
+		  ( keyword string type )
 		  ( assignment number builtin constant ) ; constants, literals
 		  ( bracket operator function delimiter punctuation variable))) ; delimiters, punctuation, functions properties variables
 
