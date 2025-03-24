@@ -363,6 +363,11 @@ first-level entry for writing comments."
      (shell . t)
      (sql . t)
      (sqlite . t)))
+
+  (add-to-list 'org-src-lang-modes '("typst" . typst-ts))
+  (add-to-list 'org-src-lang-modes '("json" . json-ts))
+  (add-to-list 'org-src-lang-modes '("python" . python-ts))
+
   ;; ** org-refile
 
   (defun my/refile (file &optional headline arg)
@@ -416,6 +421,8 @@ Triggered by a custom macOS Quick Action with a keyboard shortcut."
 (setq org-capture-templates
       `(("r" "refile" entry (file "refile.org")
 	 "* %^{Title}\n%U\n\n%i%?" :prepend t :empty-lines-after 1)
+	("i" "inbox" entry (id "73C70CF9-BFB3-47D0-A3CE-7082956C918A")
+	 "* %?\n%U\n")
 
 	("p" "project" entry (id "316F33BA-71DE-41B9-B21B-928D3778A097")
 	 (file ,(dir-concat user-emacs-directory "capture/project.org")) :prepend t)
