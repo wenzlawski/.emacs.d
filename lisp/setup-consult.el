@@ -81,7 +81,7 @@
 (defun my/consult-buffer-projectile (&optional arg)
   "Consult buffer when in project."
   (interactive "p")
-  (case arg
+  (pcase arg
     (4 (projectile-find-file))
     (16 (consult-buffer))
     (t (if (projectile-project-p)

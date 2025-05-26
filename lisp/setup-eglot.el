@@ -38,7 +38,6 @@
     (add-to-list 'eglot-server-programs mode)))
 
 (use-package emacs-lsp-booster
-  :disabled
   :after eglot
   :straight (:host github :repo "blahgeek/emacs-lsp-booster"))
 
@@ -65,7 +64,7 @@
     "Apply eglot faces"
     (set-face-attribute
      'eglot-highlight-symbol-face nil
-     :bold t :underline nil :background (modus-themes-get-color-value 'bg-hover t)))
+     :bold t :underline nil :background (modus-themes-get-color-value 'bg-hover-secondary t)))
 
   (with-eval-after-load 'modus-themes
     (add-hook 'modus-themes-after-load-theme-hook #'my/eglot-apply-faces)

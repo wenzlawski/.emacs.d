@@ -114,7 +114,7 @@
   "Open FILE or url using system's default application."
   (interactive "sOpen externally: ")
   (unless (string-match-p "\\`[a-z]+://" file)
-    (setq file (expand-file-name file)))
+    pp    (setq file (expand-file-name file)))
   (message "Opening `%s' externally..." file)
   (eval `(call-process ,browse-url-generic-program
 		       nil 0 nil ,@browse-url-generic-args ,file)))
@@ -150,7 +150,7 @@
 SQL Server on Windows and Linux platform."
   (mapconcat #'identity
 	     (delq nil
-		   (list (when host (format "-S \"%s\"" (shell-quote-argument host)))
+		   (list (when host (format "-s \"%s\"" (shell-quote-argument host)))
 			 (when user (format "-U \"%s\"" (shell-quote-argument user)))
 			 (when password (format "-P \"%s\"" (shell-quote-argument password)))
 			 (when database (format "-d \"%s\"" database))))
@@ -162,6 +162,7 @@ SQL Server on Windows and Linux platform."
 (setopt org-directory "~/org/"
 	org-refile-targets '((org-agenda-files :level . 8)
 			     ("work.org" :level . 2))
+	org-agenda-files '("work.org")
 	org-capture-templates
 	`(("i" "inbox" entry (id "0d0b8397-b242-4f88-983d-90a67fd51eb0")
 	   "* %?\n%U\n" :prepend t)
@@ -173,6 +174,9 @@ SQL Server on Windows and Linux platform."
 	   "* %? :meeting:\nSCHEDULED: %^t\n\n")
 	  ("e" "email")
 	  ("et" "task" entry (file "~/work/work.org") (file ,(dir-concat user-emacs-directory "capture/mail-task.org")) :prepend t)
+	  ("s" "steps")
+	  ("st" "tips&tricks" entry (id "91b8fed9-4ac8-4608-8959-26d1e6ba5a74")
+	   "* %?\n%U\n")
 
 	  ("c" "clock")
 	  ("cn" "clock note" entry (clock) "%^{Title}\n%?")
@@ -180,7 +184,6 @@ SQL Server on Windows and Linux platform."
 	  ("cw" "clock web"  entry (clock) "%?%:description\nSource: %:link\n\nTitle: %:description\n\n#+begin_quote\n%i\n#+end_quote" :empty-lines 1))
 	khalel-import-org-file (concat org-directory "calendar.org"))
 
-(shell-command "xset r rate 165 45")
 
 (with-eval-after-load 'org
   (require 'ol-outlook))
@@ -304,6 +307,18 @@ SQL Server on Windows and Linux platform."
 	     :italic-slant italic
 	     :italic-height 1.0)
 	  ))
+
+(fontaine-set-preset (or (fontaine-restore-latest-preset) 'regular))
+
+(defun my/remove-carriage-return ()
+  (interactive)
+  (replace-string-in-region "" "" (point-min) (point-max)))
+
+(bind-key "m" #'my/remove-carriage-return 'mule-keymap)
+
+(shell-command "xset r rate 165 45")
+
+(push (lambda (_) (shell-command "xset r rate 165 45")) after-make-frame-functions)
 
 (require 'steps)
 

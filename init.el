@@ -274,6 +274,7 @@ Containing LEFT, and RIGHT aligned respectively."
                     prot-modeline-process
                     prot-modeline-major-mode
                     " "
+		    mode-line-position
 		    ;; prot-modeline-vc-branch
                     "  "
                     prot-modeline-eglot)
@@ -858,7 +859,7 @@ Containing LEFT, and RIGHT aligned respectively."
   ;; (blink-cursor-mode)
   (recentf-mode)
   (global-auto-revert-mode)
-  (push '(lambda (_) (menu-bar-mode -1)) (cdr (last after-make-frame-functions)))
+  (push (lambda (_) (menu-bar-mode -1)) (cdr (last after-make-frame-functions)))
   ;; (add-to-list 'default-frame-alist '(font . "Iosevka-18"))
   )
 
@@ -1399,15 +1400,15 @@ Append with current prefix arg."
   (eldoc-documentation-strategy #'eldoc-documentation-compose-eagerly)
   :config
   (add-to-list 'display-buffer-alist
-	       '("^\\*eldoc for" display-buffer-at-bottom
-		 (window-height . 4)))
+	       '("^\\*eldoc for" display-buffer-in-direction
+		 (window-width. 70)))
   (add-to-list 'display-buffer-alist
-	       '("^\\*eldoc\\*$" display-buffer-at-bottom
-		 (window-height . 4))))
+	       '("^\\*eldoc\\*$" display-buffer-in-direction
+		 (window-width . 70))))
 
 (use-package eldoc-box
   :straight t
-  :hook (eglot-managed-mode . eldoc-box-hover-mode)
+  ;; :hook (eglot-managed-mode . eldoc-box-hover-mode)
   :after eldoc)
 
 ;; ** pos-tip
@@ -2141,13 +2142,13 @@ This function can be used as the value of the user option
    magit-disabled-section-inserters
    '(
      ;;   magit-insert-tags-header
-     magit-insert-status-headers
-     magit-insert-unpushed-to-pushremote
-     magit-insert-unpulled-from-pushremote
-     magit-insert-unpulled-from-upstream
-     magit-insert-unpushed-to-upstream-or-recent
-     forge-insert-pullreqs
-     forge-insert-issues
+     ;; magit-insert-status-headers
+     ;; magit-insert-unpushed-to-pushremote
+     ;; magit-insert-unpulled-from-pushremote
+     ;; magit-insert-unpulled-from-upstream
+     ;; magit-insert-unpushed-to-upstream-or-recent
+     ;; forge-insert-pullreqs
+     ;; forge-insert-issues
      )))
 
 (use-package diff-hl
@@ -2162,7 +2163,13 @@ This function can be used as the value of the user option
 
 (use-package forge
   :after magit
-  :straight t)
+  :straight t
+  :config
+  (push '("git.cicd.gold.local"
+	  "git.cicd.gold.local/api/v1"
+	  "git.cicd.gold.local"
+	  forge-gitea-repository)
+	forge-alist))
 
 ;; not a lot of discussion on this since about 3 years ago.
 ;; it works and compiles (obv nix problems), but the work in magit
@@ -2228,7 +2235,7 @@ To override the path to the ruff executable, set
 See URL `http://pypi.python.org/pypi/ruff'."
     :command ("ruff"
 	      "check"
-	      "--output-format=text"
+	      "--output-format=full"
 	      (eval (when buffer-file-name
 		      (concat "--stdin-filename=" buffer-file-name)))
 	      "-")
@@ -2610,6 +2617,7 @@ See URL `http://pypi.python.org/pypi/ruff'."
   (add-to-list 'apheleia-mode-alist '(sh-mode . shfmt))
   (add-to-list 'apheleia-mode-alist '(nix-ts-mode . alejandra))
   (add-to-list 'apheleia-mode-alist '(zig-ts-mode . zig-fmt))
+  (add-to-list 'apheleia-mode-alist '(nxml-mode . xmllint))
 
   (push
    `(shfmt ,(executable-find "shfmt") "-filename" filepath "-ln"
@@ -2771,6 +2779,17 @@ See URL `http://pypi.python.org/pypi/ruff'."
   :straight t
   :custom
   (geiser-chez-binary (executable-find "scheme")))
+
+;; ** combobulate
+
+(use-package combobulate
+  :straight t
+  :custom
+  ;; You can customize Combobulate's key prefix here.
+  ;; Note that you may have to restart Emacs for this to take effect!
+  (combobulate-key-prefix "C-c i")
+  ;; :hook ((prog-mode . combobulate-mode))
+  )
 
 ;; * LANGUAGE MODES
 ;; ** lisp
@@ -3246,6 +3265,11 @@ If given a SOURCE, execute the CMD on it."
 (use-package toml-ts-mode
   :mode "\\.toml\\'")
 
+;; ** crontab
+
+(use-package crontab-mode
+  :straight t)
+
 ;; ** web-mode
 
 (use-package web-mode
@@ -3262,7 +3286,9 @@ If given a SOURCE, execute the CMD on it."
    ("\\.html?\\'" . web-mode))
   :hook (web-mode . (lambda () (setq tab-width 2)))
   :custom
-  (web-mode-markup-indent-offset 2))
+  (web-mode-markup-indent-offset 2)
+  :hook
+  (web-mode . (lambda () (setq tab-width 2))))
 
 ;; ** js json
 
@@ -3299,7 +3325,11 @@ If given a SOURCE, execute the CMD on it."
 ;; ** xml
 
 (use-package nxml-mode
-  :mode ("\\.qrc\\'" . nxml-mode))
+  :mode ("\\.qrc\\'" . nxml-mode)
+  :config
+  (with-eval-after-load 'apheleia
+    (add-hook 'nxml-mode-hook #'apheleia-mode)
+    (bind-key "C-c f" #'apheleia-format-buffer 'nxml-mode-map)))
 
 ;; ** terraform
 
@@ -3355,6 +3385,29 @@ If given a SOURCE, execute the CMD on it."
 
 (use-package dockerfile-mode
   :straight t)
+
+;; ** nginx
+
+(use-package nginx-mode
+  :straight t)
+
+;; ** ansible
+
+(use-package ansible
+  :straight t)
+
+;; ** jenkinsfile-mode
+
+(use-package jenkinsfile-mode
+  :straight t)
+
+;; ** typescript
+
+(use-package typescript-ts-mode
+  :mode "\\.m?tsx?\\'"
+  :custom
+  (typescript-ts-mode-indent-offset 4)
+  :hook (typescript-ts-mode . (lambda () (setq tab-width 4))))
 
 ;; * ORG
 
@@ -3602,7 +3655,8 @@ With three prefix args insert at point while prompting for a signature."
 
 ;; ** notmuch
 
-(require 'setup-notmuch)
+(unless (equal "nixos" system-name)
+  (require 'setup-notmuch))
 
 ;; * APPLICATIONS
 ;; ** smudge spotify
@@ -3773,7 +3827,7 @@ The browser to used is specified by the
   (denote-backlinks-show-context t)
   :config
   ;; (denote-rename-buffer-mode)
-  (require 'denote-silo-extras)
+  ;; (require 'denote-silo-extras)
   )
 
 (defvar my/denote-silo-directories
@@ -3807,13 +3861,13 @@ The browser to used is specified by the
   (let ((denote-directory silo))
     (call-interactively command)))
 
-(use-package denote-silo-extras
-  :after denote
-  :custom
-  (denote-silo-extras-directories `(,denote-directory "~/work/notes")))
+;; (use-package denote-silo-extras
+;;   :after denote
+;;   :custom
+;;   (denote-silo-extras-directories `(,denote-directory "~/work/notes")))
 
-(use-package denote-org-extras
-  :after denote)
+;; (use-package denote-org-extras
+;;   :after denote)
 
 (use-package denote-explore
   :straight t
@@ -4287,6 +4341,15 @@ and \"apikey\" as USER."
 	    (:name "Names" :width 10 :template "{{ json .Names }}" :sort nil :format nil))
 	  ))
 
+;; ** kubernetes
+
+(use-package kubernetes
+  :straight t
+  :commands (kubernetes-overview)
+  :config
+  (setq kubernetes-poll-frequency 3600
+	kubernetes-redraw-frequency 3600))
+
 ;; ** ejc-sql
 
 (use-package ejc-sql
@@ -4354,7 +4417,7 @@ If FRAME is omitted or nil, use currently selected frame."
 (defun fake-module-reload (module)
   (interactive "fReload Module file: ")
   (let ((tmpfile (make-temp-file
-                  (file-name-nondirectory module) nil module-file-suffix)))
+		  (file-name-nondirectory module) nil module-file-suffix)))
     (copy-file module tmpfile t)
     (module-load tmpfile)))
 
@@ -4365,8 +4428,8 @@ This function is added to `kill-emacs-query-functions'."
   (let ((buf (org-clocking-buffer)))
     (when (and buf (yes-or-no-p "Clock out and save? "))
       (with-current-buffer buf
-        (org-clock-out)
-        (save-buffer))))
+	(org-clock-out)
+	(save-buffer))))
   ;; Unconditionally return t for `kill-emacs-query-functions'.
   t)
 ;; ** ox-11ty

@@ -29,13 +29,13 @@
   :bind
   ("C-x m" . notmuch-mua-new-mail)
   (:map notmuch-message-mode-map
-				("C-x C-s" . my/notmuch-draft-save))
+	("C-x C-s" . my/notmuch-draft-save))
   (:map notmuch-search-mode-map
-				("." . notmuch-show-mark-read))
+	("." . notmuch-show-mark-read))
   :custom
   (notmuch-identities '("Marc Wenzlawski <marcwenzlawski@posteo.com>"
-												"Marc Wenzlawski <marc.wenzlawski@icloud.com>"
-												))
+			"Marc Wenzlawski <marc.wenzlawski@icloud.com>"
+			))
   (notmuch-fcc-dirs
    '(("marcwenzlawski@posteo.com" . "posteo/Sent -inbox +sent -unread +posteo")
      ("marc.wenzlawski@icloud.com" . "icloud/Sent -inbox +sent -unread +icloud")
@@ -164,9 +164,9 @@
      "\n" ""
      (let ((default-directory "~"))
        (shell-command-to-string
-				(format "%s count %s"
-								notmuch-indicator-notmuch-binary
-								(shell-quote-argument terms))))))
+	(format "%s count %s"
+		notmuch-indicator-notmuch-binary
+		(shell-quote-argument terms))))))
 
   (defun notmuch-indicator-refresh (&rest other)
     "Refresh the active indicator."
@@ -174,7 +174,7 @@
       (cancel-function-timers #'notmuch-indicator--indicator)
       (run-at-time nil notmuch-indicator-refresh-count #'notmuch-indicator--indicator)))
 
-  (notmuch-indicator-mode 1)
+  (unless (equal system-name "nixos") (notmuch-indicator-mode 1))
   )
 
 (provide 'setup-notmuch)
