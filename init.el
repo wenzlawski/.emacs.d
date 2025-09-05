@@ -1353,6 +1353,11 @@ Append with current prefix arg."
   (holiday-oriental-holidays nil)
   (holiday-other-holidays nil))
 
+;; ** edit-indirect
+
+(use-package edit-indirect
+  :straight t)
+
 ;; * HELP
 ;; ** help
 
@@ -2221,6 +2226,7 @@ This function can be used as the value of the user option
   :hook (prog-mode . flycheck-mode))
 
 (use-package flycheck-eglot
+  :disabled
   :straight t
   :after flycheck eglot
   :config
@@ -2589,7 +2595,8 @@ See URL `http://pypi.python.org/pypi/ruff'."
 	  (sql "https://github.com/DerekStride/tree-sitter-sql" "gh-pages")
 	  (typst "https://github.com/uben0/tree-sitter-typst")
 	  (yaml "https://github.com/ikatyang/tree-sitter-yaml")
-	  (zig "https://github.com/maxxnino/tree-sitter-zig")))
+	  (zig "https://github.com/maxxnino/tree-sitter-zig")
+	  (c-sharp "https://github.com/tree-sitter/tree-sitter-c-sharp")))
 (setopt treesit-font-lock-level 3)
 
 (use-package treesit-auto
@@ -2620,6 +2627,8 @@ See URL `http://pypi.python.org/pypi/ruff'."
   (add-to-list 'apheleia-mode-alist '(nix-ts-mode . alejandra))
   (add-to-list 'apheleia-mode-alist '(zig-ts-mode . zig-fmt))
   (add-to-list 'apheleia-mode-alist '(nxml-mode . xmllint))
+  (add-to-list 'apheleia-mode-alist '(csharp-mode . clang-format))
+  (add-to-list 'apheleia-mode-alist '(csharp-ts-mode . clang-format))
 
   (push
    `(shfmt ,(executable-find "shfmt") "-filename" filepath "-ln"
@@ -2637,7 +2646,9 @@ See URL `http://pypi.python.org/pypi/ruff'."
   (push
    `(prettier-html ,(executable-find "prettier") "--stdin-filepath" filepath) apheleia-formatters)
   (push
-   `(prettier-css ,(executable-find "prettier") "--stdin-filepath" filepath) apheleia-formatters))
+   `(prettier-css ,(executable-find "prettier") "--stdin-filepath" filepath) apheleia-formatters)
+  (push
+   '(clang-format "clang-format" "--assume") apheleia-formatters))
 
 ;; ** emmet
 
@@ -3011,7 +3022,9 @@ See URL `http://pypi.python.org/pypi/ruff'."
 
 (use-package markdown-mode
   :straight t
-  :hook (markdown-mode . visual-line-mode))
+  :hook (markdown-mode . visual-line-mode)
+  :custom
+  (markdown-asymmetric-header t))
 
 ;; ** typst
 
@@ -3411,6 +3424,20 @@ If given a SOURCE, execute the CMD on it."
   (typescript-ts-mode-indent-offset 4)
   :hook (typescript-ts-mode . (lambda () (setq tab-width 4))))
 
+;; ** csv
+
+(use-package csv-mode
+  :straight t
+  :config
+  (setopt csv-separators '("," "	" ";")))
+
+;; ** csharp
+
+(use-package csharp-mode
+  :mode ("\\.cs\\'" . csharp-ts-mode)
+  :custom
+  (csharp-ts-mode-indent-offset 2))
+
 ;; * ORG
 
 (require 'setup-org)
@@ -3783,6 +3810,7 @@ The browser to used is specified by the
 			 ("gitlab\\.com" . browse-url-default-browser)
 			 ("reddit\\.com" . browse-url-default-browser)
 			 ("wikipedia\\.org" . browse-url-default-browser)
+			 ("atlassian\\.net" . browse-url-default-browser)
 			 ("."             . eww-browse-url))))
 
 ;; ** denote
@@ -4039,14 +4067,16 @@ backend."
   ("C-c s" . gptel-menu)
   :custom
   (gptel-default-mode #'org-mode)
-  (gptel-model 'gpt-4o)
+  (gptel-model 'gpt-4.1)
   (gptel-expert-commands t)
   (gptel-directives
    `((default . "You are a large language model living in Emacs and a helpful assistant. Respond concisely.")
      (programming . "You are a large language model and a careful programmer. Provide code and only code as output without any additional text, prompt or note.")
      (writing . "You are a large language model and a writing assistant. Respond concisely.")
      (chat . "You are a large language model and a conversation partner. Respond concisely.")
-     (research . "You are a large language model and a research assistant. Respond concisely, giving detailed and well covering answers."))))
+     (research . "You are a large language model and a research assistant. Respond concisely, giving detailed and well covering answers.")))
+  :config
+  (gptel-make-anthropic "Claude" :stream t))
 
 (defun my/notmuch-ai-response (response _)
   (insert response)
@@ -4058,11 +4088,11 @@ backend."
   (interactive "sWrite the response: ")
   (notmuch-show-reply-sender)
   (gptel-request
-   (concat "\nOriginal Email:\n" (buffer-substring-no-properties (point-min) (point-max)) 
-	   "\n Short-form response:" message)
-   :callback #'my/notmuch-ai-response
-   :stream nil
-   :system (f-read-text (dir-concat gptel-prompt-dir "email.txt")))
+      (concat "\nOriginal Email:\n" (buffer-substring-no-properties (point-min) (point-max)) 
+	      "\n Short-form response:" message)
+    :callback #'my/notmuch-ai-response
+    :stream nil
+    :system (f-read-text (dir-concat gptel-prompt-dir "email.txt")))
   (message "Composing response..."))
 
 (bind-key "," #'my/notmuch-ai-reply 'notmuch-show-mode-map)
@@ -4072,10 +4102,10 @@ backend."
   (interactive)
   (with-current-buffer (magit-diff-while-committing)
     (gptel-request
-     (buffer-substring-no-properties (point-min) (point-max))
-     :callback (lambda (response _) (insert response) (message "Writing commit...Done"))
-     :stream nil
-     :system "Write a short and concise commit message for the following diff.")
+	(buffer-substring-no-properties (point-min) (point-max))
+      :callback (lambda (response _) (insert response) (message "Writing commit...Done"))
+      :stream nil
+      :system "Write a short and concise commit message for the following diff.")
     (message "Writing commit...")))
 
 (bind-key "C-c RET" #'my/magit-ai-commit-message 'git-commit-mode-map)
@@ -4210,6 +4240,16 @@ and \"apikey\" as USER."
 	   (total (pdf-info-number-of-pages))
 	   (percent (/ (* 100 page) total)))
       (message "%d/%d %d%%" page total percent )))
+
+  (defun my/pdf-view-find-at-page (file &optional page s)
+    "Find Pdf at page"
+    (find-file-existing file)
+    (pdf-view-mode)
+    (if page (pdf-view-goto-page page))
+    (frame-focus)
+    (unless (equal s "")
+      (isearch-forward nil 1)
+      (isearch-yank-string s)))
 
   (defun my/pdf-view-open-externally ()
     "Open the current pdf in an external viewer."
