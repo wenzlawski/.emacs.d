@@ -94,7 +94,8 @@
   (:map vbnet-mode-map
 	("TAB" . indent-for-tab-command))
   :custom
-  (vbnet-want-flymake-fixup nil))
+  (vbnet-want-flymake-fixup nil)
+  (vbnet-mode-indent 2))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Emacs on WSL open links in Windows web browser
@@ -114,7 +115,7 @@
   "Open FILE or url using system's default application."
   (interactive "sOpen externally: ")
   (unless (string-match-p "\\`[a-z]+://" file)
-    pp    (setq file (expand-file-name file)))
+    (setq file (expand-file-name file)))
   (message "Opening `%s' externally..." file)
   (eval `(call-process ,browse-url-generic-program
 		       nil 0 nil ,@browse-url-generic-args ,file)))
@@ -130,6 +131,8 @@
   (require 'custom-ahk-mode))
 
 (load-theme 'modus-operandi t)
+
+(my/org-modern-apply-faces)
 
 (org-babel-do-load-languages
  'org-babel-load-languages
@@ -161,7 +164,7 @@ SQL Server on Windows and Linux platform."
 
 (setopt org-directory "~/org/"
 	org-refile-targets '((org-agenda-files :level . 8)
-			     ("work.org" :level . 2))
+			     ("work.org" :maxlevel . 3))
 	org-agenda-files '("work.org")
 	org-capture-templates
 	`(("i" "inbox" entry (id "0d0b8397-b242-4f88-983d-90a67fd51eb0")
@@ -329,15 +332,16 @@ SQL Server on Windows and Linux platform."
 	  (go-mono :default-family "GoMono Nerd Font")
 	  (present :default-height 350)
 	  (arial :default-family "Arial")
-	  (libsans :default-family "LiberationSans" :default-height 180)
+	  (libsans :default-family "LiberationSans" :default-height 160)
 	  (libserif :default-family "LiberationSerif")
 	  (libmono :default-family "LiberationMono")
+	  (opensans :default-family "OpenSans" :default-height 135)
 	  (iaquattro :default-family "iAWriterQuattroS")
 	  (regular)
 	  (t :default-family "Iosevka Nerd Font"
 	     :default-weight regular
 	     :default-slant normal
-	     :default-height 140
+	     :default-height 135
 	     :line-spacing 1
 	     :fixed-pitch-family nil
 	     :fixed-pitch-weight nil
@@ -347,10 +351,10 @@ SQL Server on Windows and Linux platform."
 	     :fixed-pitch-serif-weight nil
 	     :fixed-pitch-serif-slant nil
 	     :fixed-pitch-serif-height 1.0
-	     :variable-pitch-family ,(if IS-MAC "iA Writer Quattro V" "LiberationSans")
-	     :variable-pitch-weight bold
+	     :variable-pitch-family ,(if IS-MAC "iA Writer Quattro V" "OpenSans")
+	     :variable-pitch-weight normal
 	     :variable-pitch-slant nil
-	     :variable-pitch-height 1.1
+	     :variable-pitch-height 1.0
 	     :mode-line-active-family nil
 	     :mode-line-active-weight nil
 	     :mode-line-active-slant nil
@@ -394,6 +398,10 @@ SQL Server on Windows and Linux platform."
 (bind-key "m" #'my/remove-carriage-return 'mule-keymap)
 
 (shell-command "xset r rate 165 45")
+
+(defun my/set-key-repeat-rate ()
+  (interactive)
+  (shell-command "xset r rate 165 45"))
 
 (push (lambda (_) (shell-command "xset r rate 165 45")) after-make-frame-functions)
 
