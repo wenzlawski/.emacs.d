@@ -207,6 +207,83 @@ SQL Server on Windows and Linux platform."
   (setopt notmuch-identities '("Marc Wenzlawski <m.wenzlawski@goldstein.de")
 	  notmuch-fcc-dirs '(("m.wenzlawski@goldstein.de" . "go/Sent -inbox +sent -unread +go"))))
 
+(use-package org-jira
+  :straight t
+  :custom
+  (jiralib-url "https://batoulabb.atlassian.net")
+  (org-jira-priority-to-org-priority-alist '(("High" . ?A)
+					     ("Medium" . ?B)
+					     ("Low" . ?C))))
+
+(with-eval-after-load 'org-jira
+  (defun org-jira-update-issue-details (issue-id filename &rest rest)
+    "Update the details of issue ISSUE-ID in FILENAME.  REST will contain optional input."
+    (ensure-on-issue-id-with-filename issue-id filename
+				      ;; Set up a bunch of values from the org content
+				      (let* ((org-issue-components (org-jira-get-issue-val-from-org 'components))
+					     (org-issue-labels (org-jira-get-issue-val-from-org 'labels))
+					     (org-issue-description (org-trim (org-jira-get-issue-val-from-org 'description)))
+					     (org-issue-priority (org-jira-get-issue-val-from-org 'priority))
+					     (org-issue-type (org-jira-get-issue-val-from-org 'type))
+					     (org-issue-type-id (org-jira-get-issue-val-from-org 'type-id))
+					     (org-issue-assignee (cl-getf rest :assignee (org-jira-get-issue-val-from-org 'assignee)))
+					     (org-issue-reporter (cl-getf rest :reporter (org-jira-get-issue-val-from-org 'reporter)))
+					     (project (replace-regexp-in-string "-[0-9]+" "" issue-id))
+					     (project-components (jiralib-get-components project)))
+
+					;; Lets fire off a worklog update async with the main issue
+					;; update, why not?  This is better to fire first, because it
+					;; doesn't auto-refresh any areas, while the end of the main
+					;; update does a callback that reloads the worklog entries (so,
+					;; we hope that won't occur until after this successfully syncs
+					;; up).  Only do this sync if the user defcustom defines it as such.
+					(when org-jira-worklog-sync-p
+					  (org-jira-update-worklogs-from-org-clocks))
+
+					;; Send the update to jira
+					(let* ((components-list (or (org-jira-build-components-list
+								     project-components
+								     org-issue-components) []))
+					       (update-fields
+						(cl-remove nil (list (unless (eq components-list []) (cons 'components components-list))
+								     (cons 'labels (split-string org-issue-labels ",\\s *"))
+								     (cons 'priority (org-jira-get-id-name-alist org-issue-priority
+														 (jiralib-get-priorities)))
+								     (cons 'description org-issue-description)
+								     (cons 'assignee (list (cons 'id (jiralib-get-user-account-id project org-issue-assignee))))
+								     (cons 'summary (org-jira-strip-priority-tags (org-jira-get-issue-val-from-org 'summary)))
+								     (cons 'issuetype `((id . ,org-issue-type-id)
+											(name . ,org-issue-type)))))))
+
+					  (if org-jira-update-issue-details-include-reporter
+					      (setq update-fields
+						    (append update-fields
+							    (list (cons 'reporter (list (cons 'id (jiralib-get-user-account-id project org-issue-reporter))))))))
+
+					  ;; If we enable duedate sync and we have a deadline present
+					  (when (and org-jira-deadline-duedate-sync-p
+						     (org-jira-get-issue-val-from-org 'deadline))
+					    (setq update-fields
+						  (append update-fields
+							  (list (cons 'duedate (org-jira-get-issue-val-from-org 'deadline))))))
+
+					  ;; TODO: We need some way to handle things like assignee setting
+					  ;; and refreshing the proper issue in the proper buffer/filename.
+					  (jiralib-update-issue
+					   issue-id
+					   update-fields
+					   ;; This callback occurs on success
+					   (org-jira-with-callback
+					     (message (format "Issue '%s' updated!" issue-id))
+					     (jiralib-get-issue
+					      issue-id
+					      (org-jira-with-callback
+						(org-jira-log "Update get issue for refresh callback hit.")
+						(-> cb-data list org-jira-get-issues))))
+					   ))
+					)))
+  )
+
 (use-package org-re-reveal
   :straight t
   :custom
