@@ -763,6 +763,8 @@ Containing LEFT, and RIGHT aligned respectively."
 (setq auth-sources '("~/.authinfo.gpg"))
 (setopt epa-pinentry-mode 'loopback)
 
+(require 'epa-extras)
+(epa-extras-clean-buffers-init)
 
 ;; ** Emacs
 
