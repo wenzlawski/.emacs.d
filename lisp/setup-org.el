@@ -132,12 +132,8 @@ abort `\\[org-capture-kill]'."))))
 		   ("\\.x?html?\\'" . default)
 		   ("\\.pdf\\'" . emacs)))
   :config
-  (require 'org-clock)
   (unless (executable-find "x11idle")
     (setopt org-clock-x11idle-program-name "xprintidle"))
-
-  (org-clock-persistence-insinuate)
-  (add-to-list 'org-babel-load-languages '(shell . t))
 
   (setf (cdr (assoc 'file org-link-frame-setup)) 'find-file)
 
@@ -1305,10 +1301,17 @@ This function is called by `org-babel-execute-src-block'."
   )
 
 ;; * PLUGINS
+;; ** org-clock
+
+;; (with-eval-after-load 'org
+;;   (require 'org-clock)
+;;   (org-clock-persistence-insinuate))
+
 ;; ** org-modern
 
 (straight-use-package 'org-modern)
 (require 'org-modern)
+;; (set-face-attribute 'org-modern-todo nil :inherit 'unspecified)
 (set-face-attribute 'org-modern-symbol nil :family "Iosevka")
 (set-face-attribute 'org-modern-label nil :height 0.85)
 (set-face-attribute 'org-modern-date-active nil :height 1.1 :overline "gray80"
@@ -1339,16 +1342,19 @@ This function is called by `org-babel-execute-src-block'."
    :background (modus-themes-get-color-value 'bg-mode-line-inactive)
    :foreground (modus-themes-get-color-value 'fg-mode-line-inactive)))
 
-(with-eval-after-load 'modus-themes
-  (add-hook 'modus-themes-after-load-theme-hook #'my/org-modern-apply-faces)
-  (my/org-modern-apply-faces))
-
 (setopt org-modern-keyword nil
 	org-modern-checkbox nil
 	org-modern-star 'replace
 	org-modern-table nil)
 
 (global-org-modern-mode)
+
+(my/org-modern-apply-faces)
+
+(with-eval-after-load 'modus-themes
+  (add-hook 'modus-themes-after-load-theme-hook #'my/org-modern-apply-faces)
+  (my/org-modern-apply-faces)
+  )
 
 ;; ** org-protocol
 
