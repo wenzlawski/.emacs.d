@@ -113,14 +113,14 @@
 
 ;; still doesn't work
 (with-eval-after-load 'consult-recoll
-  (defvar consult-recoll--recollq (executable-find "recollq"))
+  ;; (defvar consult-recoll--recollq (executable-find "recollq"))
 
-  (defun consult-recoll--command (text)
-    "Command used to perform queries for TEXT."
-    (setq consult-recoll--current nil)
-    (setq consult-recoll--index 0)
-    (setq consult-recoll--snippets nil)
-    `(,consult-recoll--recollq ,@(consult-recoll--search-flags) ,text))
+  ;; (defun consult-recoll--command (text)
+  ;;   "Command used to perform queries for TEXT."
+  ;;   (setq consult-recoll--current nil)
+  ;;   (setq consult-recoll--index 0)
+  ;;   (setq consult-recoll--snippets nil)
+  ;;   `(,consult-recoll--recollq ,@(consult-recoll--search-flags) ,text))
   )
 
 (use-package consult-notes
