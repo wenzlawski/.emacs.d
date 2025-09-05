@@ -61,6 +61,7 @@
     ("S" scratch "Mode Scratch")
     ("D" toggle-debug-on-error "debug on error" :toggle (default-value 'debug-on-error))
     ("X" toggle-debug-on-quit "debug on quit" :toggle (default-value 'debug-on-quit))
+    ("C-p" epa-extras-kill-all-encrypted-buffers "kill encrypted")
     )
    ))
 
