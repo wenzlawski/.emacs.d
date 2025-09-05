@@ -556,14 +556,14 @@ Containing LEFT, and RIGHT aligned respectively."
     (fg-main "#E2E2E2")
     (fg-dim "#999999")))
 
-(defvar my/modus-operandi-darker-colors
+(defvar my/modus-operandi-lighter-colors
   '((bg-main "#F8F8F8")
     (bg-dim "#EBEBEB")
     (fg-main "#2C2C2C")
     (fg-dim "#8B8B8B")))
 
-(defvar my/modus-operandi-lighter-colors
-  '((bg-main "#EBEBEB")
+(defvar my/modus-operandi-darker-colors
+  '((bg-main "#f9f7ef") ; ebebeb
     (bg-dim "#d1d1d1")
     (fg-main "#2C2C2C")
     (fg-dim "#8B8B8B")))
@@ -604,7 +604,7 @@ Containing LEFT, and RIGHT aligned respectively."
   (modus-themes-headings
    '((agenda-structure . (variable-pitch light 2.2))
      (agenda-date . (variable-pitch regular 1.3))
-     (t . (variable-pitch medium))))
+     (t . (variable-pitch medium 1.1))))
   (modus-themes-custom-auto-reload t)
   :config
   (setopt modus-vivendi-palette-overrides my/modus-vivendi-lighter-colors)
