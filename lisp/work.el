@@ -164,7 +164,8 @@ SQL Server on Windows and Linux platform."
 
 (setopt org-directory "~/org/"
 	org-refile-targets '((org-agenda-files :level . 8)
-			     ("work.org" :maxlevel . 3))
+			     ("work.org" :maxlevel . 3)
+			     (nil :maxlevel . 8))
 	org-agenda-files '("work.org")
 	org-capture-templates
 	`(("i" "inbox" entry (id "0d0b8397-b242-4f88-983d-90a67fd51eb0")
