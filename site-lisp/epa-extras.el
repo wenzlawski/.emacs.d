@@ -56,4 +56,5 @@
   (setq epa-extras-quit-idle-encrypted-buffers-timer (run-with-timer epa-extras-epa-buffer-max-idle-seconds epa-extras-epa-buffer-max-idle-seconds #'epa-extras-clean-encrypted-buffers)
 	epa-extras-quit-encrypted-buffers-timer (run-with-idle-timer epa-extras-emacs-max-idle-seconds t #'epa-extras-kill-all-encrypted-buffers)))
 
+(provide 'epa-extras)
 ;;; usql.el ends here
